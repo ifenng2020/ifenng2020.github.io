@@ -41,43 +41,75 @@
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">36
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">37
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">38
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">39
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">40
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">41
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">42
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">43
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">44
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">45
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">46
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">47
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">48
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">49
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">50
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">51
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">52
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">53
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">54
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#000;font-weight:700>package</span> factory
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// Interviewer 面试接口 实现回答问题
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>type</span> interviewer <span style=color:#000;font-weight:700>interface</span> {
-</span></span><span style=display:flex><span>	<span style=color:#900;font-weight:700>AskQuestions</span>() <span style=color:#458;font-weight:700>string</span>
+</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// IRuleConfigParser IRuleConfigParser
+</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>type</span> IRuleConfigParser <span style=color:#000;font-weight:700>interface</span> {
+</span></span><span style=display:flex><span>	<span style=color:#900;font-weight:700>Parse</span>(data []<span style=color:#458;font-weight:700>byte</span>)
 </span></span><span style=display:flex><span>}
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// Developer 开发者
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>type</span> Developer <span style=color:#000;font-weight:700>struct</span>{}
+</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// jsonRuleConfigParser jsonRuleConfigParser
+</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>type</span> jsonRuleConfigParser <span style=color:#000;font-weight:700>struct</span>{}
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// AskQuestions 开发者面试需要回答的问题
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>func</span> (developer <span style=color:#000;font-weight:700>*</span>Developer) <span style=color:#900;font-weight:700>AskQuestions</span>() <span style=color:#458;font-weight:700>string</span> {
-</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>return</span> <span style=color:#d14>&#34;问关于开发的问题!&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// Parse Parse
+</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>func</span> (J jsonRuleConfigParser) <span style=color:#900;font-weight:700>Parse</span>(data []<span style=color:#458;font-weight:700>byte</span>) {
+</span></span><span style=display:flex><span>	<span style=color:#0086b3>panic</span>(<span style=color:#d14>&#34;implement me&#34;</span>)
 </span></span><span style=display:flex><span>}
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// CommunityExecutive CommunityExecutive(行政人员)
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>type</span> CommunityExecutive <span style=color:#000;font-weight:700>struct</span> {
+</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// yamlRuleConfigParser yamlRuleConfigParser
+</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>type</span> yamlRuleConfigParser <span style=color:#000;font-weight:700>struct</span>{}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// Parse Parse
+</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>func</span> (Y yamlRuleConfigParser) <span style=color:#900;font-weight:700>Parse</span>(data []<span style=color:#458;font-weight:700>byte</span>) {
+</span></span><span style=display:flex><span>	<span style=color:#0086b3>panic</span>(<span style=color:#d14>&#34;implement me&#34;</span>)
 </span></span><span style=display:flex><span>}
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// AskQuestions CommunityExecutive(行政人员)面试需要回答的问题
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>func</span> (communityExecutive <span style=color:#000;font-weight:700>*</span>CommunityExecutive) <span style=color:#900;font-weight:700>AskQuestions</span>() <span style=color:#458;font-weight:700>string</span> {
-</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>return</span> <span style=color:#d14>&#34;问关于行政的问题!&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// IRuleConfigParserFactory 工厂方法接口
+</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>type</span> IRuleConfigParserFactory <span style=color:#000;font-weight:700>interface</span> {
+</span></span><span style=display:flex><span>	<span style=color:#900;font-weight:700>CreateParser</span>() IRuleConfigParser
 </span></span><span style=display:flex><span>}
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// HiringManager 现在让我们创造我们的 HiringManager(招聘经理)
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>type</span> HiringManager <span style=color:#000;font-weight:700>struct</span> {
-</span></span><span style=display:flex><span>	Interviewer interviewer
+</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// yamlRuleConfigParserFactory yamlRuleConfigParser 的工厂类
+</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>type</span> yamlRuleConfigParserFactory <span style=color:#000;font-weight:700>struct</span>{}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// CreateParser CreateParser
+</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>func</span> (y yamlRuleConfigParserFactory) <span style=color:#900;font-weight:700>CreateParser</span>() IRuleConfigParser {
+</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>return</span> yamlRuleConfigParser{}
 </span></span><span style=display:flex><span>}
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// TakeInterview 接受面试
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>func</span> (hiringManager <span style=color:#000;font-weight:700>*</span>HiringManager) <span style=color:#900;font-weight:700>TakeInterview</span>() <span style=color:#458;font-weight:700>string</span> {
-</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>return</span> hiringManager.Interviewer.<span style=color:#900;font-weight:700>AskQuestions</span>()
+</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// jsonRuleConfigParserFactory jsonRuleConfigParser 的工厂类
+</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>type</span> jsonRuleConfigParserFactory <span style=color:#000;font-weight:700>struct</span>{}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// CreateParser CreateParser
+</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>func</span> (j jsonRuleConfigParserFactory) <span style=color:#900;font-weight:700>CreateParser</span>() IRuleConfigParser {
+</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>return</span> jsonRuleConfigParser{}
 </span></span><span style=display:flex><span>}
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// NewHiringManager 去找招聘者面试()
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>func</span> <span style=color:#900;font-weight:700>NewHiringManager</span>(iv interviewer) <span style=color:#000;font-weight:700>*</span>HiringManager {
-</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>return</span> <span style=color:#000;font-weight:700>&amp;</span>HiringManager{Interviewer: iv}
+</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// NewIRuleConfigParserFactory 用一个简单工厂封装工厂方法
+</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>func</span> <span style=color:#900;font-weight:700>NewIRuleConfigParserFactory</span>(t <span style=color:#458;font-weight:700>string</span>) IRuleConfigParserFactory {
+</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>switch</span> t {
+</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>case</span> <span style=color:#d14>&#34;json&#34;</span>:
+</span></span><span style=display:flex><span>		<span style=color:#000;font-weight:700>return</span> jsonRuleConfigParserFactory{}
+</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>case</span> <span style=color:#d14>&#34;yaml&#34;</span>:
+</span></span><span style=display:flex><span>		<span style=color:#000;font-weight:700>return</span> yamlRuleConfigParserFactory{}
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>return</span> <span style=color:#000;font-weight:700>nil</span>
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></td></tr></table></div></div><h2 id=测试用例>测试用例</h2><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
@@ -102,28 +134,54 @@
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">26
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">27
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">28
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">29
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">30
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">31
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">32
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">33
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">34
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">35
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">36
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#000;font-weight:700>package</span> factory
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>import</span> <span style=color:#d14>&#34;testing&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>import</span> (
+</span></span><span style=display:flex><span>	<span style=color:#d14>&#34;reflect&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#d14>&#34;testing&#34;</span>
+</span></span><span style=display:flex><span>)
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// command: go test -v factory_method_test.go factory_method.go
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>func</span> <span style=color:#900;font-weight:700>TestFactoryMethod</span>(t <span style=color:#000;font-weight:700>*</span>testing.T) {
-</span></span><span style=display:flex><span>    <span style=color:#998;font-style:italic>// 开发者面试
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span>    developer <span style=color:#000;font-weight:700>:=</span> <span style=color:#000;font-weight:700>&amp;</span>Developer{}
-</span></span><span style=display:flex><span>    <span style=color:#998;font-style:italic>// 获取一个给开发者面试的面试官
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span>    developmentManager <span style=color:#000;font-weight:700>:=</span> <span style=color:#900;font-weight:700>NewHiringManager</span>(developer)
-</span></span><span style=display:flex><span>    <span style=color:#998;font-style:italic>// 询问开发者问题
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span>    <span style=color:#000;font-weight:700>if</span> str <span style=color:#000;font-weight:700>:=</span> developmentManager.<span style=color:#900;font-weight:700>TakeInterview</span>(); str <span style=color:#000;font-weight:700>!=</span> <span style=color:#d14>&#34;问关于开发的问题!&#34;</span> {
-</span></span><span style=display:flex><span>        t.<span style=color:#900;font-weight:700>Fail</span>()
-</span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>    <span style=color:#998;font-style:italic>// 行政人员
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span>    communityExecutive <span style=color:#000;font-weight:700>:=</span> <span style=color:#000;font-weight:700>&amp;</span>CommunityExecutive{}
-</span></span><span style=display:flex><span>    <span style=color:#998;font-style:italic>// 获取一个给行政人员面试的面试官
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span>    communityExecutiveManager <span style=color:#000;font-weight:700>:=</span> <span style=color:#900;font-weight:700>NewHiringManager</span>(communityExecutive)
-</span></span><span style=display:flex><span>    <span style=color:#998;font-style:italic>// 询问行政人员问题
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span>    <span style=color:#000;font-weight:700>if</span> str <span style=color:#000;font-weight:700>:=</span> communityExecutiveManager.<span style=color:#900;font-weight:700>TakeInterview</span>(); str <span style=color:#000;font-weight:700>!=</span> <span style=color:#d14>&#34;问关于行政的问题!&#34;</span> {
-</span></span><span style=display:flex><span>        t.<span style=color:#900;font-weight:700>Fail</span>()
-</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>func</span> <span style=color:#900;font-weight:700>TestNewIRuleConfigParserFactory</span>(t <span style=color:#000;font-weight:700>*</span>testing.T) {
+</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>type</span> args <span style=color:#000;font-weight:700>struct</span> {
+</span></span><span style=display:flex><span>		t <span style=color:#458;font-weight:700>string</span>
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	tests <span style=color:#000;font-weight:700>:=</span> []<span style=color:#000;font-weight:700>struct</span> {
+</span></span><span style=display:flex><span>		name <span style=color:#458;font-weight:700>string</span>
+</span></span><span style=display:flex><span>		args args
+</span></span><span style=display:flex><span>		want IRuleConfigParserFactory
+</span></span><span style=display:flex><span>	}{
+</span></span><span style=display:flex><span>		{
+</span></span><span style=display:flex><span>			name: <span style=color:#d14>&#34;json&#34;</span>,
+</span></span><span style=display:flex><span>			args: args{t: <span style=color:#d14>&#34;json&#34;</span>},
+</span></span><span style=display:flex><span>			want: jsonRuleConfigParserFactory{},
+</span></span><span style=display:flex><span>		},
+</span></span><span style=display:flex><span>		{
+</span></span><span style=display:flex><span>			name: <span style=color:#d14>&#34;yaml&#34;</span>,
+</span></span><span style=display:flex><span>			args: args{t: <span style=color:#d14>&#34;yaml&#34;</span>},
+</span></span><span style=display:flex><span>			want: yamlRuleConfigParserFactory{},
+</span></span><span style=display:flex><span>		},
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>for</span> _, tt <span style=color:#000;font-weight:700>:=</span> <span style=color:#000;font-weight:700>range</span> tests {
+</span></span><span style=display:flex><span>		t.<span style=color:#900;font-weight:700>Run</span>(tt.name, <span style=color:#000;font-weight:700>func</span>(t <span style=color:#000;font-weight:700>*</span>testing.T) {
+</span></span><span style=display:flex><span>      got <span style=color:#000;font-weight:700>:=</span> <span style=color:#900;font-weight:700>NewIRuleConfigParserFactory</span>(tt.args.t)
+</span></span><span style=display:flex><span>			<span style=color:#000;font-weight:700>if</span>  !reflect.<span style=color:#900;font-weight:700>DeepEqual</span>(got, tt.want) {
+</span></span><span style=display:flex><span>				t.<span style=color:#900;font-weight:700>Errorf</span>(<span style=color:#d14>&#34;NewIRuleConfigParserFactory() = %v, want %v&#34;</span>, got, tt.want)
+</span></span><span style=display:flex><span>			}
+</span></span><span style=display:flex><span>		})
+</span></span><span style=display:flex><span>	}
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></td></tr></table></div></div></div><div class="post-meta meta-tags"><ul class=clearfix><li><a href=/tags/%E5%88%9B%E5%BB%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F target=_blank>创建型设计模式</a></li></ul></div></article><div class="post bg-white"><script src=https://utteranc.es/client.js repo=ifenng2020/ifenng2020.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script></div></div><footer id=footer><div>&copy; 2022 <a href=https://zaifeng.tech>平凡之路 By ifenng</a></div></footer><script type=text/javascript>window.MathJax={tex2jax:{inlineMath:[["$","$"]],processEscapes:!0}}</script><script src='//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
 <a id=rocket href=#top></a>
