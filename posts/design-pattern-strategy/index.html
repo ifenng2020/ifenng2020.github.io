@@ -3,165 +3,88 @@
 <a href=https://zaifeng.tech/life/ title=生活感悟>生活感悟</a>
 <a href=https://zaifeng.tech/archives/ title=归档>归档</a>
 <a href=https://zaifeng.tech/about/ title=关于>关于</a></nav></div></div></div></header><div id=body><div class=container><div class=col-group><div class=col-8 id=main><div class=res-cons><article class=post><header><h1 class=post-title>设计模式-策略模式</h1></header><time datetime=2022-11-14T06:07:44Z class="post-meta meta-date dt-published">2022年11月14日</time><div class="post-meta meta-category"><span>&nbsp;|</span>
-<a href=/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F>设计模式</a></div><div class=post-content><h3 id=概念>概念</h3><p><strong>策略模式</strong>是一种行为设计模式， 它将一组行为转换为对象， 并使其在原始上下文对象内部能够相互替换。</p><p>策略模式主要的作用还是解耦策略的定义、创建和使用，控制代码的复杂度，让每个部分都不至于过于复杂、代码量过多。除此之外，对于复杂代码来说，策略模式还能让其满足开闭原则，添加新策略的时候，最小化、集中化代码改动，减少引入bug的风险。</p><h3 id=应用场景>应用场景</h3><p>1、如果在一个系统里面有许多类，它们之间的区别仅在于它们的行为，那么使用策略模式可以动态地让一个对象在许多行为中选择一种行为。</p><p>2、一个系统需要动态地在几种算法中选择一种。</p><p>3、如果一个对象有很多的行为，如果不用恰当的模式，这些行为就只好使用多重的条件选择语句来实现。</p><h3 id=优点>优点</h3><ul><li>算法可自由切换</li><li>避免多重条件判断</li><li>扩展性好</li></ul><h3 id=缺点>缺点</h3><ul><li>策略类会增多</li><li>所有策略类都需要对外暴露</li></ul><h3 id=代码实现>代码实现</h3><p><strong>strategy.go</strong></p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">26
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">27
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">28
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">29
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">30
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">31
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">32
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">33
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">34
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">35
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">36
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">37
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">38
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#000;font-weight:700>package</span> strategy
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>type</span> Strategy <span style=color:#000;font-weight:700>interface</span> {
-</span></span><span style=display:flex><span>	<span style=color:#900;font-weight:700>DoOperation</span>(num1, num2 <span style=color:#458;font-weight:700>int</span>) <span style=color:#458;font-weight:700>int</span>
-</span></span><span style=display:flex><span>}
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// 加法
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>type</span> OperationAdd <span style=color:#000;font-weight:700>struct</span>{}
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>func</span> <span style=color:#900;font-weight:700>NewOperationAdd</span>() <span style=color:#000;font-weight:700>*</span>OperationAdd {
-</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>return</span> <span style=color:#000;font-weight:700>&amp;</span>OperationAdd{}
-</span></span><span style=display:flex><span>}
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>func</span> (<span style=color:#000;font-weight:700>*</span>OperationAdd) <span style=color:#900;font-weight:700>DoOperation</span>(num1, num2 <span style=color:#458;font-weight:700>int</span>) <span style=color:#458;font-weight:700>int</span> {
-</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>return</span> num1 <span style=color:#000;font-weight:700>+</span> num2
-</span></span><span style=display:flex><span>}
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// 减法
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>type</span> OperationSubtract <span style=color:#000;font-weight:700>struct</span>{}
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>func</span> <span style=color:#900;font-weight:700>NewOperationSubtract</span>() <span style=color:#000;font-weight:700>*</span>OperationSubtract {
-</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>return</span> <span style=color:#000;font-weight:700>&amp;</span>OperationSubtract{}
-</span></span><span style=display:flex><span>}
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>func</span> (<span style=color:#000;font-weight:700>*</span>OperationSubtract) <span style=color:#900;font-weight:700>DoOperation</span>(num1, num2 <span style=color:#458;font-weight:700>int</span>) <span style=color:#458;font-weight:700>int</span> {
-</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>return</span> num1 <span style=color:#000;font-weight:700>-</span> num2
-</span></span><span style=display:flex><span>}
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// 乘法
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>type</span> OperationMultiply <span style=color:#000;font-weight:700>struct</span>{}
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>func</span> <span style=color:#900;font-weight:700>NewOperationMultiply</span>() <span style=color:#000;font-weight:700>*</span>OperationMultiply {
-</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>return</span> <span style=color:#000;font-weight:700>&amp;</span>OperationMultiply{}
-</span></span><span style=display:flex><span>}
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>func</span> (<span style=color:#000;font-weight:700>*</span>OperationMultiply) <span style=color:#900;font-weight:700>DoOperation</span>(num1, num2 <span style=color:#458;font-weight:700>int</span>) <span style=color:#458;font-weight:700>int</span> {
-</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>return</span> num1 <span style=color:#000;font-weight:700>*</span> num2
-</span></span><span style=display:flex><span>}
-</span></span></code></pre></td></tr></table></div></div><p><strong>context.go</strong></p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#000;font-weight:700>package</span> strategy
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>type</span> Context <span style=color:#000;font-weight:700>struct</span> {
-</span></span><span style=display:flex><span>	strategy Strategy
-</span></span><span style=display:flex><span>}
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>func</span> <span style=color:#900;font-weight:700>NewContext</span>(str Strategy) <span style=color:#000;font-weight:700>*</span>Context {
-</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>return</span> <span style=color:#000;font-weight:700>&amp;</span>Context{
-</span></span><span style=display:flex><span>		strategy: str,
-</span></span><span style=display:flex><span>	}
-</span></span><span style=display:flex><span>}
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>func</span> (ctx <span style=color:#000;font-weight:700>*</span>Context) <span style=color:#900;font-weight:700>SetStrategy</span>(strategy Strategy) {
-</span></span><span style=display:flex><span>	ctx.strategy = strategy
-</span></span><span style=display:flex><span>}
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>func</span> (ctx <span style=color:#000;font-weight:700>*</span>Context) <span style=color:#900;font-weight:700>ExecuteStrategy</span>(num1, num2 <span style=color:#458;font-weight:700>int</span>) <span style=color:#458;font-weight:700>int</span> {
-</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>if</span> ctx.strategy <span style=color:#000;font-weight:700>==</span> <span style=color:#000;font-weight:700>nil</span> {
-</span></span><span style=display:flex><span>		<span style=color:#000;font-weight:700>return</span> <span style=color:#099>0</span>
-</span></span><span style=display:flex><span>	}
-</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>return</span> ctx.strategy.<span style=color:#900;font-weight:700>DoOperation</span>(num1, num2)
-</span></span><span style=display:flex><span>}
-</span></span></code></pre></td></tr></table></div></div><h3 id=代码测试>代码测试</h3><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#000;font-weight:700>func</span> <span style=color:#900;font-weight:700>TestStrategy</span>(t <span style=color:#000;font-weight:700>*</span>testing.T) {
-</span></span><span style=display:flex><span>	context <span style=color:#000;font-weight:700>:=</span> <span style=color:#900;font-weight:700>NewContext</span>(<span style=color:#900;font-weight:700>NewOperationAdd</span>())
-</span></span><span style=display:flex><span>	fmt.<span style=color:#900;font-weight:700>Println</span>(<span style=color:#d14>&#34;11 + 6 = &#34;</span>, context.<span style=color:#900;font-weight:700>ExecuteStrategy</span>(<span style=color:#099>11</span>, <span style=color:#099>6</span>))
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>	context = <span style=color:#900;font-weight:700>NewContext</span>(<span style=color:#900;font-weight:700>NewOperationSubtract</span>())
-</span></span><span style=display:flex><span>	fmt.<span style=color:#900;font-weight:700>Println</span>(<span style=color:#d14>&#34;18 - 3 = &#34;</span>, context.<span style=color:#900;font-weight:700>ExecuteStrategy</span>(<span style=color:#099>18</span>, <span style=color:#099>3</span>))
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>	context = <span style=color:#900;font-weight:700>NewContext</span>(<span style=color:#900;font-weight:700>NewOperationMultiply</span>())
-</span></span><span style=display:flex><span>	fmt.<span style=color:#900;font-weight:700>Println</span>(<span style=color:#d14>&#34;11 * 9 = &#34;</span>, context.<span style=color:#900;font-weight:700>ExecuteStrategy</span>(<span style=color:#099>11</span>, <span style=color:#099>9</span>))
-</span></span><span style=display:flex><span>}
-</span></span></code></pre></td></tr></table></div></div><h3 id=测试结果>测试结果</h3><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">7
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#000;font-weight:700>==</span>= RUN   TestStrategy
-</span></span><span style=display:flex><span><span style=color:#099>11</span> <span style=color:#000;font-weight:700>+</span> <span style=color:#099>6</span> =  <span style=color:#099>17</span>
-</span></span><span style=display:flex><span><span style=color:#099>18</span> <span style=color:#000;font-weight:700>-</span> <span style=color:#099>3</span> =  <span style=color:#099>15</span>
-</span></span><span style=display:flex><span><span style=color:#099>11</span> <span style=color:#000;font-weight:700>*</span> <span style=color:#099>9</span> =  <span style=color:#099>99</span>
-</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>---</span> PASS: <span style=color:#900;font-weight:700>TestStrategy</span> (<span style=color:#099>0.00</span>s)
-</span></span><span style=display:flex><span>PASS
-</span></span><span style=display:flex><span>ok      ginstudy<span style=color:#000;font-weight:700>/</span>strategy       <span style=color:#099>0.003</span>s
-</span></span></code></pre></td></tr></table></div></div></div><div class="post-meta meta-tags"><ul class=clearfix><li><a href=/tags/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F target=_blank>行为型设计模式</a></li></ul></div></article><div class="post bg-white"><script src=https://utteranc.es/client.js repo=ifenng2020/ifenng2020.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script></div></div><footer id=footer><div>&copy; 2023 <a href=https://zaifeng.tech>平凡之路 By ifenng</a></div></footer><script type=text/javascript>window.MathJax={tex2jax:{inlineMath:[["$","$"]],processEscapes:!0}}</script><script src='//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+<a href=/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F>设计模式</a></div><div class=post-content><h3 id=概念>概念</h3><p><strong>策略模式</strong>是一种行为设计模式， 它将一组行为转换为对象， 并使其在原始上下文对象内部能够相互替换。</p><p>策略模式主要的作用还是解耦策略的定义、创建和使用，控制代码的复杂度，让每个部分都不至于过于复杂、代码量过多。除此之外，对于复杂代码来说，策略模式还能让其满足开闭原则，添加新策略的时候，最小化、集中化代码改动，减少引入bug的风险。</p><h3 id=应用场景>应用场景</h3><p>1、如果在一个系统里面有许多类，它们之间的区别仅在于它们的行为，那么使用策略模式可以动态地让一个对象在许多行为中选择一种行为。</p><p>2、一个系统需要动态地在几种算法中选择一种。</p><p>3、如果一个对象有很多的行为，如果不用恰当的模式，这些行为就只好使用多重的条件选择语句来实现。</p><h3 id=优点>优点</h3><ul><li>算法可自由切换</li><li>避免多重条件判断</li><li>扩展性好</li></ul><h3 id=缺点>缺点</h3><ul><li>策略类会增多</li><li>所有策略类都需要对外暴露</li></ul><h3 id=代码实现>代码实现</h3><p><strong>strategy.go</strong></p><pre tabindex=0><code>package strategy
+
+type Strategy interface {
+	DoOperation(num1, num2 int) int
+}
+
+// 加法
+type OperationAdd struct{}
+
+func NewOperationAdd() *OperationAdd {
+	return &amp;OperationAdd{}
+}
+
+func (*OperationAdd) DoOperation(num1, num2 int) int {
+	return num1 + num2
+}
+
+// 减法
+type OperationSubtract struct{}
+
+func NewOperationSubtract() *OperationSubtract {
+	return &amp;OperationSubtract{}
+}
+
+func (*OperationSubtract) DoOperation(num1, num2 int) int {
+	return num1 - num2
+}
+
+// 乘法
+type OperationMultiply struct{}
+
+func NewOperationMultiply() *OperationMultiply {
+	return &amp;OperationMultiply{}
+}
+
+func (*OperationMultiply) DoOperation(num1, num2 int) int {
+	return num1 * num2
+}
+</code></pre><p><strong>context.go</strong></p><pre tabindex=0><code>package strategy
+
+type Context struct {
+	strategy Strategy
+}
+
+func NewContext(str Strategy) *Context {
+	return &amp;Context{
+		strategy: str,
+	}
+}
+
+func (ctx *Context) SetStrategy(strategy Strategy) {
+	ctx.strategy = strategy
+}
+
+func (ctx *Context) ExecuteStrategy(num1, num2 int) int {
+	if ctx.strategy == nil {
+		return 0
+	}
+	return ctx.strategy.DoOperation(num1, num2)
+}
+</code></pre><h3 id=代码测试>代码测试</h3><pre tabindex=0><code>func TestStrategy(t *testing.T) {
+	context := NewContext(NewOperationAdd())
+	fmt.Println(&#34;11 + 6 = &#34;, context.ExecuteStrategy(11, 6))
+
+	context = NewContext(NewOperationSubtract())
+	fmt.Println(&#34;18 - 3 = &#34;, context.ExecuteStrategy(18, 3))
+
+	context = NewContext(NewOperationMultiply())
+	fmt.Println(&#34;11 * 9 = &#34;, context.ExecuteStrategy(11, 9))
+}
+</code></pre><h3 id=测试结果>测试结果</h3><pre tabindex=0><code>=== RUN   TestStrategy
+11 + 6 =  17
+18 - 3 =  15
+11 * 9 =  99
+--- PASS: TestStrategy (0.00s)
+PASS
+ok      ginstudy/strategy       0.003s
+</code></pre></div><div class="post-meta meta-tags"><ul class=clearfix><li><a href=/tags/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F target=_blank>行为型设计模式</a></li></ul></div></article><div class="post bg-white"><script src=https://utteranc.es/client.js repo=ifenng2020/ifenng2020.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script></div></div><footer id=footer><div>&copy; 2023 <a href=https://zaifeng.tech>平凡之路 By ifenng</a></div></footer><script type=text/javascript>window.MathJax={tex2jax:{inlineMath:[["$","$"]],processEscapes:!0}}</script><script src='//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
 <a id=rocket href=#top></a>
 <script type=text/javascript src='/js/totop.js?v=0.0.0' async></script><style type=text/css>div.highlight{position:relative;margin:1em 0}.copy-code{display:none;position:absolute;top:4px;right:4px;color:rgba(255,255,255,.8);background:rgba(78,78,78,.8);border-radius:var(--radius);padding:0 5px;font:inherit;user-select:none;cursor:pointer;border:0;--radius:8px}div.highlight:hover .copy-code,pre:hover .copy-code{display:block}</style><script>document.querySelectorAll("pre > code").forEach(e=>{const n=e.parentNode.parentNode,t=document.createElement("button");t.classList.add("copy-code"),t.innerHTML="copy";function s(){t.innerHTML="copied!",setTimeout(()=>{t.innerHTML="copy"},2e3)}t.addEventListener("click",t=>{if("clipboard"in navigator){navigator.clipboard.writeText(e.textContent),s();return}const n=document.createRange();n.selectNodeContents(e);const o=window.getSelection();o.removeAllRanges(),o.addRange(n);try{document.execCommand("copy"),s()}catch{}o.removeRange(n)}),n.classList.contains("highlight")?n.appendChild(t):n.parentNode.firstChild==n||(e.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?e.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(t):e.parentNode.appendChild(t))})</script></div><div id=secondary><section class=widget><form id=search action=https://zaifeng.tech/search method=get accept-charset=utf-8 target=_blank _lpchecked=1><input type=text name=q maxlength=20 placeholder=Search>
 <input type=hidden name=sitesearch value=https://zaifeng.tech>
-<button type=submit class="submit icon-search"></button></form></section><section class=widget><h3 class=widget-title>最近文章</h3><ul class=widget-list><li><a href=https://zaifeng.tech/posts/redis-interviews/ title=50道Redis面试题 target=_blank>50道Redis面试题</a></li><li><a href=https://zaifeng.tech/posts/golang-testing/ title="Golang 测试基础" target=_blank>Golang 测试基础</a></li><li><a href=https://zaifeng.tech/posts/golang-format-output/ title=Golang格式化输出备忘 target=_blank>Golang格式化输出备忘</a></li><li><a href=https://zaifeng.tech/posts/gostudy/ title=Gostudy target=_blank>Gostudy</a></li><li><a href=https://zaifeng.tech/posts/hello/ title=Hello target=_blank>Hello</a></li><li><a href=https://zaifeng.tech/posts/grade6/ title=六年级数学题一道 target=_blank>六年级数学题一道</a></li><li><a href=https://zaifeng.tech/posts/letcode-02/ title="Letcode 02" target=_blank>Letcode 02</a></li><li><a href=https://zaifeng.tech/posts/lua-study-notes/ title="Lua Study Notes" target=_blank>Lua Study Notes</a></li><li><a href=https://zaifeng.tech/posts/linux-rsync/ title="Linux Rsync命令" target=_blank>Linux Rsync命令</a></li><li><a href=https://zaifeng.tech/posts/design-pattern-builder/ title=设计模式-建造者模式 target=_blank>设计模式-建造者模式</a></li></ul></section><section class=widget><h3 class=widget-title><a href=/categories/>分类</a></h3><ul class=widget-list><li><a href=https://zaifeng.tech/categories/gitlab/>gitlab (1)</a></li><li><a href=https://zaifeng.tech/categories/golang/>golang (3)</a></li><li><a href=https://zaifeng.tech/categories/javascript/>javascript (1)</a></li><li><a href=https://zaifeng.tech/categories/leetcode/>leetcode (1)</a></li><li><a href=https://zaifeng.tech/categories/linux/>linux (1)</a></li><li><a href=https://zaifeng.tech/categories/lua/>lua (1)</a></li><li><a href=https://zaifeng.tech/categories/reading/>reading (2)</a></li><li><a href=https://zaifeng.tech/categories/redis/>redis (3)</a></li><li><a href=https://zaifeng.tech/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/>中间件 (2)</a></li><li><a href=https://zaifeng.tech/categories/%E5%B0%8F%E5%AD%A6%E6%95%B0%E5%AD%A6/>小学数学 (1)</a></li><li><a href=https://zaifeng.tech/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/>计算机网络 (1)</a></li><li><a href=https://zaifeng.tech/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>设计模式 (9)</a></li><li><a href=https://zaifeng.tech/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/>软件开发 (1)</a></li></ul></section><section class=widget><h3 class=widget-title><a href=/tags/>标签</a></h3><div class=tagcloud><a href=https://zaifeng.tech/tags/TCP/>TCP</a>
+<button type=submit class="submit icon-search"></button></form></section><section class=widget><h3 class=widget-title>最近文章</h3><ul class=widget-list><li><a href=https://zaifeng.tech/posts/redis-interviews/ title=50道Redis面试题 target=_blank>50道Redis面试题</a></li><li><a href=https://zaifeng.tech/posts/golang-testing/ title="Golang 测试基础" target=_blank>Golang 测试基础</a></li><li><a href=https://zaifeng.tech/posts/golang-format-output/ title=Golang格式化输出备忘 target=_blank>Golang格式化输出备忘</a></li><li><a href=https://zaifeng.tech/posts/gostudy/ title=Gostudy target=_blank>Gostudy</a></li><li><a href=https://zaifeng.tech/posts/hello/ title=Redis常见问题与解决方案 target=_blank>Redis常见问题与解决方案</a></li><li><a href=https://zaifeng.tech/posts/grade6/ title=六年级数学题一道 target=_blank>六年级数学题一道</a></li><li><a href=https://zaifeng.tech/posts/letcode-02/ title="Letcode 02" target=_blank>Letcode 02</a></li><li><a href=https://zaifeng.tech/posts/lua-study-notes/ title="Lua Study Notes" target=_blank>Lua Study Notes</a></li><li><a href=https://zaifeng.tech/posts/linux-rsync/ title="Linux Rsync命令" target=_blank>Linux Rsync命令</a></li><li><a href=https://zaifeng.tech/posts/design-pattern-builder/ title=设计模式-建造者模式 target=_blank>设计模式-建造者模式</a></li></ul></section><section class=widget><h3 class=widget-title><a href=/categories/>分类</a></h3><ul class=widget-list><li><a href=https://zaifeng.tech/categories/gitlab/>gitlab (1)</a></li><li><a href=https://zaifeng.tech/categories/golang/>golang (3)</a></li><li><a href=https://zaifeng.tech/categories/javascript/>javascript (1)</a></li><li><a href=https://zaifeng.tech/categories/leetcode/>leetcode (1)</a></li><li><a href=https://zaifeng.tech/categories/linux/>linux (1)</a></li><li><a href=https://zaifeng.tech/categories/lua/>lua (1)</a></li><li><a href=https://zaifeng.tech/categories/reading/>reading (2)</a></li><li><a href=https://zaifeng.tech/categories/redis/>redis (3)</a></li><li><a href=https://zaifeng.tech/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/>中间件 (2)</a></li><li><a href=https://zaifeng.tech/categories/%E5%B0%8F%E5%AD%A6%E6%95%B0%E5%AD%A6/>小学数学 (1)</a></li><li><a href=https://zaifeng.tech/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/>计算机网络 (1)</a></li><li><a href=https://zaifeng.tech/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>设计模式 (9)</a></li><li><a href=https://zaifeng.tech/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/>软件开发 (1)</a></li></ul></section><section class=widget><h3 class=widget-title><a href=/tags/>标签</a></h3><div class=tagcloud><a href=https://zaifeng.tech/tags/TCP/>TCP</a>
 <a href=https://zaifeng.tech/tags/gitlab/>gitlab</a>
 <a href=https://zaifeng.tech/tags/go/>go</a>
 <a href=https://zaifeng.tech/tags/golang/>golang</a>
