@@ -63,7 +63,6 @@
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">28
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">29
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">30
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">31
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>列出所有本地分支
 </span></span><span style=display:flex><span>git branch
 </span></span><span style=display:flex><span>
@@ -87,7 +86,6 @@
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>删除分支
 </span></span><span style=display:flex><span>git branch -d <span style=color:#000;font-weight:700>[</span>branch-name<span style=color:#000;font-weight:700>]</span>
-</span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>git branch -D branch-name // 强制删除（未合并过的分支使用<span style=color:#d14>`</span>-d<span style=color:#d14>`</span>无法删除）
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>
@@ -164,62 +162,44 @@
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>恢复暂存区的指定文件到工作区
-</span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>git checkout <span style=color:#000;font-weight:700>[</span>file<span style=color:#000;font-weight:700>]</span>
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>恢复暂存区的所有文件到工作区
-</span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>git checkout .
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>重置暂存区与工作区，与上一次commit保持一致
 </span></span><span style=display:flex><span>git reset --hard commit_id
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>当改乱了工作区某个文件的内容，想直接丢弃工作区的修改时，用命令 
-</span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>git checkout <span style=color:#000;font-weight:700>[</span>file<span style=color:#000;font-weight:700>]</span>。
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>不但改乱了工作区某个文件的内容，还添加到了暂存区时，想丢弃修改，分两步，
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>第一步用命令 
-</span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>git reset HEAD <span style=color:#000;font-weight:700>[</span>file<span style=color:#000;font-weight:700>]</span>，
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>第二步用命令 
-</span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>git checkout <span style=color:#000;font-weight:700>[</span>file<span style=color:#000;font-weight:700>]</span>。
 </span></span></code></pre></td></tr></table></div></div><h3 id=删除文件>删除文件</h3><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">7
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>删除工作区文件，并且将这次删除放入暂存区
-</span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>git rm <span style=color:#000;font-weight:700>[</span>file<span style=color:#000;font-weight:700>]</span> 
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>改名文件，并且将这个改名放入暂存区
-</span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>git mv <span style=color:#000;font-weight:700>[</span>file-original<span style=color:#000;font-weight:700>]</span> <span style=color:#000;font-weight:700>[</span>file-renamed<span style=color:#000;font-weight:700>]</span>
 </span></span></code></pre></td></tr></table></div></div><h3 id=保存现场>保存现场</h3><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">7
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>保存现场
-</span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>git stash
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>返回现场
-</span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>git stash pop
 </span></span></code></pre></td></tr></table></div></div></div><div class="post-meta meta-tags"><ul class=clearfix><li><a href=/tags/git target=_blank>git</a></li></ul></div></article><div class="post bg-white"><script src=https://utteranc.es/client.js repo=ifenng2020/ifenng2020.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script></div></div><footer id=footer><div>&copy; 2023 <a href=https://zaifeng.tech>平凡之路 By ifenng</a></div></footer><script type=text/javascript>window.MathJax={tex2jax:{inlineMath:[["$","$"]],processEscapes:!0}}</script><script src='//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
 <a id=rocket href=#top></a>
