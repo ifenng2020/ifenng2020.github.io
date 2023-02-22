@@ -1,0 +1,243 @@
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1"><title>Git命令备忘 | 平凡之路</title><meta property="og:title" content="Git命令备忘 - 平凡之路"><meta property="og:type" content="article"><meta property="article:published_time" content="2023-02-22T18:26:50+08:00"><meta property="article:modified_time" content="2023-02-22T18:26:50+08:00"><meta name=Keywords content="golang,php"><meta name=description content="Git命令备忘"><meta name=author content="ifenng"><meta property="og:url" content="https://zaifeng.tech/posts/git-command/"><link rel="shortcut icon" href=/favicon.ico type=image/x-icon><link rel=stylesheet href=/css/normalize.css><link rel=stylesheet href=/css/style.css><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js></script></head><body><header id=header class=clearfix><div class=container><div class=col-group><div class=site-name><a id=logo href=https://zaifeng.tech>平凡之路</a><p class=description>不忘初心 方得始终</p></div><div><nav id=nav-menu class=clearfix><a class=current href=https://zaifeng.tech>首页</a>
+<a href=https://zaifeng.tech/reading/ title=读书笔记>读书笔记</a>
+<a href=https://zaifeng.tech/life/ title=生活感悟>生活感悟</a>
+<a href=https://zaifeng.tech/archives/ title=归档>归档</a>
+<a href=https://zaifeng.tech/about/ title=关于>关于</a></nav></div></div></div></header><div id=body><div class=container><div class=col-group><div class=col-8 id=main><div class=res-cons><article class=post><header><h1 class=post-title>Git命令备忘</h1></header><time datetime=2023-02-22T10:26:50Z class="post-meta meta-date dt-published">2023年2月22日</time><div class="post-meta meta-category"><span>&nbsp;|</span>
+<a href=/categories/tools>tools</a></div><div class=post-content><h3 id=配置命令>配置命令</h3><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>全局设置提交代码时的用户信息
+</span></span><span style=display:flex><span>git config --global user.name <span style=color:#d14>&#34;[name]&#34;</span>
+</span></span><span style=display:flex><span>git config --global user.email <span style=color:#d14>&#34;[email address]&#34;</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=新建代码库>新建代码库</h3><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>在当前目录新建一个Git代码库
+</span></span><span style=display:flex><span>git init
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>从已存在的仓库克隆
+</span></span><span style=display:flex><span>git clone xxx.git <span style=color:#000;font-weight:700>[</span>dist folder<span style=color:#000;font-weight:700>]</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=增加文件>增加文件</h3><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>添加指定文件到暂存区
+</span></span><span style=display:flex><span>git add <span style=color:#000;font-weight:700>[</span>file1<span style=color:#000;font-weight:700>]</span> <span style=color:#000;font-weight:700>[</span>file2<span style=color:#000;font-weight:700>]</span> ...
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>添加当前目录的所有文件到暂存区
+</span></span><span style=display:flex><span>git add .
+</span></span></code></pre></td></tr></table></div></div><h3 id=代码提交>代码提交</h3><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>提交暂存区到仓库区
+</span></span><span style=display:flex><span>git commit -m <span style=color:#000;font-weight:700>[</span>message<span style=color:#000;font-weight:700>]</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=分支>分支</h3><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">26
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">27
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">28
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">29
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">30
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">31
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>列出所有本地分支
+</span></span><span style=display:flex><span>git branch
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>列出所有远程分支
+</span></span><span style=display:flex><span>git branch -r
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>新建一个分支，但依然停留在当前分支
+</span></span><span style=display:flex><span>git branch <span style=color:#000;font-weight:700>[</span>branch-name<span style=color:#000;font-weight:700>]</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>新建一个分支，并切换到该分支
+</span></span><span style=display:flex><span>git checkout -b <span style=color:#000;font-weight:700>[</span>branch<span style=color:#000;font-weight:700>]</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>切换到指定分支，并更新工作区
+</span></span><span style=display:flex><span>git checkout <span style=color:#000;font-weight:700>[</span>branch-name<span style=color:#000;font-weight:700>]</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>建立追踪关系，在现有分支与指定的远程分支之间
+</span></span><span style=display:flex><span>git branch --set-upstream <span style=color:#000;font-weight:700>[</span>branch<span style=color:#000;font-weight:700>]</span> <span style=color:#000;font-weight:700>[</span>remote-branch<span style=color:#000;font-weight:700>]</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>合并指定分支到当前分支
+</span></span><span style=display:flex><span>git merge <span style=color:#000;font-weight:700>[</span>branch<span style=color:#000;font-weight:700>]</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>删除分支
+</span></span><span style=display:flex><span>git branch -d <span style=color:#000;font-weight:700>[</span>branch-name<span style=color:#000;font-weight:700>]</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>git branch -D branch-name // 强制删除（未合并过的分支使用<span style=color:#d14>`</span>-d<span style=color:#d14>`</span>无法删除）
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>删除远程分支
+</span></span><span style=display:flex><span>git push origin --delete <span style=color:#000;font-weight:700>[</span>branch-name<span style=color:#000;font-weight:700>]</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>git push origin :branch-name
+</span></span></code></pre></td></tr></table></div></div><h3 id=查看信息>查看信息</h3><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>显示有变更的文件
+</span></span><span style=display:flex><span>git status
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>显示当前分支的版本历史
+</span></span><span style=display:flex><span>git log
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>查看命令历史
+</span></span><span style=display:flex><span>git reflog
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>显示暂存区和工作区的差异
+</span></span><span style=display:flex><span>git diff
+</span></span></code></pre></td></tr></table></div></div><h3 id=远程同步>远程同步</h3><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>查看远程库信息
+</span></span><span style=display:flex><span>git remote -v；
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>在本地创建和远程分支对应的分支
+</span></span><span style=display:flex><span>git checkout -b branch-name origin/branch-name（本地和远程分支的名称最好一致）
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>建立本地分支和远程分支的关联
+</span></span><span style=display:flex><span>git branch --set-upstream branch-name origin/branch-name
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>取回远程仓库的变化，并与本地分支合并
+</span></span><span style=display:flex><span>git pull <span style=color:#000;font-weight:700>[</span>remote<span style=color:#000;font-weight:700>]</span> <span style=color:#000;font-weight:700>[</span>branch<span style=color:#000;font-weight:700>]</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>上传本地指定分支到远程仓库
+</span></span><span style=display:flex><span>git push <span style=color:#000;font-weight:700>[</span>remote<span style=color:#000;font-weight:700>]</span> <span style=color:#000;font-weight:700>[</span>branch<span style=color:#000;font-weight:700>]</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=撤销>撤销</h3><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>恢复暂存区的指定文件到工作区
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>git checkout <span style=color:#000;font-weight:700>[</span>file<span style=color:#000;font-weight:700>]</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>恢复暂存区的所有文件到工作区
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>git checkout .
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>重置暂存区与工作区，与上一次commit保持一致
+</span></span><span style=display:flex><span>git reset --hard commit_id
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>当改乱了工作区某个文件的内容，想直接丢弃工作区的修改时，用命令 
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>git checkout <span style=color:#000;font-weight:700>[</span>file<span style=color:#000;font-weight:700>]</span>。
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>不但改乱了工作区某个文件的内容，还添加到了暂存区时，想丢弃修改，分两步，
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>第一步用命令 
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>git reset HEAD <span style=color:#000;font-weight:700>[</span>file<span style=color:#000;font-weight:700>]</span>，
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>第二步用命令 
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>git checkout <span style=color:#000;font-weight:700>[</span>file<span style=color:#000;font-weight:700>]</span>。
+</span></span></code></pre></td></tr></table></div></div><h3 id=删除文件>删除文件</h3><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">7
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>删除工作区文件，并且将这次删除放入暂存区
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>git rm <span style=color:#000;font-weight:700>[</span>file<span style=color:#000;font-weight:700>]</span> 
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>改名文件，并且将这个改名放入暂存区
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>git mv <span style=color:#000;font-weight:700>[</span>file-original<span style=color:#000;font-weight:700>]</span> <span style=color:#000;font-weight:700>[</span>file-renamed<span style=color:#000;font-weight:700>]</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=保存现场>保存现场</h3><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">7
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>保存现场
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>git stash
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>返回现场
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>git stash pop
+</span></span></code></pre></td></tr></table></div></div></div><div class="post-meta meta-tags"><ul class=clearfix><li><a href=/tags/git target=_blank>git</a></li></ul></div></article><div class="post bg-white"><script src=https://utteranc.es/client.js repo=ifenng2020/ifenng2020.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script></div></div><footer id=footer><div>&copy; 2023 <a href=https://zaifeng.tech>平凡之路 By ifenng</a></div></footer><script type=text/javascript>window.MathJax={tex2jax:{inlineMath:[["$","$"]],processEscapes:!0}}</script><script src='//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+<a id=rocket href=#top></a>
+<script type=text/javascript src='/js/totop.js?v=0.0.0' async></script><style type=text/css>div.highlight{position:relative;margin:1em 0}.copy-code{display:none;position:absolute;top:4px;right:4px;color:rgba(255,255,255,.8);background:rgba(78,78,78,.8);border-radius:var(--radius);padding:0 5px;font:inherit;user-select:none;cursor:pointer;border:0;--radius:8px}div.highlight:hover .copy-code,pre:hover .copy-code{display:block}</style><script>document.querySelectorAll("pre > code").forEach(e=>{const n=e.parentNode.parentNode,t=document.createElement("button");t.classList.add("copy-code"),t.innerHTML="copy";function s(){t.innerHTML="copied!",setTimeout(()=>{t.innerHTML="copy"},2e3)}t.addEventListener("click",t=>{if("clipboard"in navigator){navigator.clipboard.writeText(e.textContent),s();return}const n=document.createRange();n.selectNodeContents(e);const o=window.getSelection();o.removeAllRanges(),o.addRange(n);try{document.execCommand("copy"),s()}catch{}o.removeRange(n)}),n.classList.contains("highlight")?n.appendChild(t):n.parentNode.firstChild==n||(e.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?e.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(t):e.parentNode.appendChild(t))})</script></div><div id=secondary><section class=widget><form id=search action=https://zaifeng.tech/search method=get accept-charset=utf-8 target=_blank _lpchecked=1><input type=text name=q maxlength=20 placeholder=Search>
+<input type=hidden name=sitesearch value=https://zaifeng.tech>
+<button type=submit class="submit icon-search"></button></form></section><section class=widget><h3 class=widget-title>最近文章</h3><ul class=widget-list><li><a href=https://zaifeng.tech/posts/git-command/ title=Git命令备忘 target=_blank>Git命令备忘</a></li><li><a href=https://zaifeng.tech/posts/git-notes/ title=Git命令备忘 target=_blank>Git命令备忘</a></li><li><a href=https://zaifeng.tech/posts/redis-interviews/ title=50道Redis面试题 target=_blank>50道Redis面试题</a></li><li><a href=https://zaifeng.tech/posts/golang-testing/ title="Golang 测试基础" target=_blank>Golang 测试基础</a></li><li><a href=https://zaifeng.tech/posts/golang-format-output/ title=Golang格式化输出备忘 target=_blank>Golang格式化输出备忘</a></li><li><a href=https://zaifeng.tech/posts/redis-qa/ title=Redis常见问题与解决方案 target=_blank>Redis常见问题与解决方案</a></li><li><a href=https://zaifeng.tech/posts/grade6/ title=六年级数学题一道 target=_blank>六年级数学题一道</a></li><li><a href=https://zaifeng.tech/posts/letcode-02/ title="Letcode 02" target=_blank>Letcode 02</a></li><li><a href=https://zaifeng.tech/posts/lua-study-notes/ title="Lua Study Notes" target=_blank>Lua Study Notes</a></li><li><a href=https://zaifeng.tech/posts/linux-rsync/ title="Linux Rsync命令" target=_blank>Linux Rsync命令</a></li></ul></section><section class=widget><h3 class=widget-title><a href=/categories/>分类</a></h3><ul class=widget-list><li><a href=https://zaifeng.tech/categories/gitlab/>gitlab (1)</a></li><li><a href=https://zaifeng.tech/categories/golang/>golang (2)</a></li><li><a href=https://zaifeng.tech/categories/javascript/>javascript (1)</a></li><li><a href=https://zaifeng.tech/categories/leetcode/>leetcode (1)</a></li><li><a href=https://zaifeng.tech/categories/linux/>linux (1)</a></li><li><a href=https://zaifeng.tech/categories/lua/>lua (1)</a></li><li><a href=https://zaifeng.tech/categories/reading/>reading (1)</a></li><li><a href=https://zaifeng.tech/categories/redis/>redis (3)</a></li><li><a href=https://zaifeng.tech/categories/tools/>tools (2)</a></li><li><a href=https://zaifeng.tech/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/>中间件 (2)</a></li><li><a href=https://zaifeng.tech/categories/%E5%B0%8F%E5%AD%A6%E6%95%B0%E5%AD%A6/>小学数学 (1)</a></li><li><a href=https://zaifeng.tech/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/>计算机网络 (1)</a></li><li><a href=https://zaifeng.tech/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>设计模式 (9)</a></li><li><a href=https://zaifeng.tech/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/>软件开发 (1)</a></li></ul></section><section class=widget><h3 class=widget-title><a href=/tags/>标签</a></h3><div class=tagcloud><a href=https://zaifeng.tech/tags/TCP/>TCP</a>
+<a href=https://zaifeng.tech/tags/git/>git</a>
+<a href=https://zaifeng.tech/tags/gitlab/>gitlab</a>
+<a href=https://zaifeng.tech/tags/golang/>golang</a>
+<a href=https://zaifeng.tech/tags/leetcode/>leetcode</a>
+<a href=https://zaifeng.tech/tags/lua/>lua</a>
+<a href=https://zaifeng.tech/tags/mathematics/>mathematics</a>
+<a href=https://zaifeng.tech/tags/node/>node</a>
+<a href=https://zaifeng.tech/tags/npm/>npm</a>
+<a href=https://zaifeng.tech/tags/redis/>redis</a>
+<a href=https://zaifeng.tech/tags/release/>release</a>
+<a href=https://zaifeng.tech/tags/rsync/>rsync</a>
+<a href=https://zaifeng.tech/tags/testing/>testing</a>
+<a href=https://zaifeng.tech/tags/%E5%88%9B%E5%BB%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>创建型设计模式</a>
+<a href=https://zaifeng.tech/tags/%E7%BB%93%E6%9E%84%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>结构型设计模式</a>
+<a href=https://zaifeng.tech/tags/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>行为型设计模式</a></div></section><section class=widget><h3 class=widget-title>友情链接</h3><ul class=widget-list><li><a target=_blank href=https://geektutu.com/ title=极客兔兔>极客兔兔的博客</a></li><li><a target=_blank href=https://xiaolincoding.com/ title=小林coding>小林coding</a></li></ul></section></div></div></div></div></body></html>
