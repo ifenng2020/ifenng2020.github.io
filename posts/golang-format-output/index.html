@@ -4,19 +4,19 @@
 <a href=https://zaifeng.tech/archives/ title=归档>归档</a>
 <a href=https://zaifeng.tech/about/ title=关于>关于</a></nav></div></div></div></header><div id=body><div class=container><div class=col-group><div class=col-8 id=main><div class=res-cons><article class=post><header><h1 class=post-title>Golang格式化输出备忘</h1></header><time datetime=2023-02-13T00:34:14Z class="post-meta meta-date dt-published">2023年2月13日</time><div class="post-meta meta-category"><span>&nbsp;|</span>
 <a href=/categories/golang>golang</a></div><div class=post-content><h1 id=go中格式化输出>Go中格式化输出</h1><h2 id=general><strong>General</strong></h2><ul><li>%v 以默认的方式打印变量的值</li><li>%T 打印变量的类型</li></ul><h2 id=integer><strong>Integer</strong></h2><ul><li>%+d 带符号的整型，fmt.Printf(“%+d”, 255)输出+255</li><li>%d 不带符号的整形，注意和 %+d的区别。</li><li>%o 不带零的八进制</li><li>%#o 带零的八进制</li><li>%x 小写的十六进制</li><li>%X 大写的十六进制</li><li>%#x 带0x的十六进制</li><li>%U 打印Unicode字符</li><li>%#U 打印带字符的Unicode</li><li>%b 打印整型的二进制</li><li>%q 打印单引号</li></ul><h2 id=integer-width><strong>Integer width</strong></h2><ul><li>%5d 右对齐最少占5个位置</li><li>%-5d左对齐</li><li>%05d 不足长度5前面补零。</li></ul><h2 id=float><strong>Float</strong></h2><ul><li>%f (=%.6f) 6位小数点</li><li>%e (=%.6e) 6位小数点（科学计数法）</li><li>%g 用最少的数字来表示</li><li>%.3g 最多3位数字来表示</li><li>%.3f 最多3位小数来表示</li></ul><h2 id=string><strong>String</strong></h2><ul><li>%s 正常输出字符串</li><li>%q 字符串带双引号，字符串中的引号带转义符</li><li>%#q 字符串带反引号，如果字符串内有反引号，就用双引号代替</li><li>%x 将字符串转换为小写的16进制格式</li><li>%X 将字符串转换为大写的16进制格式</li><li>% x 带空格的16进制格式</li></ul><h2 id=string-width-以5做例子><strong>String Width (以5做例子）</strong></h2><ul><li>%5s 最小宽度为5</li><li>%-5s 最小宽度为5（左对齐）</li><li>%.5s 最大宽度为5</li><li>%5.7s 最小宽度为5，最大宽度为7</li><li>%-5.7s 最小宽度为5，最大宽度为7（左对齐）</li><li>%5.3s 如果宽度大于3，则截断</li><li>%05s 如果宽度小于5，就会在字符串前面补零</li></ul><h2 id=struct><strong>Struct</strong></h2><ul><li>%v 正常打印。比如：{sam {12345 67890}}</li><li>%+v 带字段名称。比如：{name:sam phone:{mobile:12345 office:67890}</li><li>%#v 用Go的语法打印。
-比如main.People{name:”sam”, phone:main.Phone{mobile:”12345”, office:”67890”}}</li></ul><h2 id=boolean>Boolean</h2><ul><li>%t 打印 <code>true</code> 或 <code>false</code></li></ul><h2 id=pointer><strong>Pointer</strong></h2><ul><li>%p 带0x的指针</li><li>%#p 不带0x的指针</li></ul><h2 id=样例>样例</h2><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+比如main.People{name:”sam”, phone:main.Phone{mobile:”12345”, office:”67890”}}</li></ul><h2 id=boolean>Boolean</h2><ul><li>%t 打印 <code>true</code> 或 <code>false</code></li></ul><h2 id=pointer><strong>Pointer</strong></h2><ul><li>%p 带0x的指针</li><li>%#p 不带0x的指针</li></ul><h2 id=样例>样例</h2><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>fmt.<span style=color:#900;font-weight:700>Printf</span>(<span style=color:#d14>&#34;%+d\n&#34;</span>, <span style=color:#099>255</span>)
 </span></span><span style=display:flex><span>	fmt.<span style=color:#900;font-weight:700>Printf</span>(<span style=color:#d14>&#34;%d\n&#34;</span>, <span style=color:#099>2345</span>)
 </span></span><span style=display:flex><span>	fmt.<span style=color:#900;font-weight:700>Printf</span>(<span style=color:#d14>&#34;%d\n&#34;</span>, <span style=color:#000;font-weight:700>-</span><span style=color:#099>2345</span>)
@@ -30,18 +30,18 @@
 </span></span><span style=display:flex><span>	fmt.<span style=color:#900;font-weight:700>Printf</span>(<span style=color:#d14>&#34;%e\n&#34;</span>, <span style=color:#099>1000024.123456</span>)
 </span></span><span style=display:flex><span>	fmt.<span style=color:#900;font-weight:700>Printf</span>(<span style=color:#d14>&#34;%f\n&#34;</span>, <span style=color:#099>1000024.123456</span>)
 </span></span><span style=display:flex><span>	fmt.<span style=color:#900;font-weight:700>Printf</span>(<span style=color:#d14>&#34;%g\n&#34;</span>, <span style=color:#099>1000024.123456</span>)
-</span></span></code></pre></td></tr></table></div></div><h2 id=输出>输出</h2><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span></span></code></pre></td></tr></table></div></div><h2 id=输出>输出</h2><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#000;font-weight:700>+</span><span style=color:#099>255</span>
 </span></span><span style=display:flex><span><span style=color:#099>2345</span>
 </span></span><span style=display:flex><span><span style=color:#000;font-weight:700>-</span><span style=color:#099>2345</span>
