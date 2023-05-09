@@ -1,0 +1,252 @@
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1"><title>Lua Study Notes | 平凡之路</title><meta property="og:title" content="Lua Study Notes - 平凡之路"><meta property="og:type" content="article"><meta property="article:published_time" content="2022-11-29T12:19:01+08:00"><meta property="article:modified_time" content="2022-11-29T12:19:01+08:00"><meta name=Keywords content="golang,php"><meta name=description content="Lua Study Notes"><meta name=author content="ifenng"><meta property="og:url" content="/posts/lua-study-notes/"><link rel="shortcut icon" href=/favicon.ico type=image/x-icon><link rel=stylesheet href=/css/normalize.css><link rel=stylesheet href=/css/style.css><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js></script></head><body><header id=header class=clearfix><div class=container><div class=col-group><div class=site-name><a id=logo href=/>平凡之路</a><p class=description>不忘初心 方得始终</p></div><div><nav id=nav-menu class=clearfix><a class=current href=/>首页</a>
+<a href=/reading/ title=读书笔记>读书笔记</a>
+<a href=/tools/ title=工具箱>工具箱</a>
+<a href=/archives/ title=归档>归档</a>
+<a href=/about/ title=关于>关于</a></nav></div></div></div></header><div id=body><div class=container><div class=col-group><div class=col-8 id=main><div class=res-cons><article class=post><header><h1 class=post-title>Lua Study Notes</h1></header><time datetime=2022-11-29T04:19:01Z class="post-meta meta-date dt-published">2022年11月29日</time><div class="post-meta meta-category"><span>&nbsp;|</span>
+<a href=/categories/lua>lua</a></div><div class=post-content><h3 id=什么是lua>什么是lua</h3><p>Lua 是一个小巧的脚本语言。是巴西里约热内卢天主教大学（Pontifical Catholic University of Rio de Janeiro）里的一个研究小组，由 Roberto Ierusalimschy、Waldemar Celes 和 Luiz Henrique de Figueiredo 所组成并于 1993 年开发。</p><p>其设计目的是为了嵌入应用程序中，从而为应用程序提供灵活的扩展和定制功能。Lua 由标准 <strong>C 语言</strong> 编写而成，几乎在所有操作系统和平台上都可以编译，运行。Lua 并没有提供强大的库，这是由它的定位决定的。所以 Lua 不适合作为开发独立应用程序的语言。Lua 有一个同时进行的 JIT 项目，提供在特定平台上的即时编译功能。</p><p>Lua 脚本可以很容易的被 C 语言和 <strong>C++</strong> 代码调用，也可以反过来调用 C/C++ 的函数，这使得 Lua 在应用程序中可以被广泛应用。不仅仅作为扩展脚本，也可以作为普通的配置文件，代替 XML,ini 等文件格式，并且更容易理解和维护。</p><p>Lua 由标准 C 编写而成，代码简洁优美，几乎在所有操作系统和平台上都可以编译，运行。 一个完整的 Lua 解释器不过 200k，在目前所有脚本引擎中，Lua 的速度是最快的。这一切都决定了 Lua 是作为嵌入式脚本的最佳选择。</p><h3 id=安装lua-or-luajit>安装lua or luajit</h3><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">8
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ brew install luajit
+</span></span><span style=display:flex><span>$ luajit -v
+</span></span><span style=display:flex><span>LuaJIT 2.1.0-beta3 -- Copyright <span style=color:#000;font-weight:700>(</span>C<span style=color:#000;font-weight:700>)</span> 2005-2022 Mike Pall. https://luajit.org/
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>$ brew install lua@5.3
+</span></span><span style=display:flex><span>$ brew link lua@5.3
+</span></span><span style=display:flex><span>$ lua -v
+</span></span><span style=display:flex><span>Lua 5.3.6  Copyright <span style=color:#000;font-weight:700>(</span>C<span style=color:#000;font-weight:700>)</span> 1994-2020 Lua.org, PUC-Rio
+</span></span></code></pre></td></tr></table></div></div><blockquote><p>Lua官方网站：https://www.lua.org/</p></blockquote><blockquote><p>Luajit官方网站：https://luajit.org/</p></blockquote><h3 id=lua与luajit的区别>lua与luajit的区别</h3><p>Lua和LuaJIT是两种不同的解释器，它们都是基于Lua语言的，但是它们有一些不同之处。</p><ol><li><p>LuaJIT比Lua更快：LuaJIT是一个JIT（Just-In-Time）编译器，它可以在运行时将Lua字节码编译成本地机器代码，这使它比Lua更快。在许多基准测试中，LuaJIT比Lua快得多。</p></li><li><p>LuaJIT有更好的内存管理：LuaJIT的内存管理器比Lua更高效。它可以在更小的内存占用下执行更多的操作。这使得LuaJIT比Lua更适合用于高负载的应用程序。</p></li><li><p>LuaJIT的兼容性存在问题：由于LuaJIT使用了一些与Lua不兼容的优化技术，因此在某些情况下，LuaJIT可能无法与使用标准Lua的代码库兼容。</p></li></ol><p>总的来说，LuaJIT是一个非常快速和高效的Lua解释器，但它的兼容性比Lua更差。如果您需要速度和效率，那么LuaJIT可能是更好的选择，但如果您需要兼容性和稳定性，则应该选择Lua。</p><h3 id=lua基本语法>Lua基本语法</h3><ul><li><p>关键词</p></li><li><p>注释</p><ul><li><p>行注释</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-lua data-lang=lua><span style=display:flex><span><span style=color:#998;font-style:italic>-- comment</span>
+</span></span></code></pre></td></tr></table></div></div></li><li><p>块注释</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">8
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-lua data-lang=lua><span style=display:flex><span><span style=color:#998;font-style:italic>--[[
+</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic>    这里是注释
+</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic>]]</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>-- 推荐</span>
+</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>--[[
+</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic>print(&#34;Hello world&#34;)
+</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic>--]]</span>
+</span></span></code></pre></td></tr></table></div></div><blockquote><p>注意 <code>--</code> 与 <code>[[</code> 之间没有空格</p></blockquote></li></ul></li><li><p>数据类型</p><table><thead><tr><th>数据类型</th><th>描述</th></tr></thead><tbody><tr><td>nil</td><td>这个最简单，只有值 nil 属于该类，表示一个无效值（在条件表达式中相当于 false）。</td></tr><tr><td>boolean</td><td>包含两个值：false 和 true。</td></tr><tr><td>number</td><td>表示双精度类型的实浮点数。</td></tr><tr><td>string</td><td>字符串由一对双引号或单引号来表示。</td></tr><tr><td>function</td><td>由 C 或 Lua 编写的函数。</td></tr><tr><td>userdata</td><td>表示任意存储在变量中的 C 数据结构。</td></tr><tr><td>thread</td><td>表示执行的独立线路，用于执行协同程序。</td></tr><tr><td>table</td><td>Lua 中的表（table）其实是一个 “关联数组”（associative arrays），数组的索引可以是数字或者是字符串。在 Lua 里，table 的创建是通过 “构造表达式” 来完成，最简单构造表达式是 {}，用来创建一个空表。</td></tr></tbody></table></li></ul><h3 id=lua运算符>Lua运算符</h3><p>在Lua中，常见的运算符有以下几种：</p><ol><li><p>算术运算符：用于进行基本的数值运算，包括加减乘除等。例如，+表示加法，-表示减法，*表示乘法，/表示除法，%表示取模（取余数）运算。</p></li><li><p>比较运算符：用于比较两个值的大小，进行逻辑判断。例如，==表示等于，~=表示不等于，>表示大于，&lt;表示小于，>=表示大于等于，&lt;=表示小于等于。</p></li><li><p>逻辑运算符：用于进行逻辑运算，包括与、或、非等。例如，and表示逻辑与，or表示逻辑或，not表示逻辑非。</p></li><li><p>字符串连接运算符：用于连接两个字符串。例如，..表示连接运算符。</p></li></ol><p>下面是一个示例代码，演示了常见的Lua运算符的用法：</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">26
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">27
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">28
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">29
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">30
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">31
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">32
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">33
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">34
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-lua data-lang=lua><span style=display:flex><span>a <span style=color:#000;font-weight:700>=</span> <span style=color:#099>5</span>
+</span></span><span style=display:flex><span>b <span style=color:#000;font-weight:700>=</span> <span style=color:#099>3</span>
+</span></span><span style=display:flex><span>c <span style=color:#000;font-weight:700>=</span> a <span style=color:#000;font-weight:700>+</span> b
+</span></span><span style=display:flex><span>d <span style=color:#000;font-weight:700>=</span> a <span style=color:#000;font-weight:700>/</span> b
+</span></span><span style=display:flex><span>e <span style=color:#000;font-weight:700>=</span> a <span style=color:#000;font-weight:700>%</span> b
+</span></span><span style=display:flex><span>f <span style=color:#000;font-weight:700>=</span> a <span style=color:#000;font-weight:700>*</span> b
+</span></span><span style=display:flex><span>g <span style=color:#000;font-weight:700>=</span> a <span style=color:#000;font-weight:700>-</span> b
+</span></span><span style=display:flex><span>print(c, d, e, f, g) <span style=color:#998;font-style:italic>-- 输出8 1.6666666666667 2 15 2</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>-- 比较运算符</span>
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>if</span> a <span style=color:#000;font-weight:700>==</span> b <span style=color:#000;font-weight:700>then</span>
+</span></span><span style=display:flex><span>    print(<span style=color:#d14>&#34;a等于b&#34;</span>)
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>elseif</span> a <span style=color:#000;font-weight:700>&gt;</span> b <span style=color:#000;font-weight:700>then</span>
+</span></span><span style=display:flex><span>    print(<span style=color:#d14>&#34;a大于b&#34;</span>)
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>else</span>
+</span></span><span style=display:flex><span>    print(<span style=color:#d14>&#34;a小于b&#34;</span>)
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>end</span> <span style=color:#998;font-style:italic>-- 输出a大于b</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>-- 逻辑运算符</span>
+</span></span><span style=display:flex><span>x <span style=color:#000;font-weight:700>=</span> <span style=color:#000;font-weight:700>true</span>
+</span></span><span style=display:flex><span>y <span style=color:#000;font-weight:700>=</span> <span style=color:#000;font-weight:700>false</span>
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>if</span> x <span style=color:#000;font-weight:700>and</span> y <span style=color:#000;font-weight:700>then</span>
+</span></span><span style=display:flex><span>    print(<span style=color:#d14>&#34;x和y都为真&#34;</span>)
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>elseif</span> x <span style=color:#000;font-weight:700>or</span> y <span style=color:#000;font-weight:700>then</span>
+</span></span><span style=display:flex><span>    print(<span style=color:#d14>&#34;x或y至少有一个为真&#34;</span>)
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>else</span>
+</span></span><span style=display:flex><span>    print(<span style=color:#d14>&#34;x和y都为假&#34;</span>)
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>end</span> <span style=color:#998;font-style:italic>-- 输出x或y至少有一个为真</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>-- 字符串连接运算符</span>
+</span></span><span style=display:flex><span>str1 <span style=color:#000;font-weight:700>=</span> <span style=color:#d14>&#34;hello&#34;</span>
+</span></span><span style=display:flex><span>str2 <span style=color:#000;font-weight:700>=</span> <span style=color:#d14>&#34;world&#34;</span>
+</span></span><span style=display:flex><span>str3 <span style=color:#000;font-weight:700>=</span> str1 <span style=color:#000;font-weight:700>..</span> <span style=color:#d14>&#34; &#34;</span> <span style=color:#000;font-weight:700>..</span> str2
+</span></span><span style=display:flex><span>print(str3) <span style=color:#998;font-style:italic>-- 输出hello world</span>
+</span></span></code></pre></td></tr></table></div></div><p>当我们运行上述代码时，会输出各种运算符的结果以及相关的提示信息。</p><h3 id=lua流程控制>Lua流程控制</h3><p>在Lua中，常见的流程控制语句包括条件语句和循环语句。下面是一些示例代码，演示了如何使用这些流程控制语句：</p><ol><li>条件语句</li></ol><p>条件语句用于根据某个条件的真假来执行不同的操作。在Lua中，条件语句使用if..then语法。下面是一个示例代码：</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">8
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-lua data-lang=lua><span style=display:flex><span>x <span style=color:#000;font-weight:700>=</span> <span style=color:#099>10</span>
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>if</span> x <span style=color:#000;font-weight:700>&gt;</span> <span style=color:#099>0</span> <span style=color:#000;font-weight:700>then</span>
+</span></span><span style=display:flex><span>    print(<span style=color:#d14>&#34;x是正数&#34;</span>)
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>elseif</span> x <span style=color:#000;font-weight:700>==</span> <span style=color:#099>0</span> <span style=color:#000;font-weight:700>then</span>
+</span></span><span style=display:flex><span>    print(<span style=color:#d14>&#34;x是零&#34;</span>)
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>else</span>
+</span></span><span style=display:flex><span>    print(<span style=color:#d14>&#34;x是负数&#34;</span>)
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>end</span>
+</span></span></code></pre></td></tr></table></div></div><p>在这个示例代码中，我们使用了if..then语句来判断x的大小，并打印相应的提示信息。</p><ol start=2><li>循环语句</li></ol><p>循环语句用于多次执行某个操作。在Lua中，常见的循环语句包括while循环和for循环。下面是一些示例代码：</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-lua data-lang=lua><span style=display:flex><span>x <span style=color:#000;font-weight:700>=</span> <span style=color:#099>0</span>
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>while</span> x <span style=color:#000;font-weight:700>&lt;</span> <span style=color:#099>10</span> <span style=color:#000;font-weight:700>do</span>
+</span></span><span style=display:flex><span>    print(x)
+</span></span><span style=display:flex><span>    x <span style=color:#000;font-weight:700>=</span> x <span style=color:#000;font-weight:700>+</span> <span style=color:#099>1</span>
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>end</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>-- for循环</span>
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>for</span> i <span style=color:#000;font-weight:700>=</span> <span style=color:#099>1</span>, <span style=color:#099>10</span> <span style=color:#000;font-weight:700>do</span>
+</span></span><span style=display:flex><span>    print(i)
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>end</span>
+</span></span></code></pre></td></tr></table></div></div><p>在这个示例代码中，我们使用了while循环和for循环来分别输出0到9和1到10之间的整数。</p><p>除了基本的条件语句和循环语句外，Lua还支持break和return语句来跳出循环或函数，并且可以使用repeat..until语句进行至少执行一次的循环。</p><ol start=3><li>break语句</li></ol><p>break语句用于在循环中提前跳出循环。下面是一个示例代码：</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-lua data-lang=lua><span style=display:flex><span><span style=color:#000;font-weight:700>for</span> i <span style=color:#000;font-weight:700>=</span> <span style=color:#099>1</span>, <span style=color:#099>10</span> <span style=color:#000;font-weight:700>do</span>
+</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>if</span> i <span style=color:#000;font-weight:700>==</span> <span style=color:#099>5</span> <span style=color:#000;font-weight:700>then</span>
+</span></span><span style=display:flex><span>        <span style=color:#000;font-weight:700>break</span>
+</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>end</span>
+</span></span><span style=display:flex><span>    print(i)
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>end</span>
+</span></span></code></pre></td></tr></table></div></div><p>在这个示例代码中，我们使用了for循环来输出1到4之间的整数，并在i等于5的时候使用break语句提前跳出循环。</p><ol start=4><li>repeat..until语句</li></ol><p>repeat..until语句用于至少执行一次循环，直到某个条件成立时跳出循环。下面是一个示例代码：</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-lua data-lang=lua><span style=display:flex><span>x <span style=color:#000;font-weight:700>=</span> <span style=color:#099>0</span>
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>repeat</span>
+</span></span><span style=display:flex><span>    print(x)
+</span></span><span style=display:flex><span>    x <span style=color:#000;font-weight:700>=</span> x <span style=color:#000;font-weight:700>+</span> <span style=color:#099>1</span>
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>until</span> x <span style=color:#000;font-weight:700>&gt;</span> <span style=color:#099>10</span>
+</span></span></code></pre></td></tr></table></div></div><p>在这个示例代码中，我们使用了repeat..until语句来至少输出一次0，并在x大于10的时候跳出循环。</p><p>除了基本的流程控制语句外，Lua还可以使用goto语句来直接跳转到代码中的某个位置，但是使用goto语句可能会使代码变得难以理解，因此不建议滥用。</p><ol start=5><li>return语句</li></ol><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">8
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-lua data-lang=lua><span style=display:flex><span>return<span style=color:#a61717;background-color:#e3d2d2>语句用于从函数中返回一个值，并结束函数的执行。下面是一个示例代码：</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>function</span> <span style=color:#900;font-weight:700>add</span>(x, y)
+</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>return</span> x <span style=color:#000;font-weight:700>+</span> y
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>end</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>z <span style=color:#000;font-weight:700>=</span> add(<span style=color:#099>3</span>, <span style=color:#099>4</span>)
+</span></span><span style=display:flex><span>print(z)
+</span></span></code></pre></td></tr></table></div></div><p>在这个示例代码中，我们定义了一个函数add，用于计算两个数的和，并使用return语句返回运算结果。在主程序中，我们调用了这个函数，并把它的结果赋给变量z，并输出z的值。</p><p>需要注意的是，如果在函数中使用了return语句，那么这个语句后面的代码将不会被执行，因为函数的执行已经结束了。</p><p>综上所述，Lua中的流程控制语句包括条件语句和循环语句，以及break和return语句等。这些语句可以让我们根据不同的情况来执行不同的操作，并且可以循环执行某个操作，或者提前跳出循环等。需要根据具体的应用场景来选择合适的流程控制语句，以提高代码的效率和可读性。</p><h3 id=lua数组>Lua数组</h3><h3 id=lua函数>Lua函数</h3><h3 id=lua字符串>Lua字符串</h3><h3 id=lua迭代器>Lua迭代器</h3><p>在Lua中，迭代器是一种非常方便的编程工具，它可以让我们遍历某个数据集合中的所有元素，而无需知道该集合的内部实现方式。下面是一个简单的迭代器示例代码：</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-lua data-lang=lua><span style=display:flex><span><span style=color:#000;font-weight:700>function</span> <span style=color:#900;font-weight:700>my_iterator</span>(data)
+</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>local</span> index <span style=color:#000;font-weight:700>=</span> <span style=color:#099>1</span>
+</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>return</span> <span style=color:#000;font-weight:700>function</span>()
+</span></span><span style=display:flex><span>        <span style=color:#000;font-weight:700>local</span> value <span style=color:#000;font-weight:700>=</span> data[index]
+</span></span><span style=display:flex><span>        <span style=color:#000;font-weight:700>if</span> value <span style=color:#000;font-weight:700>~=</span> <span style=color:#000;font-weight:700>nil</span> <span style=color:#000;font-weight:700>then</span>
+</span></span><span style=display:flex><span>            index <span style=color:#000;font-weight:700>=</span> index <span style=color:#000;font-weight:700>+</span> <span style=color:#099>1</span>
+</span></span><span style=display:flex><span>            <span style=color:#000;font-weight:700>return</span> value
+</span></span><span style=display:flex><span>        <span style=color:#000;font-weight:700>end</span>
+</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>end</span>
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>end</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>my_data <span style=color:#000;font-weight:700>=</span> {<span style=color:#099>1</span>, <span style=color:#099>2</span>, <span style=color:#099>3</span>, <span style=color:#099>4</span>, <span style=color:#099>5</span>}
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>for</span> value <span style=color:#000;font-weight:700>in</span> my_iterator(my_data) <span style=color:#000;font-weight:700>do</span>
+</span></span><span style=display:flex><span>    print(value)
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>end</span>
+</span></span></code></pre></td></tr></table></div></div><p>这个代码片段定义了一个名为my_iterator的函数，它接受一个数据集合data作为参数，并返回一个匿名函数。当这个匿名函数被调用时，它会返回当前数据集合中的下一个元素，直到所有元素都被遍历完毕。</p><p>在最后一行代码中，我们使用for循环遍历my_iterator函数返回的迭代器对象，并打印每个元素的值。</p><p>当我们运行上述代码时，会输出data表中的每个元素，即1，2，3，4，5。</p><h3 id=lua-table>Lua Table</h3><h3 id=lua模块与包>Lua模块与包</h3><p>Lua中，模块是一种封装代码的方法。在Lua中，一个模块通常包含一些相关的函数和数据，可以被其他Lua程序引用和使用。通常，一个模块存放在一个单独的Lua文件中，并且在其他Lua程序中通过require函数进行引用。在一个Lua程序中，一个模块只会被加载一次，这样可以避免重复定义变量和函数。</p><p>在Lua中，一个包通常是一个由多个模块组成的集合。一个包可以包含一个init.lua文件，用于初始化整个包。当一个包被引用时，init.lua文件会被自动执行。</p><p>在Lua中，模块和包是非常常用的代码组织方式，可以帮助我们将代码封装和组织得更加清晰和易于维护。</p><h3 id=lua元素>Lua元素</h3><h3 id=lua协程>Lua协程</h3><p>Lua协程指的是一种轻量级的线程，它允许我们在同一线程内切换执行上下文，从而实现异步编程的目的。Lua协程的实现是基于对协程的手动管理，即使用coroutine库中的相关函数来创建、启动、暂停、恢复和销毁协程。</p><ul><li>在Lua中，我们可以使用coroutine.create()函数来创建一个协程，使用coroutine.resume()函数来启动一个协程，使用coroutine.yield()函数来暂停一个协程并返回值，使用coroutine.status()函数来查询协程的状态。</li><li>当协程结束或者出现错误时，我们可以从coroutine.resume()函数中获取返回值或错误信息。</li></ul><p>Lua协程可以用于很多场合，比如实现异步IO、控制协程的执行顺序、实现状态机等。因为它的实现是基于对协程的手动管理，所以需要开发人员对协程的使用和管理比较熟练才能写出效果好、易维护的代码。</p><h3 id=lua文件读写>Lua文件读写</h3><p>在Lua中，我们可以通过io库来进行文件的读写操作。下面是一些常用的文件读写操作函数：</p><ol><li><p>io.open(filename, mode)：打开一个文件，其中filename是要打开的文件名，而mode是打开模式，包括"r"（读取模式）、&ldquo;w&rdquo;（写入模式）和"a"（追加模式）等。</p></li><li><p>file:read(format)：从文件中读取数据，其中format是读取模式，包括"*n"（读取一个数字）、"*a"（读取整个文件）和"*l"（读取一行）等。</p></li><li><p>file:write(&mldr;)：向文件中写入数据，其中"&mldr;&ldquo;表示要写入的数据，可以是任意数量的参数。</p></li><li><p>file:close()：关闭文件。</p></li></ol><p>下面是一个简单的读取文件的示例代码：</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-lua data-lang=lua><span style=display:flex><span><span style=color:#000;font-weight:700>local</span> file <span style=color:#000;font-weight:700>=</span> io.open(<span style=color:#d14>&#34;test.txt&#34;</span>, <span style=color:#d14>&#34;r&#34;</span>)
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>local</span> content <span style=color:#000;font-weight:700>=</span> file:read(<span style=color:#d14>&#34;*all&#34;</span>)
+</span></span><span style=display:flex><span>print(content)
+</span></span><span style=display:flex><span>file:close()
+</span></span></code></pre></td></tr></table></div></div><p>这个代码片段会打开名为test.txt的文件，然后使用read函数读取整个文件的内容，最后打印出来。最后，记得要关闭文件。</p></div><div class="post-meta meta-tags"><ul class=clearfix><li><a href=/tags/lua target=_blank>lua</a></li></ul></div></article><div class="post bg-white"><script src=https://utteranc.es/client.js repo=ifenng2020/ifenng2020.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script></div></div><footer id=footer><div>&copy; 2023 <a href=/>平凡之路 By ifenng</a></div></footer><script type=text/javascript>window.MathJax={tex2jax:{inlineMath:[["$","$"]],processEscapes:!0}}</script><script src='//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+<a id=rocket href=#top></a>
+<script type=text/javascript src='/js/totop.js?v=0.0.0' async></script><style type=text/css>div.highlight{position:relative;margin:1em 0}.copy-code{display:none;position:absolute;top:4px;right:4px;color:rgba(255,255,255,.8);background:rgba(78,78,78,.8);border-radius:var(--radius);padding:0 5px;font:inherit;user-select:none;cursor:pointer;border:0;--radius:8px}div.highlight:hover .copy-code,pre:hover .copy-code{display:block}</style><script>document.querySelectorAll("pre > code").forEach(e=>{const n=e.parentNode.parentNode,t=document.createElement("button");t.classList.add("copy-code"),t.innerHTML="copy";function s(){t.innerHTML="copied!",setTimeout(()=>{t.innerHTML="copy"},2e3)}t.addEventListener("click",t=>{if("clipboard"in navigator){navigator.clipboard.writeText(e.textContent),s();return}const n=document.createRange();n.selectNodeContents(e);const o=window.getSelection();o.removeAllRanges(),o.addRange(n);try{document.execCommand("copy"),s()}catch{}o.removeRange(n)}),n.classList.contains("highlight")?n.appendChild(t):n.parentNode.firstChild==n||(e.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?e.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(t):e.parentNode.appendChild(t))})</script></div><div id=secondary><section class=widget><form id=search action=/search method=get accept-charset=utf-8 target=_blank _lpchecked=1><input type=text name=q maxlength=20 placeholder=Search>
+<input type=hidden name=sitesearch value=/>
+<button type=submit class="submit icon-search"></button></form></section><section class=widget><h3 class=widget-title>最近文章</h3><ul class=widget-list><li><a href=/posts/php-fastroute/ title=php使用fastroute路由 target=_blank>php使用fastroute路由</a></li><li><a href=/posts/composer-php-framework/ title=使用composer创建PHP框架 target=_blank>使用composer创建PHP框架</a></li><li><a href=/posts/go-test-cover/ title="Go Test代码覆盖率" target=_blank>Go Test代码覆盖率</a></li><li><a href=/posts/algorithms-binary-search/ title=二分查找 target=_blank>二分查找</a></li><li><a href=/posts/vim-makefile/ title="Vim Makefile无法输入tab问题" target=_blank>Vim Makefile无法输入tab问题</a></li><li><a href=/posts/docker-file/ title="DockerFile CMD与ENTRYPOINT的区别" target=_blank>DockerFile CMD与ENTRYPOINT的区别</a></li><li><a href=/posts/php-laravel-qt/ title="Php Laravel Controller Not Found" target=_blank>Php Laravel Controller Not Found</a></li><li><a href=/posts/golang-context/ title="Golang Context的使用方式" target=_blank>Golang Context的使用方式</a></li><li><a href=/posts/redis-interviews/ title=50道Redis面试题 target=_blank>50道Redis面试题</a></li><li><a href=/posts/golang-testing/ title="Golang 测试基础" target=_blank>Golang 测试基础</a></li></ul></section><section class=widget><h3 class=widget-title><a href=/categories/>分类</a></h3><ul class=widget-list><li><a href=/categories/algorithm/>algorithm (1)</a></li><li><a href=/categories/docker/>docker (1)</a></li><li><a href=/categories/gitlab/>gitlab (1)</a></li><li><a href=/categories/golang/>golang (4)</a></li><li><a href=/categories/javascript/>javascript (1)</a></li><li><a href=/categories/leetcode/>leetcode (1)</a></li><li><a href=/categories/linux/>linux (1)</a></li><li><a href=/categories/lua/>lua (1)</a></li><li><a href=/categories/php/>php (3)</a></li><li><a href=/categories/reading/>reading (3)</a></li><li><a href=/categories/redis/>redis (3)</a></li><li><a href=/categories/tools/>tools (5)</a></li><li><a href=/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/>中间件 (2)</a></li><li><a href=/categories/%E4%BA%91%E5%8E%9F%E7%94%9F/>云原生 (1)</a></li><li><a href=/categories/%E5%B0%8F%E5%AD%A6%E6%95%B0%E5%AD%A6/>小学数学 (1)</a></li><li><a href=/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/>计算机网络 (1)</a></li><li><a href=/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>设计模式 (9)</a></li><li><a href=/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/>软件开发 (1)</a></li></ul></section><section class=widget><h3 class=widget-title><a href=/tags/>标签</a></h3><div class=tagcloud><a href=/tags/TCP/>TCP</a>
+<a href=/tags/algorithm/>algorithm</a>
+<a href=/tags/basic/>basic</a>
+<a href=/tags/brew/>brew</a>
+<a href=/tags/context/>context</a>
+<a href=/tags/cover/>cover</a>
+<a href=/tags/dockerfile/>dockerfile</a>
+<a href=/tags/fastroute/>fastroute</a>
+<a href=/tags/git/>git</a>
+<a href=/tags/gitlab/>gitlab</a>
+<a href=/tags/golang/>golang</a>
+<a href=/tags/goroutine/>goroutine</a>
+<a href=/tags/k8s/>k8s</a>
+<a href=/tags/larval/>larval</a>
+<a href=/tags/leetcode/>leetcode</a>
+<a href=/tags/life/>life</a>
+<a href=/tags/lua/>lua</a>
+<a href=/tags/mathematics/>mathematics</a>
+<a href=/tags/node/>node</a>
+<a href=/tags/npm/>npm</a>
+<a href=/tags/redis/>redis</a>
+<a href=/tags/release/>release</a>
+<a href=/tags/rsync/>rsync</a>
+<a href=/tags/testing/>testing</a>
+<a href=/tags/vim/>vim</a>
+<a href=/tags/work/>work</a>
+<a href=/tags/%E5%88%9B%E5%BB%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>创建型设计模式</a>
+<a href=/tags/%E7%BB%93%E6%9E%84%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>结构型设计模式</a>
+<a href=/tags/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>行为型设计模式</a></div></section><section class=widget><h3 class=widget-title>友情链接</h3><ul class=widget-list><li><a target=_blank href=https://geektutu.com/ title=极客兔兔>极客兔兔的博客</a></li><li><a target=_blank href=https://xiaolincoding.com/ title=小林coding>小林coding</a></li></ul></section></div></div></div></div></body></html>

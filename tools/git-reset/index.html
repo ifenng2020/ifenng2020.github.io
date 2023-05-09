@@ -1,0 +1,114 @@
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1"><title>Git命令备忘（reset） | 平凡之路</title><meta property="og:title" content="Git命令备忘（reset） - 平凡之路"><meta property="og:type" content="article"><meta property="article:published_time" content="2023-02-22T18:38:44+08:00"><meta property="article:modified_time" content="2023-02-22T18:38:44+08:00"><meta name=Keywords content="golang,php"><meta name=description content="Git命令备忘（reset）"><meta name=author content="ifenng"><meta property="og:url" content="/tools/git-reset/"><link rel="shortcut icon" href=/favicon.ico type=image/x-icon><link rel=stylesheet href=/css/normalize.css><link rel=stylesheet href=/css/style.css><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js></script></head><body><header id=header class=clearfix><div class=container><div class=col-group><div class=site-name><a id=logo href=/>平凡之路</a><p class=description>不忘初心 方得始终</p></div><div><nav id=nav-menu class=clearfix><a href=/>首页</a>
+<a href=/reading/ title=读书笔记>读书笔记</a>
+<a href=/tools/ title=工具箱>工具箱</a>
+<a href=/archives/ title=归档>归档</a>
+<a href=/about/ title=关于>关于</a></nav></div></div></div></header><div id=body><div class=container><div class=col-group><div class=col-8 id=main><div class=res-cons><article class=post><header><h1 class=post-title>Git命令备忘（reset）</h1></header><time datetime=2023-02-22T10:38:44Z class="post-meta meta-date dt-published">2023年2月22日</time><div class="post-meta meta-category"><span>&nbsp;|</span>
+<a href=/categories/tools>tools</a></div><div class=post-content><p>git reset 命令用于回退版本，可以指定退回某一次提交的版本。</p><p>git reset 命令语法格式如下：</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ git reset <span style=color:#000;font-weight:700>[</span>--soft | --mixed | --hard<span style=color:#000;font-weight:700>]</span> <span style=color:#000;font-weight:700>[</span>HEAD<span style=color:#000;font-weight:700>]</span>
+</span></span></code></pre></td></tr></table></div></div><p><strong>&ndash;mixed</strong> 为默认，可以不用带该参数，用于重置<code>暂存区</code>的文件与上一次的提交(commit)保持一致，工作区文件内容保持不变。</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ git reset <span style=color:#000;font-weight:700>[</span>HEAD<span style=color:#000;font-weight:700>]</span> 
+</span></span></code></pre></td></tr></table></div></div><p>实例：</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ git reset HEAD^            <span style=color:#998;font-style:italic># 回退所有内容到上一个版本  </span>
+</span></span><span style=display:flex><span>$ git reset HEAD^ hello.php  <span style=color:#998;font-style:italic># 回退 hello.php 文件的版本到上一个版本  </span>
+</span></span><span style=display:flex><span>$ git reset 052e           <span style=color:#998;font-style:italic># 回退到指定版本</span>
+</span></span></code></pre></td></tr></table></div></div><p><strong>&ndash;soft</strong> 参数用于回退到某个版本：</p><pre tabindex=0><code>$ git reset --soft HEAD
+</code></pre><p>实例：</p><pre tabindex=0><code>$ git reset --soft HEAD~3   # 回退上上上一个版本 
+</code></pre><p><strong>&ndash;hard</strong> 参数撤销工作区中所有未提交的修改内容，将暂存区与工作区都回到上一次版本，并删除之前的所有信息提交：</p><pre tabindex=0><code>$ git reset --hard HEAD
+</code></pre><p>实例：</p><pre tabindex=0><code>$ git reset --hard HEAD~3  # 回退上上上一个版本  
+$ git reset --hard bae128  # 回退到某个版本回退点之前的所有信息。 
+$ git reset --hard origin/master    # 将本地的状态回退到和远程的一样 
+</code></pre><p>**注意：**谨慎使用 <strong>–-hard</strong> 参数，它会删除回退点之前的所有信息。</p><p><strong>HEAD 说明：</strong></p><ul><li><p>HEAD 表示当前版本</p></li><li><p>HEAD^ 上一个版本</p></li><li><p>HEAD^^ 上上一个版本</p></li></ul><p>以此类推&mldr;</p><p>可以使用 ～数字表示</p><ul><li><p>HEAD~0 表示当前版本</p></li><li><p>HEAD~1 上一个版本</p></li><li><p>HEAD~2 上上一个版本</p></li></ul><p>以此类推&mldr;</p><h3 id=git-reset-head>git reset HEAD</h3><p>git reset HEAD 命令用于取消已缓存的内容。</p><p>我们先改动文件 README 文件，内容如下：</p><pre tabindex=0><code># Runoob Git 测试
+# 菜鸟教程 
+</code></pre><p>hello.php 文件修改为：</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-php data-lang=php><span style=display:flex><span><span style=color:#000;font-weight:700>&lt;?</span>php
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>echo</span> <span style=color:#d14>&#39;菜鸟教程：www.runoob.com&#39;</span>;
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>echo</span> <span style=color:#d14>&#39;菜鸟教程：www.runoob.com&#39;</span>;
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>echo</span> <span style=color:#d14>&#39;菜鸟教程：www.runoob.com&#39;</span>;
+</span></span><span style=display:flex><span><span style=color:#999;font-weight:700;font-style:italic>?&gt;</span><span style=color:#a61717;background-color:#e3d2d2>
+</span></span></span></code></pre></td></tr></table></div></div><p>现在两个文件修改后，都提交到了缓存区，我们现在要取消其中一个的缓存，操作如下：</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ git status -s
+</span></span><span style=display:flex><span>    M README
+</span></span><span style=display:flex><span>    M hello.php
+</span></span><span style=display:flex><span>$ git add .
+</span></span><span style=display:flex><span>$ git status -s
+</span></span><span style=display:flex><span>M  README
+</span></span><span style=display:flex><span>M  hello.php
+</span></span><span style=display:flex><span>$ git reset HEAD hello.php 
+</span></span><span style=display:flex><span>Unstaged changes after reset:
+</span></span><span style=display:flex><span>M    hello.php
+</span></span><span style=display:flex><span>$ git status -s
+</span></span><span style=display:flex><span>M  README
+</span></span><span style=display:flex><span>    M hello.php
+</span></span></code></pre></td></tr></table></div></div><p>现在你执行 git commit，只会将 README 文件的改动提交，而 hello.php 是没有的。</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ git commit -m <span style=color:#d14>&#39;修改&#39;</span>
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>[</span>master f50cfda<span style=color:#000;font-weight:700>]</span> 修改
+</span></span><span style=display:flex><span>    <span style=color:#099>1</span> file changed, <span style=color:#099>1</span> insertion<span style=color:#000;font-weight:700>(</span>+<span style=color:#000;font-weight:700>)</span>
+</span></span><span style=display:flex><span>$ git status -s
+</span></span><span style=display:flex><span>    M hello.php
+</span></span></code></pre></td></tr></table></div></div><p>可以看到 hello.php 文件的修改并未提交。</p><p>这时我们可以使用以下命令将 hello.php 的修改提交：</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ git commit -am <span style=color:#d14>&#39;修改 hello.php 文件&#39;</span>
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>[</span>master 760f74d<span style=color:#000;font-weight:700>]</span> 修改 hello.php 文件
+</span></span><span style=display:flex><span>    <span style=color:#099>1</span> file changed, <span style=color:#099>1</span> insertion<span style=color:#000;font-weight:700>(</span>+<span style=color:#000;font-weight:700>)</span>
+</span></span><span style=display:flex><span>$ git status
+</span></span><span style=display:flex><span>On branch master
+</span></span><span style=display:flex><span>nothing to commit, working directory clean
+</span></span></code></pre></td></tr></table></div></div><p>简而言之，执行 git reset HEAD 以取消之前 git add 添加，但不希望包含在下一提交快照中的缓存。</p></div><div class="post-meta meta-tags"><ul class=clearfix><li><a href=/tags/git target=_blank>git</a></li></ul></div></article><div class="post bg-white"><script src=https://utteranc.es/client.js repo=ifenng2020/ifenng2020.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script></div></div><footer id=footer><div>&copy; 2023 <a href=/>平凡之路 By ifenng</a></div></footer><script type=text/javascript>window.MathJax={tex2jax:{inlineMath:[["$","$"]],processEscapes:!0}}</script><script src='//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+<a id=rocket href=#top></a>
+<script type=text/javascript src='/js/totop.js?v=0.0.0' async></script></div><div id=secondary><section class=widget><form id=search action=/search method=get accept-charset=utf-8 target=_blank _lpchecked=1><input type=text name=q maxlength=20 placeholder=Search>
+<input type=hidden name=sitesearch value=/>
+<button type=submit class="submit icon-search"></button></form></section><section class=widget><h3 class=widget-title>最近文章</h3><ul class=widget-list><li><a href=/posts/php-fastroute/ title=php使用fastroute路由 target=_blank>php使用fastroute路由</a></li><li><a href=/posts/composer-php-framework/ title=使用composer创建PHP框架 target=_blank>使用composer创建PHP框架</a></li><li><a href=/posts/go-test-cover/ title="Go Test代码覆盖率" target=_blank>Go Test代码覆盖率</a></li><li><a href=/posts/algorithms-binary-search/ title=二分查找 target=_blank>二分查找</a></li><li><a href=/posts/vim-makefile/ title="Vim Makefile无法输入tab问题" target=_blank>Vim Makefile无法输入tab问题</a></li><li><a href=/posts/docker-file/ title="DockerFile CMD与ENTRYPOINT的区别" target=_blank>DockerFile CMD与ENTRYPOINT的区别</a></li><li><a href=/posts/php-laravel-qt/ title="Php Laravel Controller Not Found" target=_blank>Php Laravel Controller Not Found</a></li><li><a href=/posts/golang-context/ title="Golang Context的使用方式" target=_blank>Golang Context的使用方式</a></li><li><a href=/posts/redis-interviews/ title=50道Redis面试题 target=_blank>50道Redis面试题</a></li><li><a href=/posts/golang-testing/ title="Golang 测试基础" target=_blank>Golang 测试基础</a></li></ul></section><section class=widget><h3 class=widget-title><a href=/categories/>分类</a></h3><ul class=widget-list><li><a href=/categories/algorithm/>algorithm (1)</a></li><li><a href=/categories/docker/>docker (1)</a></li><li><a href=/categories/gitlab/>gitlab (1)</a></li><li><a href=/categories/golang/>golang (4)</a></li><li><a href=/categories/javascript/>javascript (1)</a></li><li><a href=/categories/leetcode/>leetcode (1)</a></li><li><a href=/categories/linux/>linux (1)</a></li><li><a href=/categories/lua/>lua (1)</a></li><li><a href=/categories/php/>php (3)</a></li><li><a href=/categories/reading/>reading (3)</a></li><li><a href=/categories/redis/>redis (3)</a></li><li><a href=/categories/tools/>tools (5)</a></li><li><a href=/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/>中间件 (2)</a></li><li><a href=/categories/%E4%BA%91%E5%8E%9F%E7%94%9F/>云原生 (1)</a></li><li><a href=/categories/%E5%B0%8F%E5%AD%A6%E6%95%B0%E5%AD%A6/>小学数学 (1)</a></li><li><a href=/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/>计算机网络 (1)</a></li><li><a href=/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>设计模式 (9)</a></li><li><a href=/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/>软件开发 (1)</a></li></ul></section><section class=widget><h3 class=widget-title><a href=/tags/>标签</a></h3><div class=tagcloud><a href=/tags/TCP/>TCP</a>
+<a href=/tags/algorithm/>algorithm</a>
+<a href=/tags/basic/>basic</a>
+<a href=/tags/brew/>brew</a>
+<a href=/tags/context/>context</a>
+<a href=/tags/cover/>cover</a>
+<a href=/tags/dockerfile/>dockerfile</a>
+<a href=/tags/fastroute/>fastroute</a>
+<a href=/tags/git/>git</a>
+<a href=/tags/gitlab/>gitlab</a>
+<a href=/tags/golang/>golang</a>
+<a href=/tags/goroutine/>goroutine</a>
+<a href=/tags/k8s/>k8s</a>
+<a href=/tags/larval/>larval</a>
+<a href=/tags/leetcode/>leetcode</a>
+<a href=/tags/life/>life</a>
+<a href=/tags/lua/>lua</a>
+<a href=/tags/mathematics/>mathematics</a>
+<a href=/tags/node/>node</a>
+<a href=/tags/npm/>npm</a>
+<a href=/tags/redis/>redis</a>
+<a href=/tags/release/>release</a>
+<a href=/tags/rsync/>rsync</a>
+<a href=/tags/testing/>testing</a>
+<a href=/tags/vim/>vim</a>
+<a href=/tags/work/>work</a>
+<a href=/tags/%E5%88%9B%E5%BB%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>创建型设计模式</a>
+<a href=/tags/%E7%BB%93%E6%9E%84%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>结构型设计模式</a>
+<a href=/tags/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>行为型设计模式</a></div></section><section class=widget><h3 class=widget-title>友情链接</h3><ul class=widget-list><li><a target=_blank href=https://geektutu.com/ title=极客兔兔>极客兔兔的博客</a></li><li><a target=_blank href=https://xiaolincoding.com/ title=小林coding>小林coding</a></li></ul></section></div></div></div></div></body></html>

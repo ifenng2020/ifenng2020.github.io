@@ -1,0 +1,150 @@
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1"><title>建造者模式 | 平凡之路</title><meta property="og:title" content="建造者模式 - 平凡之路"><meta property="og:type" content="article"><meta property="article:published_time" content="2022-11-21T20:31:56+08:00"><meta property="article:modified_time" content="2022-11-21T20:31:56+08:00"><meta name=Keywords content="golang,php"><meta name=description content="建造者模式"><meta name=author content="ifenng"><meta property="og:url" content="/posts/design-pattern-builder/"><link rel="shortcut icon" href=/favicon.ico type=image/x-icon><link rel=stylesheet href=/css/normalize.css><link rel=stylesheet href=/css/style.css><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js></script></head><body><header id=header class=clearfix><div class=container><div class=col-group><div class=site-name><a id=logo href=/>平凡之路</a><p class=description>不忘初心 方得始终</p></div><div><nav id=nav-menu class=clearfix><a class=current href=/>首页</a>
+<a href=/reading/ title=读书笔记>读书笔记</a>
+<a href=/tools/ title=工具箱>工具箱</a>
+<a href=/archives/ title=归档>归档</a>
+<a href=/about/ title=关于>关于</a></nav></div></div></div></header><div id=body><div class=container><div class=col-group><div class=col-8 id=main><div class=res-cons><article class=post><header><h1 class=post-title>建造者模式</h1></header><time datetime=2022-11-21T12:31:56Z class="post-meta meta-date dt-published">2022年11月21日</time><div class="post-meta meta-category"><span>&nbsp;|</span>
+<a href=/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F>设计模式</a></div><div class=post-content><h3 id=建造者模式>建造者模式</h3><p>一种创建型设计模式，它将一个复杂对象的构建过程与其表示分离开来，从而使得同样的构建过程可以创建不同的表示形式。</p><h3 id=模式优点>模式优点：</h3><ul><li><p>将对象的构建过程与具体表示分离：建造者模式通过将对象的构建过程与其表示分离开来，使得可以使用相同的构建过程来创建不同的表示形式。这种分离可以提高代码的复用性和灵活性，使得代码更易于维护和扩展。</p></li><li><p>易于控制对象的构建过程：建造者模式通过将对象的构建过程分解为多个简单的步骤，并通过Director来协调这些步骤，使得可以更加精确地控制对象的构建过程。这种精确的控制可以提高代码的可靠性和稳定性，从而减少代码出错的可能性。</p></li><li><p>可以创建复杂对象：建造者模式可以通过将对象的构建过程分解为多个简单的步骤，并通过Director来协调这些步骤，使得可以创建复杂的对象，而不必关心其具体实现细节。这种创建复杂对象的能力可以提高代码的可重用性和灵活性，从而加快开发速度。</p></li><li><p>可以改变对象的内部表示：建造者模式可以通过修改Builder接口或ConcreteBuilder结构体，来改变对象的内部表示形式，而不必改变对象的外部接口。这种改变对象内部表示形式的能力可以提高代码的可维护性和可扩展性，从而减少代码重构的需要。</p></li></ul><h3 id=实现代码>实现代码</h3><pre tabindex=0><code>// 场景
+// 现在需要生产一个汉堡
+// 生产过程包括增加香肠,奶酪,生菜,番茄
+// 且有固定的顺序，即必须先确定香肠，再确定生菜,奶酪，最后放番茄的顺序，顺序错了，
+// 或者是少了其中任意一个步骤都不能做好一个汉堡。
+
+// Burger 产品汉堡包
+type Burger struct {
+	// 香肠
+	Pepperoni string
+	// 🧀️
+	Cheese string
+	// 🥬
+	Lettuce string
+	// 🍅
+	Tomato string
+}
+
+// GetDescription 获取描述
+func (burger *Burger) GetDescription() {
+	fmt.Printf(&#34;Burger 的成分是: %v,%v,%v,%v \n&#34;,
+		burger.Pepperoni, burger.Cheese,
+		burger.Lettuce, burger.Tomato)
+}
+
+// Builder 构建器接口
+type Builder interface {
+	AddPepperoni(Pepperoni string) Builder
+	AddCheese(Cheese string) Builder
+	AddLettuce(Lettuce string) Builder
+	AddTomato(Tomato string) Builder
+	Build() *Burger
+}
+
+// BurgerBuilder 具体的建造者
+type BurgerBuilder struct {
+	burger *Burger
+}
+
+// AddPepperoni 添加香肠
+func (burgerBuilder *BurgerBuilder) AddPepperoni(Pepperoni string) Builder {
+	burgerBuilder.burger.Pepperoni = Pepperoni
+	return burgerBuilder
+}
+
+// AddCheese 添加 🧀️
+func (burgerBuilder *BurgerBuilder) AddCheese(Cheese string) Builder {
+	burgerBuilder.burger.Cheese = Cheese
+	return burgerBuilder
+}
+
+// AddLettuce 添加 🥬
+func (burgerBuilder *BurgerBuilder) AddLettuce(Lettuce string) Builder {
+	burgerBuilder.burger.Lettuce = Lettuce
+	return burgerBuilder
+}
+
+// AddTomato 添加 🍅
+func (burgerBuilder *BurgerBuilder) AddTomato(Tomato string) Builder {
+	burgerBuilder.burger.Tomato = Tomato
+	return burgerBuilder
+}
+
+// Build 构建函数
+func (burgerBuilder *BurgerBuilder) Build() *Burger {
+	if burgerBuilder.burger.Pepperoni == &#34;&#34; || burgerBuilder.burger.Cheese == &#34;&#34; ||
+		burgerBuilder.burger.Lettuce == &#34;&#34; || burgerBuilder.burger.Tomato == &#34;&#34; {
+		fmt.Println(&#34;🍔 成分不全,制作失败！&#34;)
+		return nil
+	}
+	return burgerBuilder.burger
+}
+
+// NewBurgerBuilder 创建一个面包构建器
+func NewBurgerBuilder() *BurgerBuilder {
+	return &amp;BurgerBuilder{&amp;Burger{}}
+}
+</code></pre><h3 id=测试用例>测试用例</h3><pre tabindex=0><code>package builder
+
+import (
+	&#34;testing&#34;
+)
+
+// TestBuilder 测试
+// command: go test -v builder_test.go builder.go
+func TestBuilder(t *testing.T) {
+
+	t.Log(&#34;制作第一个 🍔&#34;)
+	burger1 := NewBurgerBuilder().AddPepperoni(&#34;火腿1&#34;).AddCheese(&#34;奶酪1&#34;)
+  						.AddLettuce(&#34;生菜1&#34;).AddTomato(&#34;番茄1&#34;).Build()
+
+	if burger1.Pepperoni != &#34;火腿1&#34; || burger1.Cheese != &#34;奶酪1&#34; || 
+  			burger1.Lettuce != &#34;生菜1&#34; || burger1.Tomato != &#34;番茄1&#34; {
+				t.Fail()
+	}
+
+	t.Log(&#34;制作第二个 🍔&#34;)
+	burger2 := NewBurgerBuilder().AddPepperoni(&#34;火腿2&#34;).AddCheese(&#34;奶酪2&#34;)
+  												.AddLettuce(&#34;生菜2&#34;).AddTomato(&#34;番茄2&#34;).Build()
+
+	if burger2.Pepperoni != &#34;火腿2&#34; || burger2.Cheese != &#34;奶酪2&#34; || 
+  			burger2.Lettuce != &#34;生菜2&#34; || burger2.Tomato != &#34;番茄2&#34; {
+		t.Fail()
+	}
+
+	t.Log(&#34;制作第三个 🍔&#34;)
+	burger3 := NewBurgerBuilder().AddPepperoni(&#34;火腿3&#34;)
+  					.AddLettuce(&#34;生菜3&#34;).AddTomato(&#34;番茄3&#34;).Build()
+	if burger3 != nil {
+		t.Fail()
+	}
+}
+</code></pre></div><div class="post-meta meta-tags"><ul class=clearfix><li><a href=/tags/%E5%88%9B%E5%BB%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F target=_blank>创建型设计模式</a></li></ul></div></article><div class="post bg-white"><script src=https://utteranc.es/client.js repo=ifenng2020/ifenng2020.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script></div></div><footer id=footer><div>&copy; 2023 <a href=/>平凡之路 By ifenng</a></div></footer><script type=text/javascript>window.MathJax={tex2jax:{inlineMath:[["$","$"]],processEscapes:!0}}</script><script src='//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+<a id=rocket href=#top></a>
+<script type=text/javascript src='/js/totop.js?v=0.0.0' async></script><style type=text/css>div.highlight{position:relative;margin:1em 0}.copy-code{display:none;position:absolute;top:4px;right:4px;color:rgba(255,255,255,.8);background:rgba(78,78,78,.8);border-radius:var(--radius);padding:0 5px;font:inherit;user-select:none;cursor:pointer;border:0;--radius:8px}div.highlight:hover .copy-code,pre:hover .copy-code{display:block}</style><script>document.querySelectorAll("pre > code").forEach(e=>{const n=e.parentNode.parentNode,t=document.createElement("button");t.classList.add("copy-code"),t.innerHTML="copy";function s(){t.innerHTML="copied!",setTimeout(()=>{t.innerHTML="copy"},2e3)}t.addEventListener("click",t=>{if("clipboard"in navigator){navigator.clipboard.writeText(e.textContent),s();return}const n=document.createRange();n.selectNodeContents(e);const o=window.getSelection();o.removeAllRanges(),o.addRange(n);try{document.execCommand("copy"),s()}catch{}o.removeRange(n)}),n.classList.contains("highlight")?n.appendChild(t):n.parentNode.firstChild==n||(e.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?e.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(t):e.parentNode.appendChild(t))})</script></div><div id=secondary><section class=widget><form id=search action=/search method=get accept-charset=utf-8 target=_blank _lpchecked=1><input type=text name=q maxlength=20 placeholder=Search>
+<input type=hidden name=sitesearch value=/>
+<button type=submit class="submit icon-search"></button></form></section><section class=widget><h3 class=widget-title>最近文章</h3><ul class=widget-list><li><a href=/posts/php-fastroute/ title=php使用fastroute路由 target=_blank>php使用fastroute路由</a></li><li><a href=/posts/composer-php-framework/ title=使用composer创建PHP框架 target=_blank>使用composer创建PHP框架</a></li><li><a href=/posts/go-test-cover/ title="Go Test代码覆盖率" target=_blank>Go Test代码覆盖率</a></li><li><a href=/posts/algorithms-binary-search/ title=二分查找 target=_blank>二分查找</a></li><li><a href=/posts/vim-makefile/ title="Vim Makefile无法输入tab问题" target=_blank>Vim Makefile无法输入tab问题</a></li><li><a href=/posts/docker-file/ title="DockerFile CMD与ENTRYPOINT的区别" target=_blank>DockerFile CMD与ENTRYPOINT的区别</a></li><li><a href=/posts/php-laravel-qt/ title="Php Laravel Controller Not Found" target=_blank>Php Laravel Controller Not Found</a></li><li><a href=/posts/golang-context/ title="Golang Context的使用方式" target=_blank>Golang Context的使用方式</a></li><li><a href=/posts/redis-interviews/ title=50道Redis面试题 target=_blank>50道Redis面试题</a></li><li><a href=/posts/golang-testing/ title="Golang 测试基础" target=_blank>Golang 测试基础</a></li></ul></section><section class=widget><h3 class=widget-title><a href=/categories/>分类</a></h3><ul class=widget-list><li><a href=/categories/algorithm/>algorithm (1)</a></li><li><a href=/categories/docker/>docker (1)</a></li><li><a href=/categories/gitlab/>gitlab (1)</a></li><li><a href=/categories/golang/>golang (4)</a></li><li><a href=/categories/javascript/>javascript (1)</a></li><li><a href=/categories/leetcode/>leetcode (1)</a></li><li><a href=/categories/linux/>linux (1)</a></li><li><a href=/categories/lua/>lua (1)</a></li><li><a href=/categories/php/>php (3)</a></li><li><a href=/categories/reading/>reading (3)</a></li><li><a href=/categories/redis/>redis (3)</a></li><li><a href=/categories/tools/>tools (5)</a></li><li><a href=/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/>中间件 (2)</a></li><li><a href=/categories/%E4%BA%91%E5%8E%9F%E7%94%9F/>云原生 (1)</a></li><li><a href=/categories/%E5%B0%8F%E5%AD%A6%E6%95%B0%E5%AD%A6/>小学数学 (1)</a></li><li><a href=/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/>计算机网络 (1)</a></li><li><a href=/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>设计模式 (9)</a></li><li><a href=/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/>软件开发 (1)</a></li></ul></section><section class=widget><h3 class=widget-title><a href=/tags/>标签</a></h3><div class=tagcloud><a href=/tags/TCP/>TCP</a>
+<a href=/tags/algorithm/>algorithm</a>
+<a href=/tags/basic/>basic</a>
+<a href=/tags/brew/>brew</a>
+<a href=/tags/context/>context</a>
+<a href=/tags/cover/>cover</a>
+<a href=/tags/dockerfile/>dockerfile</a>
+<a href=/tags/fastroute/>fastroute</a>
+<a href=/tags/git/>git</a>
+<a href=/tags/gitlab/>gitlab</a>
+<a href=/tags/golang/>golang</a>
+<a href=/tags/goroutine/>goroutine</a>
+<a href=/tags/k8s/>k8s</a>
+<a href=/tags/larval/>larval</a>
+<a href=/tags/leetcode/>leetcode</a>
+<a href=/tags/life/>life</a>
+<a href=/tags/lua/>lua</a>
+<a href=/tags/mathematics/>mathematics</a>
+<a href=/tags/node/>node</a>
+<a href=/tags/npm/>npm</a>
+<a href=/tags/redis/>redis</a>
+<a href=/tags/release/>release</a>
+<a href=/tags/rsync/>rsync</a>
+<a href=/tags/testing/>testing</a>
+<a href=/tags/vim/>vim</a>
+<a href=/tags/work/>work</a>
+<a href=/tags/%E5%88%9B%E5%BB%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>创建型设计模式</a>
+<a href=/tags/%E7%BB%93%E6%9E%84%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>结构型设计模式</a>
+<a href=/tags/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>行为型设计模式</a></div></section><section class=widget><h3 class=widget-title>友情链接</h3><ul class=widget-list><li><a target=_blank href=https://geektutu.com/ title=极客兔兔>极客兔兔的博客</a></li><li><a target=_blank href=https://xiaolincoding.com/ title=小林coding>小林coding</a></li></ul></section></div></div></div></div></body></html>

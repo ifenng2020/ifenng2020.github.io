@@ -1,0 +1,39 @@
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1"><title>larval | 平凡之路</title><meta property="og:title" content="larval - 平凡之路"><meta property="og:type" content="article"><meta name=Keywords content="golang,php"><meta name=description content="larval"><meta name=author content="ifenng"><meta property="og:url" content="/tags/larval/"><link rel="shortcut icon" href=/favicon.ico type=image/x-icon><link rel=stylesheet href=/css/normalize.css><link rel=stylesheet href=/css/style.css><link rel=alternate type=application/rss+xml href=/tags/larval/index.xml title=平凡之路><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js></script></head><body><header id=header class=clearfix><div class=container><div class=col-group><div class=site-name><a id=logo href=/>平凡之路</a><p class=description>不忘初心 方得始终</p></div><div><nav id=nav-menu class=clearfix><a href=/>首页</a>
+<a href=/reading/ title=读书笔记>读书笔记</a>
+<a href=/tools/ title=工具箱>工具箱</a>
+<a href=/archives/ title=归档>归档</a>
+<a href=/about/ title=关于>关于</a></nav></div></div></div></header><div id=body><div class=container><div class=col-group><div class=col-8 id=main><div class=res-cons><h3 class=archive-title>标签
+<span class=keyword>larval</span>
+中的文章</h3><article class=post><header><h1 class=post-title><a href=/posts/php-laravel-qt/ target=_blank>Php Laravel Controller Not Found</a></h1></header><time datetime=2023-03-23T10:35:06Z class="post-meta meta-date dt-published">2023年3月23日</time><div class="post-meta meta-category"><span>&nbsp;|</span>
+<a href=/categories/php>php</a></div><div class=post-content>问题描述 1 Route::get('/task', 'TaskController@index'); 报错 ： controller [TaskController] does not exist 解决方案： 1 2 3 4 5 6 use App\Http\Controllers\TaskController; # 新增 ... Route::get('task', [TaskController::class, 'index']); Route::get('task/read/{id}', [TaskController::class, 'read']); 或者 1 Route::get('/users', 'App\Http\Controllers\TaskController@index');……<p class=readmore><a href=/posts/php-laravel-qt/ target=_blank>阅读全文</a></p></div></article></div><footer id=footer><div>&copy; 2023 <a href=/>平凡之路 By ifenng</a></div></footer><a id=rocket href=#top></a>
+<script type=text/javascript src='/js/totop.js?v=0.0.0' async></script></div><div id=secondary><section class=widget><form id=search action=/search method=get accept-charset=utf-8 target=_blank _lpchecked=1><input type=text name=q maxlength=20 placeholder=Search>
+<input type=hidden name=sitesearch value=/>
+<button type=submit class="submit icon-search"></button></form></section><section class=widget><h3 class=widget-title>最近文章</h3><ul class=widget-list><li><a href=/posts/php-fastroute/ title=php使用fastroute路由 target=_blank>php使用fastroute路由</a></li><li><a href=/posts/composer-php-framework/ title=使用composer创建PHP框架 target=_blank>使用composer创建PHP框架</a></li><li><a href=/posts/go-test-cover/ title="Go Test代码覆盖率" target=_blank>Go Test代码覆盖率</a></li><li><a href=/posts/algorithms-binary-search/ title=二分查找 target=_blank>二分查找</a></li><li><a href=/posts/vim-makefile/ title="Vim Makefile无法输入tab问题" target=_blank>Vim Makefile无法输入tab问题</a></li><li><a href=/posts/docker-file/ title="DockerFile CMD与ENTRYPOINT的区别" target=_blank>DockerFile CMD与ENTRYPOINT的区别</a></li><li><a href=/posts/php-laravel-qt/ title="Php Laravel Controller Not Found" target=_blank>Php Laravel Controller Not Found</a></li><li><a href=/posts/golang-context/ title="Golang Context的使用方式" target=_blank>Golang Context的使用方式</a></li><li><a href=/posts/redis-interviews/ title=50道Redis面试题 target=_blank>50道Redis面试题</a></li><li><a href=/posts/golang-testing/ title="Golang 测试基础" target=_blank>Golang 测试基础</a></li></ul></section><section class=widget><h3 class=widget-title><a href=/categories/>分类</a></h3><ul class=widget-list><li><a href=/categories/algorithm/>algorithm (1)</a></li><li><a href=/categories/docker/>docker (1)</a></li><li><a href=/categories/gitlab/>gitlab (1)</a></li><li><a href=/categories/golang/>golang (4)</a></li><li><a href=/categories/javascript/>javascript (1)</a></li><li><a href=/categories/leetcode/>leetcode (1)</a></li><li><a href=/categories/linux/>linux (1)</a></li><li><a href=/categories/lua/>lua (1)</a></li><li><a href=/categories/php/>php (3)</a></li><li><a href=/categories/reading/>reading (3)</a></li><li><a href=/categories/redis/>redis (3)</a></li><li><a href=/categories/tools/>tools (5)</a></li><li><a href=/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/>中间件 (2)</a></li><li><a href=/categories/%E4%BA%91%E5%8E%9F%E7%94%9F/>云原生 (1)</a></li><li><a href=/categories/%E5%B0%8F%E5%AD%A6%E6%95%B0%E5%AD%A6/>小学数学 (1)</a></li><li><a href=/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/>计算机网络 (1)</a></li><li><a href=/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>设计模式 (9)</a></li><li><a href=/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/>软件开发 (1)</a></li></ul></section><section class=widget><h3 class=widget-title><a href=/tags/>标签</a></h3><div class=tagcloud><a href=/tags/TCP/>TCP</a>
+<a href=/tags/algorithm/>algorithm</a>
+<a href=/tags/basic/>basic</a>
+<a href=/tags/brew/>brew</a>
+<a href=/tags/context/>context</a>
+<a href=/tags/cover/>cover</a>
+<a href=/tags/dockerfile/>dockerfile</a>
+<a href=/tags/fastroute/>fastroute</a>
+<a href=/tags/git/>git</a>
+<a href=/tags/gitlab/>gitlab</a>
+<a href=/tags/golang/>golang</a>
+<a href=/tags/goroutine/>goroutine</a>
+<a href=/tags/k8s/>k8s</a>
+<a href=/tags/larval/>larval</a>
+<a href=/tags/leetcode/>leetcode</a>
+<a href=/tags/life/>life</a>
+<a href=/tags/lua/>lua</a>
+<a href=/tags/mathematics/>mathematics</a>
+<a href=/tags/node/>node</a>
+<a href=/tags/npm/>npm</a>
+<a href=/tags/redis/>redis</a>
+<a href=/tags/release/>release</a>
+<a href=/tags/rsync/>rsync</a>
+<a href=/tags/testing/>testing</a>
+<a href=/tags/vim/>vim</a>
+<a href=/tags/work/>work</a>
+<a href=/tags/%E5%88%9B%E5%BB%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>创建型设计模式</a>
+<a href=/tags/%E7%BB%93%E6%9E%84%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>结构型设计模式</a>
+<a href=/tags/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>行为型设计模式</a></div></section><section class=widget><h3 class=widget-title>友情链接</h3><ul class=widget-list><li><a target=_blank href=https://geektutu.com/ title=极客兔兔>极客兔兔的博客</a></li><li><a target=_blank href=https://xiaolincoding.com/ title=小林coding>小林coding</a></li></ul></section></div></div></div></div></body></html>
