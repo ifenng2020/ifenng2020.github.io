@@ -15,40 +15,38 @@ List:</li><li>消息队列:
 重复消息处理：生产者自行实现全局唯一 ID；
 消息的可靠性：使用 BRPOPLPUSH</li><li>Hash:
 缓存对象
-一般对象用 String + Json 存储，对象中某些频繁变化的属性可以考虑抽出来用 Hash 类型存储。</li></ul><h1 id=存储一个哈希表uid1的键值>存储一个哈希表uid:1的键值</h1><blockquote><p>HMSET uid:1 name Tom age 15
-2</p></blockquote><h1 id=存储一个哈希表uid2的键值>存储一个哈希表uid:2的键值</h1><blockquote><p>HMSET uid:2 name Jerry age 13
-2</p></blockquote><h1 id=获取哈希表用户id为1中所有的键值>获取哈希表用户id为1中所有的键值</h1><blockquote><p>HGETALL uid:1</p></blockquote><ol><li>&ldquo;name&rdquo;</li><li>&ldquo;Tom&rdquo;</li><li>&ldquo;age&rdquo;</li><li>&ldquo;15&rdquo;
+一般对象用 String + Json 存储，对象中某些频繁变化的属性可以考虑抽出来用 Hash 类型存储。</li></ul><h1 id=存储一个哈希表-uid1-的键值>存储一个哈希表 uid:1 的键值</h1><blockquote><p>HMSET uid:1 name Tom age 15
+2</p></blockquote><h1 id=存储一个哈希表-uid2-的键值>存储一个哈希表 uid:2 的键值</h1><blockquote><p>HMSET uid:2 name Jerry age 13
+2</p></blockquote><h1 id=获取哈希表用户-id-为-1-中所有的键值>获取哈希表用户 id 为 1 中所有的键值</h1><blockquote><p>HGETALL uid:1</p></blockquote><ol><li>&ldquo;name&rdquo;</li><li>&ldquo;Tom&rdquo;</li><li>&ldquo;age&rdquo;</li><li>&ldquo;15&rdquo;
 购物车
-添加商品：HSET cart:{用户id} {商品id} 1
-添加数量：HINCRBY cart:{用户id} {商品id} 1
-商品总数：HLEN cart:{用户id}
-删除商品：HDEL cart:{用户id} {商品id}
-获取购物车所有商品：HGETALL cart:{用户id}
+添加商品：HSET cart:{用户 id} {商品 id} 1
+添加数量：HINCRBY cart:{用户 id} {商品 id} 1
+商品总数：HLEN cart:{用户 id}
+删除商品：HDEL cart:{用户 id} {商品 id}
+获取购物车所有商品：HGETALL cart:{用户 id}
 Set:
 聚合计算场景
 主从集群中，为了避免主库因为 Set 做聚合计算（交集、差集、并集）时导致主库被阻塞，我们可以选择一个从库完成聚合统计</li></ol><p>点赞</p><p>#<code>uid:1</code> 用户对文章 article:1 点赞
-SADD article:1 uid:1
-#<code>uid:1</code> 取消了对 article:1 文章点赞。
+SADD article:1 uid:1 #<code>uid:1</code> 取消了对 article:1 文章点赞。
 SREM article:1 uid:1</p><h1 id=获取-article1-文章所有点赞用户->获取 article:1 文章所有点赞用户 :</h1><p>SMEMBERS article:1</p><ol><li>&ldquo;uid:3&rdquo;</li><li>&ldquo;uid:2&rdquo;
 获取 article:1 文章的点赞用户数量：
 SCARD article:1
-(integer) 2
-#判断用户 uid:1 是否对文章 article:1 点赞了：
+(integer) 2 #判断用户 uid:1 是否对文章 article:1 点赞了：
 SISMEMBER article:1 uid:1
-(integer) 0 # 返回0说明没点赞，返回1则说明点赞了
+(integer) 0 # 返回 0 说明没点赞，返回 1 则说明点赞了
 共同关注
 Set 类型支持交集运算，所以可以用来计算共同关注的好友、公众号等。</li></ol><h1 id=uid1-用户关注公众号-id-为-56789>uid:1 用户关注公众号 id 为 5、6、7、8、9</h1><blockquote><p>SADD uid:1 5 6 7 8 9</p></blockquote><h1 id=uid2-用户关注公众号-id-为-7891011>uid:2 用户关注公众号 id 为 7、8、9、10、11</h1><blockquote><p>SADD uid:2 7 8 9 10 11</p></blockquote><h1 id=获取共同关注>获取共同关注</h1><blockquote><p>SINTER uid:1 uid:2</p></blockquote><ol><li>&ldquo;7&rdquo;</li><li>&ldquo;8&rdquo;</li><li>&ldquo;9&rdquo;</li></ol><h1 id=给-uid2-推荐-uid1-关注的公众号>给 <code>uid:2</code> 推荐 <code>uid:1</code> 关注的公众号：</h1><blockquote><p>SDIFF uid:1 uid:2</p></blockquote><ol><li>&ldquo;5&rdquo;</li><li>&ldquo;6&rdquo;</li></ol><h1 id=验证某个公众号是否同时被-uid1-或-uid2-关注>验证某个公众号是否同时被 <code>uid:1</code> 或 <code>uid:2</code> 关注:</h1><blockquote><p>SISMEMBER uid:1 5
-(integer) 1 # 返回0，说明关注了
+(integer) 1 # 返回 0，说明关注了
 SISMEMBER uid:2 5
-(integer) 0 # 返回0，说明没关注
+(integer) 0 # 返回 0，说明没关注
 抽奖活动
 存储某活动中中奖的用户名 ，Set 类型因为有去重功能，可以保证同一个用户不会中奖两次。
 key 为抽奖活动名，value 为员工名称，把所有员工名称放入抽奖箱 ：</p></blockquote><blockquote><p>SADD lucky Tom Jerry John Sean Marry Lindy Sary Mark
 (integer) 5
 如果允许重复中奖，可以使用 SRANDMEMBER 命令。</p></blockquote><h1 id=抽取-1-个一等奖>抽取 1 个一等奖：</h1><blockquote><p>SRANDMEMBER lucky 1</p></blockquote><ol><li>&ldquo;Tom&rdquo;</li></ol><h1 id=抽取-2-个二等奖>抽取 2 个二等奖：</h1><blockquote><p>SRANDMEMBER lucky 2</p></blockquote><ol><li>&ldquo;Mark&rdquo;</li><li>&ldquo;Jerry&rdquo;</li></ol><h1 id=抽取-3-个三等奖>抽取 3 个三等奖：</h1><blockquote><p>SRANDMEMBER lucky 3</p></blockquote><ol><li>&ldquo;Sary&rdquo;</li><li>&ldquo;Tom&rdquo;</li><li>&ldquo;Jerry&rdquo;
-如果不允许重复中奖，可以使用 SPOP 命令。</li></ol><h1 id=抽取一等奖1个>抽取一等奖1个</h1><blockquote><p>SPOP lucky 1</p></blockquote><ol><li>&ldquo;Sary&rdquo;</li></ol><h1 id=抽取二等奖2个>抽取二等奖2个</h1><blockquote><p>SPOP lucky 2</p></blockquote><ol><li>&ldquo;Jerry&rdquo;</li><li>&ldquo;Mark&rdquo;</li></ol><h1 id=抽取三等奖3个>抽取三等奖3个</h1><blockquote><p>SPOP lucky 3</p></blockquote><ol><li>&ldquo;John&rdquo;</li><li>&ldquo;Sean&rdquo;</li><li>&ldquo;Lindy&rdquo;
+如果不允许重复中奖，可以使用 SPOP 命令。</li></ol><h1 id=抽取一等奖-1-个>抽取一等奖 1 个</h1><blockquote><p>SPOP lucky 1</p></blockquote><ol><li>&ldquo;Sary&rdquo;</li></ol><h1 id=抽取二等奖-2-个>抽取二等奖 2 个</h1><blockquote><p>SPOP lucky 2</p></blockquote><ol><li>&ldquo;Jerry&rdquo;</li><li>&ldquo;Mark&rdquo;</li></ol><h1 id=抽取三等奖-3-个>抽取三等奖 3 个</h1><blockquote><p>SPOP lucky 3</p></blockquote><ol><li>&ldquo;John&rdquo;</li><li>&ldquo;Sean&rdquo;</li><li>&ldquo;Lindy&rdquo;
 Zset:
-排行榜</li></ol><h1 id=arcticle1-文章获得了200个赞>arcticle:1 文章获得了200个赞</h1><p>ZADD user:xiaolin:ranking 200 arcticle:1</p><h1 id=文章-arcticle1-新增一个赞>文章 arcticle:1 新增一个赞</h1><p>ZINCRBY user:xiaolin:ranking 1 arcticle:1</p><h1 id=查看某篇文章的赞数>查看某篇文章的赞数</h1><p>ZSCORE user:xiaolin:ranking arcticle:4</p><h1 id=获取文章赞数最多的-3-篇文章>获取文章赞数最多的 3 篇文章</h1><p>ZREVRANGE user:xiaolin:ranking 0 2 WITHSCORES</p><h1 id=获取100赞到200-赞的文章>获取100赞到200 赞的文章</h1><p>ZRANGEBYSCORE user:xiaolin:ranking 100 200 WITHSCORES
+排行榜</li></ol><h1 id=arcticle1-文章获得了-200-个赞>arcticle:1 文章获得了 200 个赞</h1><p>ZADD user:xiaolin:ranking 200 arcticle:1</p><h1 id=文章-arcticle1-新增一个赞>文章 arcticle:1 新增一个赞</h1><p>ZINCRBY user:xiaolin:ranking 1 arcticle:1</p><h1 id=查看某篇文章的赞数>查看某篇文章的赞数</h1><p>ZSCORE user:xiaolin:ranking arcticle:4</p><h1 id=获取文章赞数最多的-3-篇文章>获取文章赞数最多的 3 篇文章</h1><p>ZREVRANGE user:xiaolin:ranking 0 2 WITHSCORES</p><h1 id=获取-100-赞到-200-赞的文章>获取 100 赞到 200 赞的文章</h1><p>ZRANGEBYSCORE user:xiaolin:ranking 100 200 WITHSCORES
 电话和姓名排序
 使用有序集合的 ZRANGEBYLEX 或 ZREVRANGEBYLEX 可以帮助我们实现电话号码或姓名的排序</p><p>BitMap:
 签到
@@ -132,7 +130,7 @@ zadd score1 value1 命令就可以一直往内存中生产消息。 zrangebyscor
 Hash、List、Set、ZSet 类型的元素的个数超过 5000 个；
 //最好选择在从节点上执行该命令。因为主节点上执行时，会阻塞主节点,只能返回每种类型中最大的那个 bigkey，无法得到大小排在前 N 位的 bigkey,对于集合类型来说，只统计集合元素个数的多少，而不是实际占用的内存量。
 redis-cli -h 127.0.0.1 -p6379 -a &ldquo;password&rdquo; &ndash; bigkeys
-scan命令,配合key类型再用对应的命令计算内存
+scan 命令,配合 key 类型再用对应的命令计算内存
 //使用 RdbTools 第三方开源工具，可以用来解析 Redis 快照（RDB）文件，找到其中的大 key。
 rdb dump.rdb -c memory &ndash;bytes 10240 -f redis.csv
 如何删除大 key？
@@ -169,12 +167,9 @@ Redis 如何解决集群情况下分布式锁的可靠性？
 在更新完缓存时，给缓存加上较短的过期时间，缓存的数据也会很快过期，
 先删除缓存 + 更新数据库
 延迟双删</p><p>#删除缓存
-redis.delKey(X)
-#更新数据库
-db.update(X)
-#睡眠
-Thread.sleep(N)
-#再删除缓存
+redis.delKey(X) #更新数据库
+db.update(X) #睡眠
+Thread.sleep(N) #再删除缓存
 redis.delKey(X)</p><p>————————————————
 原文作者：竖横山
 转自链接：https://learnku.com/articles/75382
@@ -183,8 +178,7 @@ redis.delKey(X)</p><p>————————————————
 <a id=rocket href=#top></a>
 <script type=text/javascript src='/js/totop.js?v=0.0.0' async></script><style type=text/css>div.highlight{position:relative;margin:1em 0}.copy-code{display:none;position:absolute;top:4px;right:4px;color:rgba(255,255,255,.8);background:rgba(78,78,78,.8);border-radius:var(--radius);padding:0 5px;font:inherit;user-select:none;cursor:pointer;border:0;--radius:8px}div.highlight:hover .copy-code,pre:hover .copy-code{display:block}</style><script>document.querySelectorAll("pre > code").forEach(e=>{const n=e.parentNode.parentNode,t=document.createElement("button");t.classList.add("copy-code"),t.innerHTML="copy";function s(){t.innerHTML="copied!",setTimeout(()=>{t.innerHTML="copy"},2e3)}t.addEventListener("click",t=>{if("clipboard"in navigator){navigator.clipboard.writeText(e.textContent),s();return}const n=document.createRange();n.selectNodeContents(e);const o=window.getSelection();o.removeAllRanges(),o.addRange(n);try{document.execCommand("copy"),s()}catch{}o.removeRange(n)}),n.classList.contains("highlight")?n.appendChild(t):n.parentNode.firstChild==n||(e.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?e.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(t):e.parentNode.appendChild(t))})</script></div><div id=secondary><section class=widget><form id=search action=/search method=get accept-charset=utf-8 target=_blank _lpchecked=1><input type=text name=q maxlength=20 placeholder=Search>
 <input type=hidden name=sitesearch value=/>
-<button type=submit class="submit icon-search"></button></form></section><section class=widget><h3 class=widget-title>最近文章</h3><ul class=widget-list><li><a href=/posts/hugo-favicon/ title="Hugo Maupassant添加Favicon" target=_blank>Hugo Maupassant添加Favicon</a></li><li><a href=/posts/php-fastroute/ title=php使用fastroute路由 target=_blank>php使用fastroute路由</a></li><li><a href=/posts/composer-php-framework/ title=使用composer创建PHP框架 target=_blank>使用composer创建PHP框架</a></li><li><a href=/posts/go-test-cover/ title="Go Test代码覆盖率" target=_blank>Go Test代码覆盖率</a></li><li><a href=/posts/algorithms-binary-search/ title=二分查找 target=_blank>二分查找</a></li><li><a href=/posts/vim-makefile/ title="Vim Makefile无法输入tab问题" target=_blank>Vim Makefile无法输入tab问题</a></li><li><a href=/posts/docker-file/ title="DockerFile CMD与ENTRYPOINT的区别" target=_blank>DockerFile CMD与ENTRYPOINT的区别</a></li><li><a href=/posts/php-laravel-qt/ title="Php Laravel Controller Not Found" target=_blank>Php Laravel Controller Not Found</a></li><li><a href=/posts/golang-context/ title="Golang Context的使用方式" target=_blank>Golang Context的使用方式</a></li><li><a href=/posts/redis-interviews/ title=50道Redis面试题 target=_blank>50道Redis面试题</a></li></ul></section><section class=widget><h3 class=widget-title><a href=/categories/>分类</a></h3><ul class=widget-list><li><a href=/categories/algorithm/>algorithm (1)</a></li><li><a href=/categories/docker/>docker (1)</a></li><li><a href=/categories/gitlab/>gitlab (1)</a></li><li><a href=/categories/golang/>golang (4)</a></li><li><a href=/categories/javascript/>javascript (1)</a></li><li><a href=/categories/leetcode/>leetcode (1)</a></li><li><a href=/categories/linux/>linux (1)</a></li><li><a href=/categories/lua/>lua (1)</a></li><li><a href=/categories/php/>php (3)</a></li><li><a href=/categories/reading/>reading (3)</a></li><li><a href=/categories/redis/>redis (3)</a></li><li><a href=/categories/tools/>tools (6)</a></li><li><a href=/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/>中间件 (2)</a></li><li><a href=/categories/%E4%BA%91%E5%8E%9F%E7%94%9F/>云原生 (1)</a></li><li><a href=/categories/%E5%B0%8F%E5%AD%A6%E6%95%B0%E5%AD%A6/>小学数学 (1)</a></li><li><a href=/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/>计算机网络 (1)</a></li><li><a href=/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>设计模式 (9)</a></li><li><a href=/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/>软件开发 (1)</a></li></ul></section><section class=widget><h3 class=widget-title><a href=/tags/>标签</a></h3><div class=tagcloud><a href=/tags/Hugo/>Hugo</a>
-<a href=/tags/TCP/>TCP</a>
+<button type=submit class="submit icon-search"></button></form></section><section class=widget><h3 class=widget-title>最近文章</h3><ul class=widget-list><li><a href=/posts/hugo-favicon/ title="Hugo Maupassant添加favicon.ico" target=_blank>Hugo Maupassant添加favicon.ico</a></li><li><a href=/posts/php-fastroute/ title=php使用fastroute路由 target=_blank>php使用fastroute路由</a></li><li><a href=/posts/composer-php-framework/ title=使用composer创建PHP框架 target=_blank>使用composer创建PHP框架</a></li><li><a href=/posts/go-test-cover/ title="Go Test代码覆盖率" target=_blank>Go Test代码覆盖率</a></li><li><a href=/posts/algorithms-binary-search/ title=二分查找 target=_blank>二分查找</a></li><li><a href=/posts/vim-makefile/ title="Vim Makefile无法输入tab问题" target=_blank>Vim Makefile无法输入tab问题</a></li><li><a href=/posts/docker-file/ title="DockerFile CMD与ENTRYPOINT的区别" target=_blank>DockerFile CMD与ENTRYPOINT的区别</a></li><li><a href=/posts/php-laravel-qt/ title="Php Laravel Controller Not Found" target=_blank>Php Laravel Controller Not Found</a></li><li><a href=/posts/golang-context/ title="Golang Context的使用方式" target=_blank>Golang Context的使用方式</a></li><li><a href=/posts/redis-interviews/ title=50道Redis面试题 target=_blank>50道Redis面试题</a></li></ul></section><section class=widget><h3 class=widget-title><a href=/categories/>分类</a></h3><ul class=widget-list><li><a href=/categories/algorithm/>algorithm (1)</a></li><li><a href=/categories/docker/>docker (1)</a></li><li><a href=/categories/gitlab/>gitlab (1)</a></li><li><a href=/categories/golang/>golang (4)</a></li><li><a href=/categories/javascript/>javascript (1)</a></li><li><a href=/categories/leetcode/>leetcode (1)</a></li><li><a href=/categories/linux/>linux (1)</a></li><li><a href=/categories/lua/>lua (1)</a></li><li><a href=/categories/php/>php (3)</a></li><li><a href=/categories/reading/>reading (3)</a></li><li><a href=/categories/redis/>redis (3)</a></li><li><a href=/categories/tools/>tools (6)</a></li><li><a href=/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/>中间件 (2)</a></li><li><a href=/categories/%E4%BA%91%E5%8E%9F%E7%94%9F/>云原生 (1)</a></li><li><a href=/categories/%E5%B0%8F%E5%AD%A6%E6%95%B0%E5%AD%A6/>小学数学 (1)</a></li><li><a href=/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/>计算机网络 (1)</a></li><li><a href=/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>设计模式 (8)</a></li><li><a href=/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/>软件开发 (1)</a></li></ul></section><section class=widget><h3 class=widget-title><a href=/tags/>标签</a></h3><div class=tagcloud><a href=/tags/TCP/>TCP</a>
 <a href=/tags/algorithm/>algorithm</a>
 <a href=/tags/basic/>basic</a>
 <a href=/tags/brew/>brew</a>
@@ -196,6 +190,7 @@ redis.delKey(X)</p><p>————————————————
 <a href=/tags/gitlab/>gitlab</a>
 <a href=/tags/golang/>golang</a>
 <a href=/tags/goroutine/>goroutine</a>
+<a href=/tags/hugo/>hugo</a>
 <a href=/tags/k8s/>k8s</a>
 <a href=/tags/larval/>larval</a>
 <a href=/tags/leetcode/>leetcode</a>
