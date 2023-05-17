@@ -3,165 +3,319 @@
 <a href=/tools/ title=工具箱>工具箱</a>
 <a href=/archives/ title=归档>归档</a>
 <a href=/about/ title=关于>关于</a></nav></div></div></div></header><div id=body><div class=container><div class=col-group><div class=col-8 id=main><div class=res-cons><article class=post><header><h1 class=post-title>Golang Context的使用方式</h1></header><time datetime=2023-02-26T08:32:28Z class="post-meta meta-date dt-published">2023年2月26日</time><div class="post-meta meta-category"><span>&nbsp;|</span>
-<a href=/categories/golang>golang</a></div><div class=post-content><p>context 是 go 中控制协程的一种比较方便的方式。</p><h3 id=select--chan>Select + Chan</h3><p>我们都知道一个 goroutine 启动后，我们是无法控制他的，大部分情况是等待它自己结束，那么如果这个 goroutine 是一个不会自己结束的后台 goroutine 呢？比如监控等，会一直运行的。</p><p>这种情况下比较笨的办法是全局变量，其他地方通过修改这个变量完成结束通知，然后后台 goroutine 不停的检查这个变量，如果发现被通知关闭了，就自我结束。这种方式首先我们要保证这个变量在多线程下的安全，基于此，有一种经典的处理方式：<code>chan</code> + <code>select</code> 。</p><pre tabindex=0><code>func main() {
-	stop := make(chan bool)
-
-	go func() {
-		for {
-			select {
-			case &lt;-stop:    // 收到了停滞信号
-				fmt.Println(&#34;监控退出，停止了...&#34;)
-				return
-			default:
-				fmt.Println(&#34;goroutine监控中...&#34;)
-				time.Sleep(2 * time.Second)
-			}
-		}
-	}()
-
-	time.Sleep(10 * time.Second)
-	fmt.Println(&#34;可以了，通知监控停止&#34;)
-	stop&lt;- true
-
-	//为了检测监控过是否停止，如果没有监控输出，就表示停止了
-	time.Sleep(5 * time.Second)
-}
-</code></pre><blockquote><p>这里还有一个额外的知识，go 中通道的接收是有阻塞和非阻塞的（发送只有阻塞），这里 select 中的 case 语句接收通道数据其实是非阻塞的。非阻塞接收通道数据的 CPU 消耗较高，但是可以获取是否通道中有数据的状态。但是当 case 上读一个通道时，如果这个通道是 nil，则该 case 永远阻塞</p></blockquote><p>例子中我们定义一个 stop 的 chan，通知他结束后台 goroutine。实现也非常简单，在后台 goroutine 中，使用 select 判断 stop 是否可以接收到值，如果可以接收到，就表示可以退出停止了；如果没有接收到，就会执行 default 里的监控逻辑，继续监控，只到收到 stop 的通知。</p><p>有了以上的逻辑，我们就可以在其他 goroutine 中，给 stop chan 发送值了，例子中是在 main goroutine 中发送的，控制让这个监控的 goroutine 结束。</p><p>发送了 <code>stop&lt;-true</code> 结束的指令后，我这里使用 <code>time.Sleep(5 * time.Second)</code> 故意停顿 5 秒来检测我们结束监控 goroutine 是否成功。如果成功的话，不会再有 <code>goroutine监控中...</code> 的输出了；如果没有成功，监控 goroutine 就会继续打印 <code>goroutine监控中...</code> 输出。</p><p>这种 chan+select 的方式，是比较优雅的结束一个 goroutine 的方式，不过这种方式也有局限性，如果有很多 goroutine 都需要控制结束怎么办呢？如果这些 goroutine 又衍生了其他更多的 goroutine 怎么办呢？如果一层层的无穷尽的 goroutine 呢？这就非常复杂了，即使我们定义很多 chan 也很难解决这个问题，因为 goroutine 的关系链就导致了这种场景非常复杂。</p><h3 id=context>Context</h3><p>上面说的这种场景是存在的，比如一个网络请求 Request，每个 Request 都需要开启一个 goroutine 做一些事情，这些 goroutine 又可能会开启其他的 goroutine。所以我们需要一种可以跟踪 goroutine 的方案，才可以达到控制他们的目的，这就是 Go 语言为我们提供的 Context，称之为上下文非常贴切，它就是 goroutine 的上下文。</p><p>下面我们就使用 Go Context 重写上面的示例。</p><pre tabindex=0><code>func main() {
-	ctx, cancel := context.WithCancel(context.Background())
-	go func(ctx context.Context) {
-		for {
-			select {
-			case &lt;-ctx.Done():
-				fmt.Println(&#34;监控退出，停止了...&#34;)
-				return
-			default:
-				fmt.Println(&#34;goroutine监控中...&#34;)
-				time.Sleep(2 * time.Second)
-			}
-		}
-	}(ctx)
-
-	time.Sleep(10 * time.Second)
-	fmt.Println(&#34;可以了，通知监控停止&#34;)
-	cancel()
-	//为了检测监控过是否停止，如果没有监控输出，就表示停止了
-	time.Sleep(5 * time.Second)
-}
-</code></pre><p>重写也很简单，把之前使用 select+chan 控制的协程改为 Context 控制即可：</p><p><code>context.Background()</code> 返回一个空的 Context，这个空的 Context 一般用于整个 Context 树的根节点。然后我们使用 <code>context.WithCancel(parent)</code> 函数，创建一个可取消的子 Context，然后当作参数传给 goroutine 使用，这样就可以使用这个子 Context 跟踪这个 goroutine。</p><p>在 goroutine 中，使用 select 调用 <code>&lt;-ctx.Done()</code> 判断是否要结束，如果接受到值的话，就可以返回结束 goroutine 了；如果接收不到，就会继续进行监控。</p><p>那么 Context 是如何发送结束指令的呢？这就是示例中的 <code>cancel</code> 函数啦，它是我们调用 <code>context.WithCancel(parent)</code> 函数生成子 Context 的时候返回的，第二个返回值就是这个取消函数，它是 <code>CancelFunc</code> 类型的。我们调用它就可以发出取消指令，然后我们的监控 goroutine 就会收到信号，就会返回结束。</p><h3 id=context-控制多个-goroutine>Context 控制多个 goroutine</h3><p>使用 Context 控制一个 goroutine 的例子如上，非常简单，下面我们看看控制多个 goroutine 的例子，其实也比较简单。</p><pre tabindex=0><code>func main() {
-	ctx, cancel := context.WithCancel(context.Background())
-	go watch(ctx,&#34;【监控1】&#34;)
-	go watch(ctx,&#34;【监控2】&#34;)
-	go watch(ctx,&#34;【监控3】&#34;)
-
-	time.Sleep(10 * time.Second)
-	fmt.Println(&#34;可以了，通知监控停止&#34;)
-	cancel()
-	//为了检测监控过是否停止，如果没有监控输出，就表示停止了
-	time.Sleep(5 * time.Second)
-}
-
-func watch(ctx context.Context, name string) {
-	for {
-		select {
-		case &lt;-ctx.Done():
-			fmt.Println(name,&#34;监控退出，停止了...&#34;)
-			return
-		default:
-			fmt.Println(name,&#34;goroutine监控中...&#34;)
-			time.Sleep(2 * time.Second)
-		}
-	}
-}
-</code></pre><p>示例中启动了 3 个监控 goroutine 进行不断的监控，每一个都使用了 Context 进行跟踪，<strong>当我们使用 cancel 函数通知取消时，这 3 个 goroutine 都会被结束</strong>。这就是 Context 的控制能力，它就像一个控制器一样，按下开关后，<strong>所有基于这个 Context 或者衍生的子 Context 都会收到通知</strong>，这时就可以进行清理操作了，最终释放 goroutine，这就优雅的解决了 goroutine 启动后不可控的问题。</p><h3 id=context-接口>Context 接口</h3><p>Context 的接口定义的比较简洁，我们看下这个接口的方法。</p><pre tabindex=0><code>type Context interface {
-	Deadline() (deadline time.Time, ok bool)
-
-	Done() &lt;-chan struct{}
-
-	Err() error
-
-	Value(key interface{}) interface{}
-}
-</code></pre><p>这个接口共有 4 个方法，了解这些方法的意思非常重要，这样我们才可以更好的使用他们。</p><p><code>Deadline</code> 方法是获取设置的截止时间的意思，第一个返回式是截止时间，到了这个时间点，Context 会自动发起取消请求；第二个返回值 <code>ok</code> 表示是否设置截止时间，如果没有设置时间，当需要取消的时候，需要调用取消函数进行取消。</p><p><code>Done</code> 方法返回一个只读的 chan，类型为 struct{}，我们在 goroutine 中，如果该方法返回的 chan 可以读取，则意味着 parent context 已经发起了取消请求，我们通过 Done 方法收到这个信号后，就应该做清理操作，然后退出 goroutine，释放资源。</p><p><code>Err</code> 方法返回取消的错误原因，因为什么 Context 被取消。</p><p><code>Value</code> 方法获取该 Context 上绑定的值，是一个键值对，所以要通过一个 Key 才可以获取对应的值，这个值一般是线程安全的。</p><p>以上四个方法中常用的就是 <code>Done</code> 了，如果 Context 取消的时候，我们就可以得到一个关闭的 chan，关闭的 chan 是可以读取的，所以<strong>只要 <code>ctx.Done()</code> 可以读取的时候，就意味着收到 Context 取消的信号了</strong>，以下是这个方法的经典用法。</p><pre tabindex=0><code>func Stream(ctx context.Context, out chan&lt;- Value) error {
-	for {
-		v, err := DoSomething(ctx)
-		if err != nil {
-			return err
-		}
-		select {
-		case &lt;-ctx.Done():
-			return ctx.Err()
-		case out &lt;- v:
-		}
-	}
-}
-</code></pre><p>Context 接口并不需要我们实现，Go 内置已经帮我们实现了 2 个，我们代码中最开始都是以这两个内置的作为最顶层的 partent context，衍生出更多的子 Context。</p><pre tabindex=0><code>var (
-	background = new(emptyCtx)
-	todo       = new(emptyCtx)
-)
-
-func Background() Context {
-	return background
-}
-
-func TODO() Context {
-	return todo
-}
-</code></pre><p>一个是 <code>Background</code>，主要用于 main 函数、初始化以及测试代码中，作为 Context 这个树结构的最顶层的 Context，也就是根 Context。</p><p>一个是 <code>TODO</code>，它目前还不知道具体的使用场景，如果我们不知道该使用什么 Context 的时候，可以使用这个。</p><p>他们两个本质上都是 emptyCtx 结构体类型，是一个不可取消，没有设置截止时间，没有携带任何值的 Context。</p><pre tabindex=0><code>type emptyCtx int
-
-func (*emptyCtx) Deadline() (deadline time.Time, ok bool) {
-	return
-}
-
-func (*emptyCtx) Done() &lt;-chan struct{} {
-	return nil
-}
-
-func (*emptyCtx) Err() error {
-	return nil
-}
-
-func (*emptyCtx) Value(key interface{}) interface{} {
-	return nil
-}
-</code></pre><h3 id=context-的继承衍生>Context 的继承衍生</h3><p>有了如上的根 Context，那么是如何衍生更多的子 Context 的呢？这就要靠 context 包为我们提供的 With 系列的函数了。</p><pre tabindex=0><code>func WithCancel(parent Context) (ctx Context, cancel CancelFunc)
-func WithDeadline(parent Context, deadline time.Time) (Context, CancelFunc)
-func WithTimeout(parent Context, timeout time.Duration) (Context, CancelFunc)
-func WithValue(parent Context, key, val interface{}) Context
-</code></pre><p>这四个 With 函数，接收的都有一个 <code>partent</code> 参数，就是父 Context，我们要基于这个父 Context 创建出子 Context 的意思，这种方式可以理解为子 Context 对父 Context 的继承，也可以理解为基于父 Context 的衍生。</p><p>通过这些函数，就创建了一颗 Context 树，树的每个节点都可以有任意多个子节点，节点层级可以有任意多个。每个父节点可以控制自己所有的子节点。</p><ul><li><code>WithCancel</code> 函数，传递一个父 Context 作为参数，返回子 Context，以及一个取消函数用来取消 Context。</li><li><code>WithDeadline</code> 函数，和 <code>WithCancel</code> 差不多，它会多传递一个截止时间参数，意味着到了这个时间点，会自动取消 Context，当然我们也可以不等到这个时候，可以提前通过取消函数进行取消。</li><li><code>WithTimeout</code> 和 <code>WithDeadline</code> 基本上一样，这个表示是超时自动取消，是多少时间后自动取消 Context 的意思。</li><li><code>WithValue</code> 函数和取消 Context 无关，它是为了生成一个绑定了一个键值对数据的 Context，这个绑定的数据可以通过 Context.Value 方法访问到，后面我们会专门讲。</li></ul><p>大家可能留意到，前三个函数都返回一个取消函数 CancelFunc，这是一个函数类型，它的定义非常简单。</p><pre tabindex=0><code>type CancelFunc func()
-</code></pre><p>这就是取消函数的类型，该函数可以取消一个 Context，以及这个节点 Context 下所有的所有的 Context，不管有多少层级。</p><h3 id=withvalue-传递元数据>WithValue 传递元数据</h3><p>通过 Context 我们也可以传递一些必须的元数据，这些数据会附加在 Context 上以供使用。</p><pre tabindex=0><code>var key string=&#34;name&#34;
-
-func main() {
-	ctx, cancel := context.WithCancel(context.Background())
-	//附加值
-	valueCtx:=context.WithValue(ctx,key,&#34;【监控1】&#34;)
-	go watch(valueCtx)
-	time.Sleep(10 * time.Second)
-	fmt.Println(&#34;可以了，通知监控停止&#34;)
-	cancel()
-	//为了检测监控过是否停止，如果没有监控输出，就表示停止了
-	time.Sleep(5 * time.Second)
-}
-
-func watch(ctx context.Context) {
-	for {
-		select {
-		case &lt;-ctx.Done():
-			//取出值
-			fmt.Println(ctx.Value(key),&#34;监控退出，停止了...&#34;)
-			return
-		default:
-			//取出值
-			fmt.Println(ctx.Value(key),&#34;goroutine监控中...&#34;)
-			time.Sleep(2 * time.Second)
-		}
-	}
-}
-</code></pre><p>在前面的例子，我们通过传递参数的方式，把 <code>name</code> 的值传递给监控函数。在这个例子里，我们实现一样的效果，但是通过的是 Context 的 Value 的方式。</p><p>我们可以使用 <code>context.WithValue</code> 方法附加一对 K-V 的键值对，这里 Key 必须是等价性的，也就是具有可比性；Value 值要是线程安全的。</p><p>这样我们就生成了一个新的 Context，这个新的 Context 带有这个键值对，在使用的时候，可以通过 Value 方法读取 <code>ctx.Value(key)</code>。</p><p>记住，使用 WithValue 传值，一般是必须的值，不要什么值都传递。</p><h3 id=context-使用原则>Context 使用原则</h3><ul><li>不要把 Context 放在结构体中，要以参数的方式传递。</li><li>以 Context 作为参数的函数方法，应该把 Context 作为第一个参数，放在第一位。</li><li>给一个函数方法传递 Context 的时候，不要传递 nil，如果不知道传递什么，就使用 <code>context.TODO</code>。</li><li>Context 的 Value 相关方法应该传递必须的数据，不要什么数据都使用这个传递。</li><li>Context 是线程安全的，可以放心的在多个 goroutine 中传递。</li></ul><blockquote><p>个人认为是目前最好理解 context 的博文，转自：<a href=https://murphypei.github.io/blog/2021/06/go-context>拾荒志</a></p></blockquote></div><div class="post-meta meta-tags"><ul class=clearfix><li><a href=/tags/golang target=_blank>golang</a></li><li><a href=/tags/context target=_blank>context</a></li><li><a href=/tags/goroutine target=_blank>goroutine</a></li></ul></div></article><div class="post bg-white"><script src=https://utteranc.es/client.js repo=ifenng2020/ifenng2020.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script></div></div><footer id=footer><div>&copy; 2023 <a href=/>平凡之路</a>
+<a href=/categories/golang>golang</a></div><div class=post-content><p>context 是 go 中控制协程的一种比较方便的方式。</p><h3 id=select--chan>Select + Chan</h3><p>我们都知道一个 goroutine 启动后，我们是无法控制他的，大部分情况是等待它自己结束，那么如果这个 goroutine 是一个不会自己结束的后台 goroutine 呢？比如监控等，会一直运行的。</p><p>这种情况下比较笨的办法是全局变量，其他地方通过修改这个变量完成结束通知，然后后台 goroutine 不停的检查这个变量，如果发现被通知关闭了，就自我结束。</p><p>这种方式首先我们要保证这个变量在多线程下的安全，基于此，有一种经典的处理方式：<code>chan</code> + <code>select</code> 。</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#000;font-weight:700>func</span> <span style=color:#900;font-weight:700>main</span>() {
+</span></span><span style=display:flex><span>	stop <span style=color:#000;font-weight:700>:=</span> <span style=color:#0086b3>make</span>(<span style=color:#000;font-weight:700>chan</span> <span style=color:#458;font-weight:700>bool</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>go</span> <span style=color:#000;font-weight:700>func</span>() {
+</span></span><span style=display:flex><span>		<span style=color:#000;font-weight:700>for</span> {
+</span></span><span style=display:flex><span>			<span style=color:#000;font-weight:700>select</span> {
+</span></span><span style=display:flex><span>			<span style=color:#000;font-weight:700>case</span> <span style=color:#000;font-weight:700>&lt;-</span>stop:    <span style=color:#998;font-style:italic>// 收到了停滞信号
+</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span>				fmt.<span style=color:#900;font-weight:700>Println</span>(<span style=color:#d14>&#34;监控退出，停止了...&#34;</span>)
+</span></span><span style=display:flex><span>				<span style=color:#000;font-weight:700>return</span>
+</span></span><span style=display:flex><span>			<span style=color:#000;font-weight:700>default</span>:
+</span></span><span style=display:flex><span>				fmt.<span style=color:#900;font-weight:700>Println</span>(<span style=color:#d14>&#34;goroutine监控中...&#34;</span>)
+</span></span><span style=display:flex><span>				time.<span style=color:#900;font-weight:700>Sleep</span>(<span style=color:#099>2</span> <span style=color:#000;font-weight:700>*</span> time.Second)
+</span></span><span style=display:flex><span>			}
+</span></span><span style=display:flex><span>		}
+</span></span><span style=display:flex><span>	}()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	time.<span style=color:#900;font-weight:700>Sleep</span>(<span style=color:#099>10</span> <span style=color:#000;font-weight:700>*</span> time.Second)
+</span></span><span style=display:flex><span>	fmt.<span style=color:#900;font-weight:700>Println</span>(<span style=color:#d14>&#34;可以了，通知监控停止&#34;</span>)
+</span></span><span style=display:flex><span>	stop<span style=color:#000;font-weight:700>&lt;-</span> <span style=color:#000;font-weight:700>true</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#998;font-style:italic>//为了检测监控过是否停止，如果没有监控输出，就表示停止了
+</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span>	time.<span style=color:#900;font-weight:700>Sleep</span>(<span style=color:#099>5</span> <span style=color:#000;font-weight:700>*</span> time.Second)
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></td></tr></table></div></div><blockquote><p>这里还有一个额外的知识，go 中通道的接收是有阻塞和非阻塞的（发送只有阻塞），这里 select 中的 case 语句接收通道数据其实是非阻塞的。非阻塞接收通道数据的 CPU 消耗较高，但是可以获取是否通道中有数据的状态。但是当 case 上读一个通道时，如果这个通道是 nil，则该 case 永远阻塞</p></blockquote><p>例子中我们定义一个 stop 的 chan，通知他结束后台 goroutine。实现也非常简单，在后台 goroutine 中，使用 select 判断 stop 是否可以接收到值，如果可以接收到，就表示可以退出停止了；</p><p>如果没有接收到，就会执行 default 里的监控逻辑，继续监控，只到收到 stop 的通知。</p><p>有了以上的逻辑，我们就可以在其他 goroutine 中，给 stop chan 发送值了，例子中是在 main goroutine 中发送的，控制让这个监控的 goroutine 结束。</p><p>发送了 <code>stop&lt;-true</code> 结束的指令后，我这里使用 <code>time.Sleep(5 * time.Second)</code> 故意停顿 5 秒来检测我们结束监控 goroutine 是否成功。如果成功的话，不会再有 <code>goroutine监控中...</code> 的输出了；</p><p>如果没有成功，监控 goroutine 就会继续打印 <code>goroutine监控中...</code> 输出。</p><p>这种 chan+select 的方式，是比较优雅的结束一个 goroutine 的方式，不过这种方式也有局限性，如果有很多 goroutine 都需要控制结束怎么办呢？如果这些 goroutine 又衍生了其他更多的 goroutine 怎么办呢？</p><p>如果一层层的无穷尽的 goroutine 呢？这就非常复杂了，即使我们定义很多 chan 也很难解决这个问题，因为 goroutine 的关系链就导致了这种场景非常复杂。</p><h3 id=context>Context</h3><p>上面说的这种场景是存在的，比如一个网络请求 Request，每个 Request 都需要开启一个 goroutine 做一些事情，这些 goroutine 又可能会开启其他的 goroutine。</p><p>所以我们需要一种可以跟踪 goroutine 的方案，才可以达到控制他们的目的，这就是 Go 语言为我们提供的 Context，称之为上下文非常贴切，它就是 goroutine 的上下文。</p><p>下面我们就使用 Go Context 重写上面的示例。</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#000;font-weight:700>func</span> <span style=color:#900;font-weight:700>main</span>() {
+</span></span><span style=display:flex><span>	ctx, cancel <span style=color:#000;font-weight:700>:=</span> context.<span style=color:#900;font-weight:700>WithCancel</span>(context.<span style=color:#900;font-weight:700>Background</span>())
+</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>go</span> <span style=color:#000;font-weight:700>func</span>(ctx context.Context) {
+</span></span><span style=display:flex><span>		<span style=color:#000;font-weight:700>for</span> {
+</span></span><span style=display:flex><span>			<span style=color:#000;font-weight:700>select</span> {
+</span></span><span style=display:flex><span>			<span style=color:#000;font-weight:700>case</span> <span style=color:#000;font-weight:700>&lt;-</span>ctx.<span style=color:#900;font-weight:700>Done</span>():
+</span></span><span style=display:flex><span>				fmt.<span style=color:#900;font-weight:700>Println</span>(<span style=color:#d14>&#34;监控退出，停止了...&#34;</span>)
+</span></span><span style=display:flex><span>				<span style=color:#000;font-weight:700>return</span>
+</span></span><span style=display:flex><span>			<span style=color:#000;font-weight:700>default</span>:
+</span></span><span style=display:flex><span>				fmt.<span style=color:#900;font-weight:700>Println</span>(<span style=color:#d14>&#34;goroutine监控中...&#34;</span>)
+</span></span><span style=display:flex><span>				time.<span style=color:#900;font-weight:700>Sleep</span>(<span style=color:#099>2</span> <span style=color:#000;font-weight:700>*</span> time.Second)
+</span></span><span style=display:flex><span>			}
+</span></span><span style=display:flex><span>		}
+</span></span><span style=display:flex><span>	}(ctx)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	time.<span style=color:#900;font-weight:700>Sleep</span>(<span style=color:#099>10</span> <span style=color:#000;font-weight:700>*</span> time.Second)
+</span></span><span style=display:flex><span>	fmt.<span style=color:#900;font-weight:700>Println</span>(<span style=color:#d14>&#34;可以了，通知监控停止&#34;</span>)
+</span></span><span style=display:flex><span>	<span style=color:#900;font-weight:700>cancel</span>()
+</span></span><span style=display:flex><span>	<span style=color:#998;font-style:italic>//为了检测监控过是否停止，如果没有监控输出，就表示停止了
+</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span>	time.<span style=color:#900;font-weight:700>Sleep</span>(<span style=color:#099>5</span> <span style=color:#000;font-weight:700>*</span> time.Second)
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></td></tr></table></div></div><p>重写也很简单，把之前使用 select+chan 控制的协程改为 Context 控制即可：</p><p><code>context.Background()</code> 返回一个空的 Context，这个空的 Context 一般用于整个 Context 树的根节点。</p><p>然后我们使用 <code>context.WithCancel(parent)</code> 函数，创建一个可取消的子 Context，然后当作参数传给 goroutine 使用，这样就可以使用这个子 Context 跟踪这个 goroutine。</p><p>在 goroutine 中，使用 select 调用 <code>&lt;-ctx.Done()</code> 判断是否要结束，如果接受到值的话，就可以返回结束 goroutine 了；如果接收不到，就会继续进行监控。</p><p>那么 Context 是如何发送结束指令的呢？这就是示例中的 <code>cancel</code> 函数啦，它是我们调用 <code>context.WithCancel(parent)</code> 函数生成子 Context 的时候返回的，</p><p>第二个返回值就是这个取消函数，它是 <code>CancelFunc</code> 类型的。我们调用它就可以发出取消指令，然后我们的监控 goroutine 就会收到信号，就会返回结束。</p><h3 id=context-控制多个-goroutine>Context 控制多个 goroutine</h3><p>使用 Context 控制一个 goroutine 的例子如上，非常简单，下面我们看看控制多个 goroutine 的例子，其实也比较简单。</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#000;font-weight:700>func</span> <span style=color:#900;font-weight:700>main</span>() {
+</span></span><span style=display:flex><span>	ctx, cancel <span style=color:#000;font-weight:700>:=</span> context.<span style=color:#900;font-weight:700>WithCancel</span>(context.<span style=color:#900;font-weight:700>Background</span>())
+</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>go</span> <span style=color:#900;font-weight:700>watch</span>(ctx,<span style=color:#d14>&#34;【监控1】&#34;</span>)
+</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>go</span> <span style=color:#900;font-weight:700>watch</span>(ctx,<span style=color:#d14>&#34;【监控2】&#34;</span>)
+</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>go</span> <span style=color:#900;font-weight:700>watch</span>(ctx,<span style=color:#d14>&#34;【监控3】&#34;</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	time.<span style=color:#900;font-weight:700>Sleep</span>(<span style=color:#099>10</span> <span style=color:#000;font-weight:700>*</span> time.Second)
+</span></span><span style=display:flex><span>	fmt.<span style=color:#900;font-weight:700>Println</span>(<span style=color:#d14>&#34;可以了，通知监控停止&#34;</span>)
+</span></span><span style=display:flex><span>	<span style=color:#900;font-weight:700>cancel</span>()
+</span></span><span style=display:flex><span>	<span style=color:#998;font-style:italic>//为了检测监控过是否停止，如果没有监控输出，就表示停止了
+</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span>	time.<span style=color:#900;font-weight:700>Sleep</span>(<span style=color:#099>5</span> <span style=color:#000;font-weight:700>*</span> time.Second)
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>func</span> <span style=color:#900;font-weight:700>watch</span>(ctx context.Context, name <span style=color:#458;font-weight:700>string</span>) {
+</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>for</span> {
+</span></span><span style=display:flex><span>		<span style=color:#000;font-weight:700>select</span> {
+</span></span><span style=display:flex><span>		<span style=color:#000;font-weight:700>case</span> <span style=color:#000;font-weight:700>&lt;-</span>ctx.<span style=color:#900;font-weight:700>Done</span>():
+</span></span><span style=display:flex><span>			fmt.<span style=color:#900;font-weight:700>Println</span>(name,<span style=color:#d14>&#34;监控退出，停止了...&#34;</span>)
+</span></span><span style=display:flex><span>			<span style=color:#000;font-weight:700>return</span>
+</span></span><span style=display:flex><span>		<span style=color:#000;font-weight:700>default</span>:
+</span></span><span style=display:flex><span>			fmt.<span style=color:#900;font-weight:700>Println</span>(name,<span style=color:#d14>&#34;goroutine监控中...&#34;</span>)
+</span></span><span style=display:flex><span>			time.<span style=color:#900;font-weight:700>Sleep</span>(<span style=color:#099>2</span> <span style=color:#000;font-weight:700>*</span> time.Second)
+</span></span><span style=display:flex><span>		}
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></td></tr></table></div></div><p>示例中启动了 3 个监控 goroutine 进行不断的监控，每一个都使用了 Context 进行跟踪，<strong>当我们使用 cancel 函数通知取消时，这 3 个 goroutine 都会被结束</strong>。</p><p>这就是 Context 的控制能力，它就像一个控制器一样，按下开关后，<strong>所有基于这个 Context 或者衍生的子 Context 都会收到通知</strong>，这时就可以进行清理操作了，最终释放 goroutine，这就优雅的解决了 goroutine 启动后不可控的问题。</p><h3 id=context-接口>Context 接口</h3><p>Context 的接口定义的比较简洁，我们看下这个接口的方法。</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">9
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#000;font-weight:700>type</span> Context <span style=color:#000;font-weight:700>interface</span> {
+</span></span><span style=display:flex><span>	<span style=color:#900;font-weight:700>Deadline</span>() (deadline time.Time, ok <span style=color:#458;font-weight:700>bool</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#900;font-weight:700>Done</span>() <span style=color:#000;font-weight:700>&lt;-</span><span style=color:#000;font-weight:700>chan</span> <span style=color:#000;font-weight:700>struct</span>{}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#900;font-weight:700>Err</span>() <span style=color:#458;font-weight:700>error</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#900;font-weight:700>Value</span>(key <span style=color:#000;font-weight:700>interface</span>{}) <span style=color:#000;font-weight:700>interface</span>{}
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></td></tr></table></div></div><p>这个接口共有 4 个方法，了解这些方法的意思非常重要，这样我们才可以更好的使用他们。</p><p><code>Deadline</code> 方法是获取设置的截止时间的意思，第一个返回式是截止时间，到了这个时间点，Context 会自动发起取消请求；第二个返回值 <code>ok</code> 表示是否设置截止时间，如果没有设置时间，当需要取消的时候，需要调用取消函数进行取消。</p><p><code>Done</code> 方法返回一个只读的 chan，类型为 struct{}，我们在 goroutine 中，如果该方法返回的 chan 可以读取，则意味着 parent context 已经发起了取消请求，我们通过 Done 方法收到这个信号后，就应该做清理操作，然后退出 goroutine，释放资源。</p><p><code>Err</code> 方法返回取消的错误原因，因为什么 Context 被取消。</p><p><code>Value</code> 方法获取该 Context 上绑定的值，是一个键值对，所以要通过一个 Key 才可以获取对应的值，这个值一般是线程安全的。</p><p>以上四个方法中常用的就是 <code>Done</code> 了，如果 Context 取消的时候，我们就可以得到一个关闭的 chan，关闭的 chan 是可以读取的，所以<strong>只要 <code>ctx.Done()</code> 可以读取的时候，就意味着收到 Context 取消的信号了</strong>，以下是这个方法的经典用法。</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#000;font-weight:700>func</span> <span style=color:#900;font-weight:700>Stream</span>(ctx context.Context, out <span style=color:#000;font-weight:700>chan</span><span style=color:#000;font-weight:700>&lt;-</span> Value) <span style=color:#458;font-weight:700>error</span> {
+</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>for</span> {
+</span></span><span style=display:flex><span>		v, err <span style=color:#000;font-weight:700>:=</span> <span style=color:#900;font-weight:700>DoSomething</span>(ctx)
+</span></span><span style=display:flex><span>		<span style=color:#000;font-weight:700>if</span> err <span style=color:#000;font-weight:700>!=</span> <span style=color:#000;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>			<span style=color:#000;font-weight:700>return</span> err
+</span></span><span style=display:flex><span>		}
+</span></span><span style=display:flex><span>		<span style=color:#000;font-weight:700>select</span> {
+</span></span><span style=display:flex><span>		<span style=color:#000;font-weight:700>case</span> <span style=color:#000;font-weight:700>&lt;-</span>ctx.<span style=color:#900;font-weight:700>Done</span>():
+</span></span><span style=display:flex><span>			<span style=color:#000;font-weight:700>return</span> ctx.<span style=color:#900;font-weight:700>Err</span>()
+</span></span><span style=display:flex><span>		<span style=color:#000;font-weight:700>case</span> out <span style=color:#000;font-weight:700>&lt;-</span> v:
+</span></span><span style=display:flex><span>		}
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></td></tr></table></div></div><p>Context 接口并不需要我们实现，Go 内置已经帮我们实现了 2 个，我们代码中最开始都是以这两个内置的作为最顶层的 partent context，衍生出更多的子 Context。</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#000;font-weight:700>var</span> (
+</span></span><span style=display:flex><span>	background = <span style=color:#0086b3>new</span>(emptyCtx)
+</span></span><span style=display:flex><span>	todo       = <span style=color:#0086b3>new</span>(emptyCtx)
+</span></span><span style=display:flex><span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>func</span> <span style=color:#900;font-weight:700>Background</span>() Context {
+</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>return</span> background
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>func</span> <span style=color:#900;font-weight:700>TODO</span>() Context {
+</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>return</span> todo
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></td></tr></table></div></div><p>一个是 <code>Background</code>，主要用于 main 函数、初始化以及测试代码中，作为 Context 这个树结构的最顶层的 Context，也就是根 Context。</p><p>一个是 <code>TODO</code>，它目前还不知道具体的使用场景，如果我们不知道该使用什么 Context 的时候，可以使用这个。</p><p>他们两个本质上都是 emptyCtx 结构体类型，是一个不可取消，没有设置截止时间，没有携带任何值的 Context。</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#000;font-weight:700>type</span> emptyCtx <span style=color:#458;font-weight:700>int</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>func</span> (<span style=color:#000;font-weight:700>*</span>emptyCtx) <span style=color:#900;font-weight:700>Deadline</span>() (deadline time.Time, ok <span style=color:#458;font-weight:700>bool</span>) {
+</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>return</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>func</span> (<span style=color:#000;font-weight:700>*</span>emptyCtx) <span style=color:#900;font-weight:700>Done</span>() <span style=color:#000;font-weight:700>&lt;-</span><span style=color:#000;font-weight:700>chan</span> <span style=color:#000;font-weight:700>struct</span>{} {
+</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>return</span> <span style=color:#000;font-weight:700>nil</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>func</span> (<span style=color:#000;font-weight:700>*</span>emptyCtx) <span style=color:#900;font-weight:700>Err</span>() <span style=color:#458;font-weight:700>error</span> {
+</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>return</span> <span style=color:#000;font-weight:700>nil</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>func</span> (<span style=color:#000;font-weight:700>*</span>emptyCtx) <span style=color:#900;font-weight:700>Value</span>(key <span style=color:#000;font-weight:700>interface</span>{}) <span style=color:#000;font-weight:700>interface</span>{} {
+</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>return</span> <span style=color:#000;font-weight:700>nil</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></td></tr></table></div></div><h3 id=context-的继承衍生>Context 的继承衍生</h3><p>有了如上的根 Context，那么是如何衍生更多的子 Context 的呢？这就要靠 context 包为我们提供的 With 系列的函数了。</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#000;font-weight:700>func</span> <span style=color:#900;font-weight:700>WithCancel</span>(parent Context) (ctx Context, cancel CancelFunc)
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>func</span> <span style=color:#900;font-weight:700>WithDeadline</span>(parent Context, deadline time.Time) (Context, CancelFunc)
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>func</span> <span style=color:#900;font-weight:700>WithTimeout</span>(parent Context, timeout time.Duration) (Context, CancelFunc)
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>func</span> <span style=color:#900;font-weight:700>WithValue</span>(parent Context, key, val <span style=color:#000;font-weight:700>interface</span>{}) Context
+</span></span></code></pre></td></tr></table></div></div><p>这四个 With 函数，接收的都有一个 <code>partent</code> 参数，就是父 Context，我们要基于这个父 Context 创建出子 Context 的意思，这种方式可以理解为子 Context 对父 Context 的继承，也可以理解为基于父 Context 的衍生。</p><p>通过这些函数，就创建了一颗 Context 树，树的每个节点都可以有任意多个子节点，节点层级可以有任意多个。每个父节点可以控制自己所有的子节点。</p><ul><li><code>WithCancel</code> 函数，传递一个父 Context 作为参数，返回子 Context，以及一个取消函数用来取消 Context。</li><li><code>WithDeadline</code> 函数，和 <code>WithCancel</code> 差不多，它会多传递一个截止时间参数，意味着到了这个时间点，会自动取消 Context，当然我们也可以不等到这个时候，可以提前通过取消函数进行取消。</li><li><code>WithTimeout</code> 和 <code>WithDeadline</code> 基本上一样，这个表示是超时自动取消，是多少时间后自动取消 Context 的意思。</li><li><code>WithValue</code> 函数和取消 Context 无关，它是为了生成一个绑定了一个键值对数据的 Context，这个绑定的数据可以通过 Context.Value 方法访问到，后面我们会专门讲。</li></ul><p>大家可能留意到，前三个函数都返回一个取消函数 CancelFunc，这是一个函数类型，它的定义非常简单。</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#000;font-weight:700>type</span> CancelFunc <span style=color:#000;font-weight:700>func</span>()
+</span></span></code></pre></td></tr></table></div></div><p>这就是取消函数的类型，该函数可以取消一个 Context，以及这个节点 Context 下所有的所有的 Context，不管有多少层级。</p><h3 id=withvalue-传递元数据>WithValue 传递元数据</h3><p>通过 Context 我们也可以传递一些必须的元数据，这些数据会附加在 Context 上以供使用。</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">26
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">27
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">28
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#000;font-weight:700>var</span> key <span style=color:#458;font-weight:700>string</span>=<span style=color:#d14>&#34;name&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>func</span> <span style=color:#900;font-weight:700>main</span>() {
+</span></span><span style=display:flex><span>	ctx, cancel <span style=color:#000;font-weight:700>:=</span> context.<span style=color:#900;font-weight:700>WithCancel</span>(context.<span style=color:#900;font-weight:700>Background</span>())
+</span></span><span style=display:flex><span>	<span style=color:#998;font-style:italic>//附加值
+</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span>	valueCtx<span style=color:#000;font-weight:700>:=</span>context.<span style=color:#900;font-weight:700>WithValue</span>(ctx,key,<span style=color:#d14>&#34;【监控1】&#34;</span>)
+</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>go</span> <span style=color:#900;font-weight:700>watch</span>(valueCtx)
+</span></span><span style=display:flex><span>	time.<span style=color:#900;font-weight:700>Sleep</span>(<span style=color:#099>10</span> <span style=color:#000;font-weight:700>*</span> time.Second)
+</span></span><span style=display:flex><span>	fmt.<span style=color:#900;font-weight:700>Println</span>(<span style=color:#d14>&#34;可以了，通知监控停止&#34;</span>)
+</span></span><span style=display:flex><span>	<span style=color:#900;font-weight:700>cancel</span>()
+</span></span><span style=display:flex><span>	<span style=color:#998;font-style:italic>//为了检测监控过是否停止，如果没有监控输出，就表示停止了
+</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span>	time.<span style=color:#900;font-weight:700>Sleep</span>(<span style=color:#099>5</span> <span style=color:#000;font-weight:700>*</span> time.Second)
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>func</span> <span style=color:#900;font-weight:700>watch</span>(ctx context.Context) {
+</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>for</span> {
+</span></span><span style=display:flex><span>		<span style=color:#000;font-weight:700>select</span> {
+</span></span><span style=display:flex><span>		<span style=color:#000;font-weight:700>case</span> <span style=color:#000;font-weight:700>&lt;-</span>ctx.<span style=color:#900;font-weight:700>Done</span>():
+</span></span><span style=display:flex><span>			<span style=color:#998;font-style:italic>//取出值
+</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span>			fmt.<span style=color:#900;font-weight:700>Println</span>(ctx.<span style=color:#900;font-weight:700>Value</span>(key),<span style=color:#d14>&#34;监控退出，停止了...&#34;</span>)
+</span></span><span style=display:flex><span>			<span style=color:#000;font-weight:700>return</span>
+</span></span><span style=display:flex><span>		<span style=color:#000;font-weight:700>default</span>:
+</span></span><span style=display:flex><span>			<span style=color:#998;font-style:italic>//取出值
+</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span>			fmt.<span style=color:#900;font-weight:700>Println</span>(ctx.<span style=color:#900;font-weight:700>Value</span>(key),<span style=color:#d14>&#34;goroutine监控中...&#34;</span>)
+</span></span><span style=display:flex><span>			time.<span style=color:#900;font-weight:700>Sleep</span>(<span style=color:#099>2</span> <span style=color:#000;font-weight:700>*</span> time.Second)
+</span></span><span style=display:flex><span>		}
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></td></tr></table></div></div><p>在前面的例子，我们通过传递参数的方式，把 <code>name</code> 的值传递给监控函数。在这个例子里，我们实现一样的效果，但是通过的是 Context 的 Value 的方式。</p><p>我们可以使用 <code>context.WithValue</code> 方法附加一对 K-V 的键值对，这里 Key 必须是等价性的，也就是具有可比性；Value 值要是线程安全的。</p><p>这样我们就生成了一个新的 Context，这个新的 Context 带有这个键值对，在使用的时候，可以通过 Value 方法读取 <code>ctx.Value(key)</code>。</p><p>记住，使用 WithValue 传值，一般是必须的值，不要什么值都传递。</p><h3 id=context-使用原则>Context 使用原则</h3><ul><li>不要把 Context 放在结构体中，要以参数的方式传递。</li><li>以 Context 作为参数的函数方法，应该把 Context 作为第一个参数，放在第一位。</li><li>给一个函数方法传递 Context 的时候，不要传递 nil，如果不知道传递什么，就使用 <code>context.TODO</code>。</li><li>Context 的 Value 相关方法应该传递必须的数据，不要什么数据都使用这个传递。</li><li>Context 是线程安全的，可以放心的在多个 goroutine 中传递。</li></ul><blockquote><p>个人认为是目前最好理解 context 的博文，
+转自：<a href=https://murphypei.github.io/blog/2021/06/go-context>拾荒志</a></p></blockquote></div><div class="post-meta meta-tags"><ul class=clearfix><li><a href=/tags/golang target=_blank>golang</a></li><li><a href=/tags/context target=_blank>context</a></li><li><a href=/tags/goroutine target=_blank>goroutine</a></li></ul></div></article><div class="post bg-white"><script src=https://utteranc.es/client.js repo=ifenng2020/ifenng2020.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script></div></div><footer id=footer><div>&copy; 2023 <a href=/>平凡之路</a>
 | <a rel=nofollow target=_blank href=http://beian.miit.gov.cn/>冀ICP备2023015737号-1</a></div></footer><script type=text/javascript>window.MathJax={tex2jax:{inlineMath:[["$","$"]],processEscapes:!0}}</script><script src='//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
 <a id=rocket href=#top></a>
 <script type=text/javascript src='/js/totop.js?v=0.0.0' async></script><style type=text/css>div.highlight{position:relative;margin:1em 0}.copy-code{display:none;position:absolute;top:4px;right:4px;color:rgba(255,255,255,.8);background:rgba(78,78,78,.8);border-radius:var(--radius);padding:0 5px;font:inherit;user-select:none;cursor:pointer;border:0;--radius:8px}div.highlight:hover .copy-code,pre:hover .copy-code{display:block}</style><script>document.querySelectorAll("pre > code").forEach(e=>{const n=e.parentNode.parentNode,t=document.createElement("button");t.classList.add("copy-code"),t.innerHTML="copy";function s(){t.innerHTML="copied!",setTimeout(()=>{t.innerHTML="copy"},2e3)}t.addEventListener("click",t=>{if("clipboard"in navigator){navigator.clipboard.writeText(e.textContent),s();return}const n=document.createRange();n.selectNodeContents(e);const o=window.getSelection();o.removeAllRanges(),o.addRange(n);try{document.execCommand("copy"),s()}catch{}o.removeRange(n)}),n.classList.contains("highlight")?n.appendChild(t):n.parentNode.firstChild==n||(e.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?e.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(t):e.parentNode.appendChild(t))})</script></div><div id=secondary><section class=widget><form id=search action=/search method=get accept-charset=utf-8 target=_blank _lpchecked=1><input type=text name=q maxlength=20 placeholder=Search>
 <input type=hidden name=sitesearch value=/>
-<button type=submit class="submit icon-search"></button></form></section><section class=widget><h3 class=widget-title>最近文章</h3><ul class=widget-list><li><a href=/posts/hugo-favicon/ title="Hugo Maupassant添加favicon.ico" target=_blank>Hugo Maupassant添加favicon.ico</a></li><li><a href=/posts/php-fastroute/ title=php使用fastroute路由 target=_blank>php使用fastroute路由</a></li><li><a href=/posts/composer-php-framework/ title=使用composer创建PHP框架 target=_blank>使用composer创建PHP框架</a></li><li><a href=/posts/go-test-cover/ title="Go Test代码覆盖率" target=_blank>Go Test代码覆盖率</a></li><li><a href=/posts/algorithms-binary-search/ title=二分查找 target=_blank>二分查找</a></li><li><a href=/posts/vim-makefile/ title="Vim Makefile无法输入tab问题" target=_blank>Vim Makefile无法输入tab问题</a></li><li><a href=/posts/docker-file/ title="DockerFile CMD与ENTRYPOINT的区别" target=_blank>DockerFile CMD与ENTRYPOINT的区别</a></li><li><a href=/posts/php-laravel-qt/ title="Php Laravel Controller Not Found" target=_blank>Php Laravel Controller Not Found</a></li><li><a href=/posts/golang-context/ title="Golang Context的使用方式" target=_blank>Golang Context的使用方式</a></li><li><a href=/posts/redis-interviews/ title=50道Redis面试题 target=_blank>50道Redis面试题</a></li></ul></section><section class=widget><h3 class=widget-title><a href=/categories/>分类</a></h3><ul class=widget-list><li><a href=/categories/algorithm/>algorithm (1)</a></li><li><a href=/categories/docker/>docker (1)</a></li><li><a href=/categories/gitlab/>gitlab (1)</a></li><li><a href=/categories/golang/>golang (4)</a></li><li><a href=/categories/javascript/>javascript (1)</a></li><li><a href=/categories/leetcode/>leetcode (1)</a></li><li><a href=/categories/linux/>linux (1)</a></li><li><a href=/categories/lua/>lua (1)</a></li><li><a href=/categories/php/>php (3)</a></li><li><a href=/categories/reading/>reading (3)</a></li><li><a href=/categories/redis/>redis (3)</a></li><li><a href=/categories/tools/>tools (6)</a></li><li><a href=/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/>中间件 (2)</a></li><li><a href=/categories/%E4%BA%91%E5%8E%9F%E7%94%9F/>云原生 (1)</a></li><li><a href=/categories/%E5%B0%8F%E5%AD%A6%E6%95%B0%E5%AD%A6/>小学数学 (1)</a></li><li><a href=/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/>计算机网络 (1)</a></li><li><a href=/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>设计模式 (8)</a></li><li><a href=/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/>软件开发 (1)</a></li></ul></section><section class=widget><h3 class=widget-title><a href=/tags/>标签</a></h3><div class=tagcloud><a href=/tags/TCP/>TCP</a>
+<button type=submit class="submit icon-search"></button></form></section><section class=widget><h3 class=widget-title>最近文章</h3><ul class=widget-list><li><a href=/posts/hugo-favicon/ title="Hugo Maupassant添加favicon.ico" target=_blank>Hugo Maupassant添加favicon.ico</a></li><li><a href=/posts/php-fastroute/ title=php使用fastroute路由 target=_blank>php使用fastroute路由</a></li><li><a href=/posts/composer-php-framework/ title=使用composer创建PHP框架 target=_blank>使用composer创建PHP框架</a></li><li><a href=/posts/go-test-cover/ title="Go Test代码覆盖率" target=_blank>Go Test代码覆盖率</a></li><li><a href=/posts/algorithms-binary-search/ title=二分查找 target=_blank>二分查找</a></li><li><a href=/posts/vim-makefile/ title="Vim Makefile无法输入tab问题" target=_blank>Vim Makefile无法输入tab问题</a></li><li><a href=/posts/docker-file/ title="DockerFile CMD与ENTRYPOINT的区别" target=_blank>DockerFile CMD与ENTRYPOINT的区别</a></li><li><a href=/posts/php-laravel-qt/ title="Php Laravel Controller Not Found" target=_blank>Php Laravel Controller Not Found</a></li><li><a href=/posts/golang-context/ title="Golang Context的使用方式" target=_blank>Golang Context的使用方式</a></li><li><a href=/posts/redis-interviews/ title=50道Redis面试题 target=_blank>50道Redis面试题</a></li></ul></section><section class=widget><h3 class=widget-title><a href=/categories/>分类</a></h3><ul class=widget-list><li><a href=/categories/algorithm/>algorithm (1)</a></li><li><a href=/categories/docker/>docker (1)</a></li><li><a href=/categories/gitlab/>gitlab (1)</a></li><li><a href=/categories/golang/>golang (4)</a></li><li><a href=/categories/javascript/>javascript (1)</a></li><li><a href=/categories/leetcode/>leetcode (1)</a></li><li><a href=/categories/linux/>linux (1)</a></li><li><a href=/categories/lua/>lua (1)</a></li><li><a href=/categories/php/>php (3)</a></li><li><a href=/categories/reading/>reading (3)</a></li><li><a href=/categories/redis/>redis (4)</a></li><li><a href=/categories/tools/>tools (6)</a></li><li><a href=/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/>中间件 (2)</a></li><li><a href=/categories/%E4%BA%91%E5%8E%9F%E7%94%9F/>云原生 (1)</a></li><li><a href=/categories/%E5%B0%8F%E5%AD%A6%E6%95%B0%E5%AD%A6/>小学数学 (1)</a></li><li><a href=/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/>计算机网络 (1)</a></li><li><a href=/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>设计模式 (8)</a></li><li><a href=/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/>软件开发 (1)</a></li></ul></section><section class=widget><h3 class=widget-title><a href=/tags/>标签</a></h3><div class=tagcloud><a href=/tags/TCP/>TCP</a>
 <a href=/tags/algorithm/>algorithm</a>
 <a href=/tags/basic/>basic</a>
 <a href=/tags/brew/>brew</a>
