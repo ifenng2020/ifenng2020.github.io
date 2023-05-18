@@ -3,119 +3,59 @@
 <a href=/tools/ title=工具箱>工具箱</a>
 <a href=/archives/ title=归档>归档</a>
 <a href=/about/ title=关于>关于</a></nav></div></div></div></header><div id=body><div class=container><div class=col-group><div class=col-8 id=main><div class=res-cons><article class=post><header><h1 class=post-title>kind使用功能</h1></header><time datetime=2022-12-13T08:21:04Z class="post-meta meta-date dt-published">2022年12月13日</time><div class="post-meta meta-category"><span>&nbsp;|</span>
-<a href=/categories/%E4%BA%91%E5%8E%9F%E7%94%9F>云原生</a></div><div class=post-content><h3 id=安装请自行搜索>安装请自行搜索</h3><h3 id=创建集群>创建集群：</h3><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">7
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">8
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#998;font-style:italic>#创建默认集群kind</span>
+<a href=/categories/%E4%BA%91%E5%8E%9F%E7%94%9F>云原生</a></div><div class=post-content><h3 id=安装请自行搜索>安装请自行搜索</h3><h3 id=创建集群>创建集群：</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#6272a4>#创建默认集群kind</span>
 </span></span><span style=display:flex><span>$ kind create cluster
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 根据镜像创建：</span>
+</span></span><span style=display:flex><span><span style=color:#6272a4># 根据镜像创建：</span>
 </span></span><span style=display:flex><span>$ kind create cluster --image kindest/node:latest
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 根据配置文件创建</span>
+</span></span><span style=display:flex><span><span style=color:#6272a4># 根据配置文件创建</span>
 </span></span><span style=display:flex><span>$ kind create cluster --config kind-my-cluster.yaml
-</span></span></code></pre></td></tr></table></div></div><p>文件<code>kind-my-cluster.yaml</code>内容如下</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">7
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yml data-lang=yml><span style=display:flex><span><span style=color:navy>kind</span>:<span style=color:#bbb> </span>Cluster<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>apiVersion</span>:<span style=color:#bbb> </span>kind.x-k8s.io/v1alpha4<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>name</span>:<span style=color:#bbb> </span>my-cluster<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>nodes</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span>- <span style=color:navy>role</span>:<span style=color:#bbb> </span>control-plane<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span>- <span style=color:navy>role</span>:<span style=color:#bbb> </span>worker<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span>- <span style=color:navy>role</span>:<span style=color:#bbb> </span>worker<span style=color:#bbb>
-</span></span></span></code></pre></td></tr></table></div></div><h3 id=查看集群>查看集群</h3><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ kind get clusters
+</span></span></code></pre></div><p>文件<code>kind-my-cluster.yaml</code>内容如下</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yml data-lang=yml><span style=display:flex><span><span style=color:#ff79c6>kind</span>: Cluster
+</span></span><span style=display:flex><span><span style=color:#ff79c6>apiVersion</span>: kind.x-k8s.io/v1alpha4
+</span></span><span style=display:flex><span><span style=color:#ff79c6>name</span>: my-cluster
+</span></span><span style=display:flex><span><span style=color:#ff79c6>nodes</span>:
+</span></span><span style=display:flex><span>  - <span style=color:#ff79c6>role</span>: control-plane
+</span></span><span style=display:flex><span>  - <span style=color:#ff79c6>role</span>: worker
+</span></span><span style=display:flex><span>  - <span style=color:#ff79c6>role</span>: worker
+</span></span></code></pre></div><h3 id=查看集群>查看集群</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ kind get clusters
 </span></span><span style=display:flex><span>my-cluster
-</span></span></code></pre></td></tr></table></div></div><h3 id=获取-cluster-节点>获取 Cluster 节点</h3><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>kind get nodes --name my-cluster
-</span></span></code></pre></td></tr></table></div></div><h3 id=删除-cluster>删除 Cluster</h3><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">7
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">8
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#998;font-style:italic># 删除默认cluster kind</span>
+</span></span></code></pre></div><h3 id=获取-cluster-节点>获取 Cluster 节点</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>kind get nodes --name my-cluster
+</span></span></code></pre></div><h3 id=删除-cluster>删除 Cluster</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#6272a4># 删除默认cluster kind</span>
 </span></span><span style=display:flex><span>$ kind delete cluster
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 根据名字删除集群</span>
+</span></span><span style=display:flex><span><span style=color:#6272a4># 根据名字删除集群</span>
 </span></span><span style=display:flex><span>$ kind delete cluster --name my-cluster
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 删除所有的集群</span>
+</span></span><span style=display:flex><span><span style=color:#6272a4># 删除所有的集群</span>
 </span></span><span style=display:flex><span>kind delete clusters --all
-</span></span></code></pre></td></tr></table></div></div><h5 id=kubectl-上下文>kubectl 上下文</h5><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">7
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">8
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#998;font-style:italic>#设置上下文(两条命令作用相同)</span>
+</span></span></code></pre></div><h5 id=kubectl-上下文>kubectl 上下文</h5><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#6272a4>#设置上下文(两条命令作用相同)</span>
 </span></span><span style=display:flex><span>$ kubectl cluster-info --context kind-my-cluster
 </span></span><span style=display:flex><span>$ kubectl config set-context clusterName
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>#查看上下文</span>
+</span></span><span style=display:flex><span><span style=color:#6272a4>#查看上下文</span>
 </span></span><span style=display:flex><span>$ kubectl config get-contexts
 </span></span><span style=display:flex><span>CURRENT   NAME              CLUSTER           AUTHINFO          NAMESPACE
 </span></span><span style=display:flex><span>* kind-my-cluster   kind-my-cluster   kind-my-cluster
-</span></span></code></pre></td></tr></table></div></div><h3 id=加载镜像到-kind-的-node-中这主要在无网络的地方使用>加载镜像到 kind 的 node 中，这主要在无网络的地方使用</h3><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ kind load docker-image nginx --name kind
-</span></span></code></pre></td></tr></table></div></div><h3 id=查看节点>查看节点</h3><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ kubectl get nodes
+</span></span></code></pre></div><h3 id=加载镜像到-kind-的-node-中这主要在无网络的地方使用>加载镜像到 kind 的 node 中，这主要在无网络的地方使用</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ kind load docker-image nginx --name kind
+</span></span></code></pre></div><h3 id=查看节点>查看节点</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ kubectl get nodes
 </span></span><span style=display:flex><span>NAME                       STATUS   ROLES           AGE   VERSION
 </span></span><span style=display:flex><span>my-cluster-control-plane   Ready    control-plane   39m   v1.25.3
 </span></span><span style=display:flex><span>my-cluster-worker          Ready    &lt;none&gt;          39m   v1.25.3
 </span></span><span style=display:flex><span>my-cluster-worker2         Ready    &lt;none&gt;          39m   v1.25.3
-</span></span></code></pre></td></tr></table></div></div><h3 id=多控制面>多控制面</h3><p>一般一个生产使用的 kubernetes 都会使用多个控制面来保证高可用，使用 kind config 可以方便地创建多控制面的 kubernetes 集群。使用如下命令创建一个 3 控制面，3 work 节点的集群：</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:navy>kind</span>:<span style=color:#bbb> </span>Cluster<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>apiVersion</span>:<span style=color:#bbb> </span>kind.x-k8s.io/v1alpha4<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>nodes</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># the control plane node config</span><span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span>- <span style=color:navy>role</span>:<span style=color:#bbb> </span>control-plane<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span>- <span style=color:navy>role</span>:<span style=color:#bbb> </span>control-plane<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span>- <span style=color:navy>role</span>:<span style=color:#bbb> </span>control-plane<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># the three workers</span><span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span>- <span style=color:navy>role</span>:<span style=color:#bbb> </span>worker<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span>- <span style=color:navy>role</span>:<span style=color:#bbb> </span>worker<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span>- <span style=color:navy>role</span>:<span style=color:#bbb> </span>worker<span style=color:#bbb>
-</span></span></span></code></pre></td></tr></table></div></div><p>此时可以看到有 3 个控制面：</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">7
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">8
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ kubectl get node
+</span></span></code></pre></div><h3 id=多控制面>多控制面</h3><p>一般一个生产使用的 kubernetes 都会使用多个控制面来保证高可用，使用 kind config 可以方便地创建多控制面的 kubernetes 集群。使用如下命令创建一个 3 控制面，3 work 节点的集群：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#ff79c6>kind</span>: Cluster
+</span></span><span style=display:flex><span><span style=color:#ff79c6>apiVersion</span>: kind.x-k8s.io/v1alpha4
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#ff79c6>nodes</span>:
+</span></span><span style=display:flex><span>  <span style=color:#6272a4># the control plane node config</span>
+</span></span><span style=display:flex><span>  - <span style=color:#ff79c6>role</span>: control-plane
+</span></span><span style=display:flex><span>  - <span style=color:#ff79c6>role</span>: control-plane
+</span></span><span style=display:flex><span>  - <span style=color:#ff79c6>role</span>: control-plane
+</span></span><span style=display:flex><span>  <span style=color:#6272a4># the three workers</span>
+</span></span><span style=display:flex><span>  - <span style=color:#ff79c6>role</span>: worker
+</span></span><span style=display:flex><span>  - <span style=color:#ff79c6>role</span>: worker
+</span></span><span style=display:flex><span>  - <span style=color:#ff79c6>role</span>: worker
+</span></span></code></pre></div><p>此时可以看到有 3 个控制面：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ kubectl get node
 </span></span><span style=display:flex><span>NAME                  STATUS   ROLES    AGE   VERSION
 </span></span><span style=display:flex><span>kind-control-plane    Ready    master   15m   v1.19.1
 </span></span><span style=display:flex><span>kind-control-plane2   Ready    master   14m   v1.19.1
@@ -123,225 +63,118 @@
 </span></span><span style=display:flex><span>kind-worker           Ready    &lt;none&gt;   12m   v1.19.1
 </span></span><span style=display:flex><span>kind-worker2          Ready    &lt;none&gt;   12m   v1.19.1
 </span></span><span style=display:flex><span>kind-worker3          Ready    &lt;none&gt;   12m   v1.19.1
-</span></span></code></pre></td></tr></table></div></div><h3 id=指定-kubernetes-的版本>指定 Kubernetes 的版本</h3><p>可以通过指定 node 的镜像版本来修改 kubernetes 的版本。可以在官方 release 页面中中查找需要镜像 tag，推荐 tag 带上 sha，如</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yml data-lang=yml><span style=display:flex><span>kindest/node:v1.19.1@sha256:98cf5288864662e37115e362b23e4369c8c4a408f99cbc06e58ac30ddc721600<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>kind</span>:<span style=color:#bbb> </span>Cluster<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>apiVersion</span>:<span style=color:#bbb> </span>kind.x-k8s.io/v1alpha4<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>nodes</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span>- <span style=color:navy>role</span>:<span style=color:#bbb> </span>control-plane<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>image</span>:<span style=color:#bbb> </span>kindest/node:v1.16.4@sha256:b91a2c2317a000f3a783489dfb755064177dbc3a0b2f4147d50f04825d016f55<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span>- <span style=color:navy>role</span>:<span style=color:#bbb> </span>worker<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>image</span>:<span style=color:#bbb> </span>kindest/node:v1.16.4@sha256:b91a2c2317a000f3a783489dfb755064177dbc3a0b2f4147d50f04825d016f55<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span>将node的端口映射到主机<span style=color:#bbb>
-</span></span></span></code></pre></td></tr></table></div></div><p>可以通过如下方式将 node 的端口映射到主机，将容器的 80 端口映射到 host 的 80 端口：</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">7
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">8
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">9
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yml data-lang=yml><span style=display:flex><span><span style=color:navy>kind</span>:<span style=color:#bbb> </span>Cluster<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>apiVersion</span>:<span style=color:#bbb> </span>kind.x-k8s.io/v1alpha4<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>nodes</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span>- <span style=color:navy>role</span>:<span style=color:#bbb> </span>control-plane<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:navy>extraPortMappings</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span>- <span style=color:navy>containerPort</span>:<span style=color:#bbb> </span><span style=color:#099>80</span><span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:navy>hostPort</span>:<span style=color:#bbb> </span><span style=color:#099>80</span><span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:navy>listenAddress</span>:<span style=color:#bbb> </span><span style=color:#d14>&#34;0.0.0.0&#34;</span><span style=color:#bbb> </span><span style=color:#998;font-style:italic># Optional, defaults to &#34;0.0.0.0&#34;</span><span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:navy>protocol</span>:<span style=color:#bbb> </span>udp<span style=color:#bbb> </span><span style=color:#998;font-style:italic># Optional, defaults to tcp</span><span style=color:#bbb>
-</span></span></span></code></pre></td></tr></table></div></div><pre><code>kind对cluster的更新(如启用IPv6，配置nodeport等)有一个弊端，就是只能通过重新创建集群来&quot;更新&quot;配置。目前官方不支持对控制面的更新操作，可以参见该issue。更多配置参见官方文档。
-</code></pre><h3 id=ingress-部署>ingress 部署</h3><p>可以通过 KIND 的 extraPortMapping 配置选项来将流量从主机转发到 node 的 ingress 控制器上。</p><p>可以通过 kubeadm 的 InitConfiguration 来设置自定义的 node-labels，用于 ingress 控制器的 nodeSelector。</p><p>创建集群</p><p>使用 extraPortMappings 和 node-labels 创建一个集群。</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yml data-lang=yml><span style=display:flex><span><span style=color:navy>kind</span>:<span style=color:#bbb> </span>Cluster<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>apiVersion</span>:<span style=color:#bbb> </span>kind.x-k8s.io/v1alpha4<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>nodes</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span>- <span style=color:navy>role</span>:<span style=color:#bbb> </span>control-plane<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:navy>kubeadmConfigPatches</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span>- |<span style=color:#d14>
-</span></span></span><span style=display:flex><span><span style=color:#d14>        kind: InitConfiguration
-</span></span></span><span style=display:flex><span><span style=color:#d14>        nodeRegistration:
-</span></span></span><span style=display:flex><span><span style=color:#d14>          kubeletExtraArgs:
-</span></span></span><span style=display:flex><span><span style=color:#d14>            node-labels: &#34;ingress-ready=true&#34;</span><span style=color:#bbb>        
-</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:navy>extraPortMappings</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span>- <span style=color:navy>containerPort</span>:<span style=color:#bbb> </span><span style=color:#099>80</span><span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:navy>hostPort</span>:<span style=color:#bbb> </span><span style=color:#099>80</span><span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:navy>protocol</span>:<span style=color:#bbb> </span>TCP<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span>- <span style=color:navy>containerPort</span>:<span style=color:#bbb> </span><span style=color:#099>443</span><span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:navy>hostPort</span>:<span style=color:#bbb> </span><span style=color:#099>443</span><span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:navy>protocol</span>:<span style=color:#bbb> </span>TCP<span style=color:#bbb>
-</span></span></span></code></pre></td></tr></table></div></div><h5 id=部署-ingress-控制器>部署 ingress 控制器</h5><p>kind 支持的 ingress 控制器如下：</p><p>Ambassador
+</span></span></code></pre></div><h3 id=指定-kubernetes-的版本>指定 Kubernetes 的版本</h3><p>可以通过指定 node 的镜像版本来修改 kubernetes 的版本。可以在官方 release 页面中中查找需要镜像 tag，推荐 tag 带上 sha，如</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yml data-lang=yml><span style=display:flex><span>kindest/node:v1.19.1@sha256:98cf5288864662e37115e362b23e4369c8c4a408f99cbc06e58ac30ddc721600
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#ff79c6>kind</span>: Cluster
+</span></span><span style=display:flex><span><span style=color:#ff79c6>apiVersion</span>: kind.x-k8s.io/v1alpha4
+</span></span><span style=display:flex><span><span style=color:#ff79c6>nodes</span>:
+</span></span><span style=display:flex><span>- <span style=color:#ff79c6>role</span>: control-plane
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>image</span>: kindest/node:v1.16.4@sha256:b91a2c2317a000f3a783489dfb755064177dbc3a0b2f4147d50f04825d016f55
+</span></span><span style=display:flex><span>- <span style=color:#ff79c6>role</span>: worker
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>image</span>: kindest/node:v1.16.4@sha256:b91a2c2317a000f3a783489dfb755064177dbc3a0b2f4147d50f04825d016f55
+</span></span><span style=display:flex><span>  将node的端口映射到主机
+</span></span></code></pre></div><p>可以通过如下方式将 node 的端口映射到主机，将容器的 80 端口映射到 host 的 80 端口：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yml data-lang=yml><span style=display:flex><span><span style=color:#ff79c6>kind</span>: Cluster
+</span></span><span style=display:flex><span><span style=color:#ff79c6>apiVersion</span>: kind.x-k8s.io/v1alpha4
+</span></span><span style=display:flex><span><span style=color:#ff79c6>nodes</span>:
+</span></span><span style=display:flex><span>  - <span style=color:#ff79c6>role</span>: control-plane
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>extraPortMappings</span>:
+</span></span><span style=display:flex><span>      - <span style=color:#ff79c6>containerPort</span>: <span style=color:#bd93f9>80</span>
+</span></span><span style=display:flex><span>        <span style=color:#ff79c6>hostPort</span>: <span style=color:#bd93f9>80</span>
+</span></span><span style=display:flex><span>        <span style=color:#ff79c6>listenAddress</span>: <span style=color:#f1fa8c>&#34;0.0.0.0&#34;</span> <span style=color:#6272a4># Optional, defaults to &#34;0.0.0.0&#34;</span>
+</span></span><span style=display:flex><span>        <span style=color:#ff79c6>protocol</span>: udp <span style=color:#6272a4># Optional, defaults to tcp</span>
+</span></span></code></pre></div><pre><code>kind对cluster的更新(如启用IPv6，配置nodeport等)有一个弊端，就是只能通过重新创建集群来&quot;更新&quot;配置。目前官方不支持对控制面的更新操作，可以参见该issue。更多配置参见官方文档。
+</code></pre><h3 id=ingress-部署>ingress 部署</h3><p>可以通过 KIND 的 extraPortMapping 配置选项来将流量从主机转发到 node 的 ingress 控制器上。</p><p>可以通过 kubeadm 的 InitConfiguration 来设置自定义的 node-labels，用于 ingress 控制器的 nodeSelector。</p><p>创建集群</p><p>使用 extraPortMappings 和 node-labels 创建一个集群。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yml data-lang=yml><span style=display:flex><span><span style=color:#ff79c6>kind</span>: Cluster
+</span></span><span style=display:flex><span><span style=color:#ff79c6>apiVersion</span>: kind.x-k8s.io/v1alpha4
+</span></span><span style=display:flex><span><span style=color:#ff79c6>nodes</span>:
+</span></span><span style=display:flex><span>  - <span style=color:#ff79c6>role</span>: control-plane
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>kubeadmConfigPatches</span>:
+</span></span><span style=display:flex><span>      - |<span style=color:#f1fa8c>
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        kind: InitConfiguration
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>        nodeRegistration:
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>          kubeletExtraArgs:
+</span></span></span><span style=display:flex><span><span style=color:#f1fa8c>            node-labels: &#34;ingress-ready=true&#34;</span>        
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>extraPortMappings</span>:
+</span></span><span style=display:flex><span>      - <span style=color:#ff79c6>containerPort</span>: <span style=color:#bd93f9>80</span>
+</span></span><span style=display:flex><span>        <span style=color:#ff79c6>hostPort</span>: <span style=color:#bd93f9>80</span>
+</span></span><span style=display:flex><span>        <span style=color:#ff79c6>protocol</span>: TCP
+</span></span><span style=display:flex><span>      - <span style=color:#ff79c6>containerPort</span>: <span style=color:#bd93f9>443</span>
+</span></span><span style=display:flex><span>        <span style=color:#ff79c6>hostPort</span>: <span style=color:#bd93f9>443</span>
+</span></span><span style=display:flex><span>        <span style=color:#ff79c6>protocol</span>: TCP
+</span></span></code></pre></div><h5 id=部署-ingress-控制器>部署 ingress 控制器</h5><p>kind 支持的 ingress 控制器如下：</p><p>Ambassador
 Contour
 Ingress NGINX
-下面部署 NGINX ingress。</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml
-</span></span></code></pre></td></tr></table></div></div><p>在部署 ingree 的过程中可能会遇到无法找到 secret ingress-nginx-admission 的问题，出现该问题的原因可能是因为如下两个 job 无法正常启动造成的，参见该 issue。</p><p>如果是因为无法拉取外网镜像，可以先将 deploy.yaml 文件下载到本地，将镜像手动加载到本地主机上，然后使用上面提到的 kind load docker-image 命令将镜像加载到 node 上即可。</p><h3 id=测试-ingress>测试 ingress</h3><p>创建如下资源：<code>kubectl apply -f usage.yaml</code></p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">26
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">27
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">28
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">29
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">30
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">31
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">32
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">33
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">34
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">35
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">36
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">37
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">38
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">39
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">40
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">41
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">42
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">43
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">44
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">45
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">46
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">47
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">48
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">49
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">50
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">51
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">52
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">53
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">54
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">55
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">56
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">57
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">58
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">59
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">60
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">61
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">62
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">63
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">64
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">65
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yml data-lang=yml><span style=display:flex><span><span style=color:navy>kind</span>:<span style=color:#bbb> </span>Pod<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>apiVersion</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>metadata</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>name</span>:<span style=color:#bbb> </span>foo-app<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>labels</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:navy>app</span>:<span style=color:#bbb> </span>foo<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>spec</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>containers</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span>- <span style=color:navy>name</span>:<span style=color:#bbb> </span>foo-app<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:navy>image</span>:<span style=color:#bbb> </span>hashicorp/http-echo:0.2.3<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:navy>args</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span>- <span style=color:#d14>&#34;-text=foo&#34;</span><span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#555>---</span><span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>kind</span>:<span style=color:#bbb> </span>Service<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>apiVersion</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>metadata</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>name</span>:<span style=color:#bbb> </span>foo-service<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>spec</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>selector</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:navy>app</span>:<span style=color:#bbb> </span>foo<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>ports</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:#998;font-style:italic># Default port used by the image</span><span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span>- <span style=color:navy>port</span>:<span style=color:#bbb> </span><span style=color:#099>5678</span><span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#555>---</span><span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>kind</span>:<span style=color:#bbb> </span>Pod<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>apiVersion</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>metadata</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>name</span>:<span style=color:#bbb> </span>bar-app<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>labels</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:navy>app</span>:<span style=color:#bbb> </span>bar<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>spec</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>containers</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span>- <span style=color:navy>name</span>:<span style=color:#bbb> </span>bar-app<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:navy>image</span>:<span style=color:#bbb> </span>hashicorp/http-echo:0.2.3<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:navy>args</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span>- <span style=color:#d14>&#34;-text=bar&#34;</span><span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#555>---</span><span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>kind</span>:<span style=color:#bbb> </span>Service<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>apiVersion</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>metadata</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>name</span>:<span style=color:#bbb> </span>bar-service<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>spec</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>selector</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:navy>app</span>:<span style=color:#bbb> </span>bar<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>ports</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:#998;font-style:italic># Default port used by the image</span><span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span>- <span style=color:navy>port</span>:<span style=color:#bbb> </span><span style=color:#099>5678</span><span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#555>---</span><span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>apiVersion</span>:<span style=color:#bbb> </span>networking.k8s.io/v1beta1<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>kind</span>:<span style=color:#bbb> </span>Ingress<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>metadata</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>name</span>:<span style=color:#bbb> </span>example-ingress<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>spec</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>rules</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span>- <span style=color:navy>http</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:navy>paths</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>          </span>- <span style=color:navy>path</span>:<span style=color:#bbb> </span>/foo<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>            </span><span style=color:navy>backend</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>              </span><span style=color:navy>serviceName</span>:<span style=color:#bbb> </span>foo-service<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>              </span><span style=color:navy>servicePort</span>:<span style=color:#bbb> </span><span style=color:#099>5678</span><span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>          </span>- <span style=color:navy>path</span>:<span style=color:#bbb> </span>/bar<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>            </span><span style=color:navy>backend</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>              </span><span style=color:navy>serviceName</span>:<span style=color:#bbb> </span>bar-service<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>              </span><span style=color:navy>servicePort</span>:<span style=color:#bbb> </span><span style=color:#099>5678</span><span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#555>---</span><span style=color:#bbb>
-</span></span></span></code></pre></td></tr></table></div></div><p>在远端 curl 该主机所在上的 foo 和 bar 服务，可以看到网络是通的，此时走的是 ingress 通过 kind 配置 extraPortMappings 暴露的 nodeport 80 端口。</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>C:<span style=color:#d14>\U</span>sers<span style=color:#d14>\l</span>iuch&gt;curl 192.168.100.11/foo
+下面部署 NGINX ingress。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml
+</span></span></code></pre></div><p>在部署 ingree 的过程中可能会遇到无法找到 secret ingress-nginx-admission 的问题，出现该问题的原因可能是因为如下两个 job 无法正常启动造成的，参见该 issue。</p><p>如果是因为无法拉取外网镜像，可以先将 deploy.yaml 文件下载到本地，将镜像手动加载到本地主机上，然后使用上面提到的 kind load docker-image 命令将镜像加载到 node 上即可。</p><h3 id=测试-ingress>测试 ingress</h3><p>创建如下资源：<code>kubectl apply -f usage.yaml</code></p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yml data-lang=yml><span style=display:flex><span><span style=color:#ff79c6>kind</span>: Pod
+</span></span><span style=display:flex><span><span style=color:#ff79c6>apiVersion</span>: v1
+</span></span><span style=display:flex><span><span style=color:#ff79c6>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>name</span>: foo-app
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>labels</span>:
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>app</span>: foo
+</span></span><span style=display:flex><span><span style=color:#ff79c6>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>containers</span>:
+</span></span><span style=display:flex><span>    - <span style=color:#ff79c6>name</span>: foo-app
+</span></span><span style=display:flex><span>      <span style=color:#ff79c6>image</span>: hashicorp/http-echo:0.2.3
+</span></span><span style=display:flex><span>      <span style=color:#ff79c6>args</span>:
+</span></span><span style=display:flex><span>        - <span style=color:#f1fa8c>&#34;-text=foo&#34;</span>
+</span></span><span style=display:flex><span>---
+</span></span><span style=display:flex><span><span style=color:#ff79c6>kind</span>: Service
+</span></span><span style=display:flex><span><span style=color:#ff79c6>apiVersion</span>: v1
+</span></span><span style=display:flex><span><span style=color:#ff79c6>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>name</span>: foo-service
+</span></span><span style=display:flex><span><span style=color:#ff79c6>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>selector</span>:
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>app</span>: foo
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>ports</span>:
+</span></span><span style=display:flex><span>    <span style=color:#6272a4># Default port used by the image</span>
+</span></span><span style=display:flex><span>    - <span style=color:#ff79c6>port</span>: <span style=color:#bd93f9>5678</span>
+</span></span><span style=display:flex><span>---
+</span></span><span style=display:flex><span><span style=color:#ff79c6>kind</span>: Pod
+</span></span><span style=display:flex><span><span style=color:#ff79c6>apiVersion</span>: v1
+</span></span><span style=display:flex><span><span style=color:#ff79c6>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>name</span>: bar-app
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>labels</span>:
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>app</span>: bar
+</span></span><span style=display:flex><span><span style=color:#ff79c6>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>containers</span>:
+</span></span><span style=display:flex><span>    - <span style=color:#ff79c6>name</span>: bar-app
+</span></span><span style=display:flex><span>      <span style=color:#ff79c6>image</span>: hashicorp/http-echo:0.2.3
+</span></span><span style=display:flex><span>      <span style=color:#ff79c6>args</span>:
+</span></span><span style=display:flex><span>        - <span style=color:#f1fa8c>&#34;-text=bar&#34;</span>
+</span></span><span style=display:flex><span>---
+</span></span><span style=display:flex><span><span style=color:#ff79c6>kind</span>: Service
+</span></span><span style=display:flex><span><span style=color:#ff79c6>apiVersion</span>: v1
+</span></span><span style=display:flex><span><span style=color:#ff79c6>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>name</span>: bar-service
+</span></span><span style=display:flex><span><span style=color:#ff79c6>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>selector</span>:
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>app</span>: bar
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>ports</span>:
+</span></span><span style=display:flex><span>    <span style=color:#6272a4># Default port used by the image</span>
+</span></span><span style=display:flex><span>    - <span style=color:#ff79c6>port</span>: <span style=color:#bd93f9>5678</span>
+</span></span><span style=display:flex><span>---
+</span></span><span style=display:flex><span><span style=color:#ff79c6>apiVersion</span>: networking.k8s.io/v1beta1
+</span></span><span style=display:flex><span><span style=color:#ff79c6>kind</span>: Ingress
+</span></span><span style=display:flex><span><span style=color:#ff79c6>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>name</span>: example-ingress
+</span></span><span style=display:flex><span><span style=color:#ff79c6>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#ff79c6>rules</span>:
+</span></span><span style=display:flex><span>    - <span style=color:#ff79c6>http</span>:
+</span></span><span style=display:flex><span>        <span style=color:#ff79c6>paths</span>:
+</span></span><span style=display:flex><span>          - <span style=color:#ff79c6>path</span>: /foo
+</span></span><span style=display:flex><span>            <span style=color:#ff79c6>backend</span>:
+</span></span><span style=display:flex><span>              <span style=color:#ff79c6>serviceName</span>: foo-service
+</span></span><span style=display:flex><span>              <span style=color:#ff79c6>servicePort</span>: <span style=color:#bd93f9>5678</span>
+</span></span><span style=display:flex><span>          - <span style=color:#ff79c6>path</span>: /bar
+</span></span><span style=display:flex><span>            <span style=color:#ff79c6>backend</span>:
+</span></span><span style=display:flex><span>              <span style=color:#ff79c6>serviceName</span>: bar-service
+</span></span><span style=display:flex><span>              <span style=color:#ff79c6>servicePort</span>: <span style=color:#bd93f9>5678</span>
+</span></span><span style=display:flex><span>---
+</span></span></code></pre></div><p>在远端 curl 该主机所在上的 foo 和 bar 服务，可以看到网络是通的，此时走的是 ingress 通过 kind 配置 extraPortMappings 暴露的 nodeport 80 端口。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>C:<span style=color:#f1fa8c>\U</span>sers<span style=color:#f1fa8c>\l</span>iuch&gt;curl 192.168.100.11/foo
 </span></span><span style=display:flex><span>foo
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>C:<span style=color:#d14>\U</span>sers<span style=color:#d14>\l</span>iuch&gt;curl 192.168.100.11/bar
+</span></span><span style=display:flex><span>C:<span style=color:#f1fa8c>\U</span>sers<span style=color:#f1fa8c>\l</span>iuch&gt;curl 192.168.100.11/bar
 </span></span><span style=display:flex><span>bar
-</span></span></code></pre></td></tr></table></div></div><h2 id=总结>总结：</h2><p>kind 是一个非常方便的 kubernetes 部署工具，可以快速地部署多个 kubernetes 集群。</p><p>但也有一些实现上的瑕疵，比如，kind 不支持对集群的升级，手动加载镜像的过程也比较麻烦，但总体使用上来看，瑕不掩瑜。</p></div><div class="post-meta meta-tags"><ul class=clearfix><li><a href=/tags/k8s target=_blank>k8s</a></li></ul></div></article><div class="post bg-white"><script src=https://utteranc.es/client.js repo=ifenng2020/ifenng2020.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script></div></div><footer id=footer><div>&copy; 2023 <a href=/>平凡之路</a>
+</span></span></code></pre></div><h2 id=总结>总结：</h2><p>kind 是一个非常方便的 kubernetes 部署工具，可以快速地部署多个 kubernetes 集群。</p><p>但也有一些实现上的瑕疵，比如，kind 不支持对集群的升级，手动加载镜像的过程也比较麻烦，但总体使用上来看，瑕不掩瑜。</p></div><div class="post-meta meta-tags"><ul class=clearfix><li><a href=/tags/k8s target=_blank>k8s</a></li></ul></div></article><div class="post bg-white"><script src=https://utteranc.es/client.js repo=ifenng2020/ifenng2020.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script></div></div><footer id=footer><div>&copy; 2023 <a href=/>平凡之路</a>
 | <a rel=nofollow target=_blank href=http://beian.miit.gov.cn/>冀ICP备2023015737号-1</a></div></footer><script type=text/javascript>window.MathJax={tex2jax:{inlineMath:[["$","$"]],processEscapes:!0}}</script><script src='//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
 <a id=rocket href=#top></a>
 <script type=text/javascript src='/js/totop.js?v=0.0.0' async></script><style type=text/css>div.highlight{position:relative;margin:1em 0}.copy-code{display:none;position:absolute;top:4px;right:4px;color:rgba(255,255,255,.8);background:rgba(78,78,78,.8);border-radius:var(--radius);padding:0 5px;font:inherit;user-select:none;cursor:pointer;border:0;--radius:8px}div.highlight:hover .copy-code,pre:hover .copy-code{display:block}</style><script>document.querySelectorAll("pre > code").forEach(e=>{const n=e.parentNode.parentNode,t=document.createElement("button");t.classList.add("copy-code"),t.innerHTML="copy";function s(){t.innerHTML="copied!",setTimeout(()=>{t.innerHTML="copy"},2e3)}t.addEventListener("click",t=>{if("clipboard"in navigator){navigator.clipboard.writeText(e.textContent),s();return}const n=document.createRange();n.selectNodeContents(e);const o=window.getSelection();o.removeAllRanges(),o.addRange(n);try{document.execCommand("copy"),s()}catch{}o.removeRange(n)}),n.classList.contains("highlight")?n.appendChild(t):n.parentNode.firstChild==n||(e.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?e.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(t):e.parentNode.appendChild(t))})</script></div><div id=secondary><section class=widget><form id=search action=/search method=get accept-charset=utf-8 target=_blank _lpchecked=1><input type=text name=q maxlength=20 placeholder=Search>
@@ -374,4 +207,4 @@ Ingress NGINX
 <a href=/tags/work/>work</a>
 <a href=/tags/%E5%88%9B%E5%BB%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>创建型设计模式</a>
 <a href=/tags/%E7%BB%93%E6%9E%84%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>结构型设计模式</a>
-<a href=/tags/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>行为型设计模式</a></div></section><section class=widget><h3 class=widget-title>友情链接</h3><ul class=widget-list><li><a target=_blank href=https://geektutu.com/ title=极客兔兔>极客兔兔的博客</a></li><li><a target=_blank href=https://xiaolincoding.com/ title=小林coding>小林coding</a></li></ul></section></div></div></div></div></body></html>
+<a href=/tags/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>行为型设计模式</a></div></section><section class=widget><h3 class=widget-title>友情链接</h3><ul class=widget-list><li><a target=_blank href=https://xiaolincoding.com/ title=小林coding>小林coding</a></li></ul></section></div></div></div></div></body></html>

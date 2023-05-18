@@ -3,231 +3,119 @@
 <a href=/tools/ title=工具箱>工具箱</a>
 <a href=/archives/ title=归档>归档</a>
 <a href=/about/ title=关于>关于</a></nav></div></div></div></header><div id=body><div class=container><div class=col-group><div class=col-8 id=main><div class=res-cons><article class=post><header><h1 class=post-title>建造者模式</h1></header><time datetime=2022-11-21T12:31:56Z class="post-meta meta-date dt-published">2022年11月21日</time><div class="post-meta meta-category"><span>&nbsp;|</span>
-<a href=/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F>设计模式</a></div><div class=post-content><h3 id=建造者模式>建造者模式</h3><p>一种创建型设计模式，它将一个复杂对象的构建过程与其表示分离开来，从而使得同样的构建过程可以创建不同的表示形式。</p><h3 id=模式优点>模式优点：</h3><ul><li><p>将对象的构建过程与具体表示分离：建造者模式通过将对象的构建过程与其表示分离开来，使得可以使用相同的构建过程来创建不同的表示形式。这种分离可以提高代码的复用性和灵活性，使得代码更易于维护和扩展。</p></li><li><p>易于控制对象的构建过程：建造者模式通过将对象的构建过程分解为多个简单的步骤，并通过 Director 来协调这些步骤，使得可以更加精确地控制对象的构建过程。这种精确的控制可以提高代码的可靠性和稳定性，从而减少代码出错的可能性。</p></li><li><p>可以创建复杂对象：建造者模式可以通过将对象的构建过程分解为多个简单的步骤，并通过 Director 来协调这些步骤，使得可以创建复杂的对象，而不必关心其具体实现细节。这种创建复杂对象的能力可以提高代码的可重用性和灵活性，从而加快开发速度。</p></li><li><p>可以改变对象的内部表示：建造者模式可以通过修改 Builder 接口或 ConcreteBuilder 结构体，来改变对象的内部表示形式，而不必改变对象的外部接口。这种改变对象内部表示形式的能力可以提高代码的可维护性和可扩展性，从而减少代码重构的需要。</p></li></ul><h3 id=实现代码>实现代码</h3><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">26
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">27
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">28
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">29
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">30
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">31
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">32
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">33
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">34
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">35
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">36
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">37
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">38
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">39
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">40
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">41
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">42
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">43
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">44
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">45
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">46
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">47
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">48
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">49
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">50
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">51
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">52
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">53
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">54
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">55
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">56
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">57
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">58
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">59
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">60
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">61
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">62
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">63
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">64
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">65
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">66
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">67
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">68
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">69
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">70
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">71
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">72
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">73
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">74
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">75
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">76
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">77
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#998;font-style:italic>// 场景
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// 现在需要生产一个汉堡
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// 生产过程包括增加香肠,奶酪,生菜,番茄
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// 且有固定的顺序，即必须先确定香肠，再确定生菜,奶酪，最后放番茄的顺序，顺序错了，
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// 或者是少了其中任意一个步骤都不能做好一个汉堡。
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// Burger 产品汉堡包
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>type</span> Burger <span style=color:#000;font-weight:700>struct</span> {
-</span></span><span style=display:flex><span>	<span style=color:#998;font-style:italic>// 香肠
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span>	Pepperoni <span style=color:#458;font-weight:700>string</span>
-</span></span><span style=display:flex><span>	<span style=color:#998;font-style:italic>// 🧀️
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span>	Cheese <span style=color:#458;font-weight:700>string</span>
-</span></span><span style=display:flex><span>	<span style=color:#998;font-style:italic>// 🥬
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span>	Lettuce <span style=color:#458;font-weight:700>string</span>
-</span></span><span style=display:flex><span>	<span style=color:#998;font-style:italic>// 🍅
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span>	Tomato <span style=color:#458;font-weight:700>string</span>
+<a href=/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F>设计模式</a></div><div class=post-content><h3 id=建造者模式>建造者模式</h3><p>一种创建型设计模式，它将一个复杂对象的构建过程与其表示分离开来，从而使得同样的构建过程可以创建不同的表示形式。</p><h3 id=模式优点>模式优点：</h3><ul><li><p>将对象的构建过程与具体表示分离：建造者模式通过将对象的构建过程与其表示分离开来，使得可以使用相同的构建过程来创建不同的表示形式。这种分离可以提高代码的复用性和灵活性，使得代码更易于维护和扩展。</p></li><li><p>易于控制对象的构建过程：建造者模式通过将对象的构建过程分解为多个简单的步骤，并通过 Director 来协调这些步骤，使得可以更加精确地控制对象的构建过程。这种精确的控制可以提高代码的可靠性和稳定性，从而减少代码出错的可能性。</p></li><li><p>可以创建复杂对象：建造者模式可以通过将对象的构建过程分解为多个简单的步骤，并通过 Director 来协调这些步骤，使得可以创建复杂的对象，而不必关心其具体实现细节。这种创建复杂对象的能力可以提高代码的可重用性和灵活性，从而加快开发速度。</p></li><li><p>可以改变对象的内部表示：建造者模式可以通过修改 Builder 接口或 ConcreteBuilder 结构体，来改变对象的内部表示形式，而不必改变对象的外部接口。这种改变对象内部表示形式的能力可以提高代码的可维护性和可扩展性，从而减少代码重构的需要。</p></li></ul><h3 id=实现代码>实现代码</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#6272a4>// 场景
+</span></span></span><span style=display:flex><span><span style=color:#6272a4>// 现在需要生产一个汉堡
+</span></span></span><span style=display:flex><span><span style=color:#6272a4>// 生产过程包括增加香肠,奶酪,生菜,番茄
+</span></span></span><span style=display:flex><span><span style=color:#6272a4>// 且有固定的顺序，即必须先确定香肠，再确定生菜,奶酪，最后放番茄的顺序，顺序错了，
+</span></span></span><span style=display:flex><span><span style=color:#6272a4>// 或者是少了其中任意一个步骤都不能做好一个汉堡。
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>
+</span></span><span style=display:flex><span><span style=color:#6272a4>// Burger 产品汉堡包
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#8be9fd;font-style:italic>type</span> Burger <span style=color:#8be9fd;font-style:italic>struct</span> {
+</span></span><span style=display:flex><span>	<span style=color:#6272a4>// 香肠
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>	Pepperoni <span style=color:#8be9fd>string</span>
+</span></span><span style=display:flex><span>	<span style=color:#6272a4>// 🧀️
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>	Cheese <span style=color:#8be9fd>string</span>
+</span></span><span style=display:flex><span>	<span style=color:#6272a4>// 🥬
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>	Lettuce <span style=color:#8be9fd>string</span>
+</span></span><span style=display:flex><span>	<span style=color:#6272a4>// 🍅
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>	Tomato <span style=color:#8be9fd>string</span>
 </span></span><span style=display:flex><span>}
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// GetDescription 获取描述
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>func</span> (burger <span style=color:#000;font-weight:700>*</span>Burger) <span style=color:#900;font-weight:700>GetDescription</span>() {
-</span></span><span style=display:flex><span>	fmt.<span style=color:#900;font-weight:700>Printf</span>(<span style=color:#d14>&#34;Burger 的成分是: %v,%v,%v,%v \n&#34;</span>,
+</span></span><span style=display:flex><span><span style=color:#6272a4>// GetDescription 获取描述
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#8be9fd;font-style:italic>func</span> (burger <span style=color:#ff79c6>*</span>Burger) <span style=color:#50fa7b>GetDescription</span>() {
+</span></span><span style=display:flex><span>	fmt.<span style=color:#50fa7b>Printf</span>(<span style=color:#f1fa8c>&#34;Burger 的成分是: %v,%v,%v,%v \n&#34;</span>,
 </span></span><span style=display:flex><span>		burger.Pepperoni, burger.Cheese,
 </span></span><span style=display:flex><span>		burger.Lettuce, burger.Tomato)
 </span></span><span style=display:flex><span>}
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// Builder 构建器接口
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>type</span> Builder <span style=color:#000;font-weight:700>interface</span> {
-</span></span><span style=display:flex><span>	<span style=color:#900;font-weight:700>AddPepperoni</span>(Pepperoni <span style=color:#458;font-weight:700>string</span>) Builder
-</span></span><span style=display:flex><span>	<span style=color:#900;font-weight:700>AddCheese</span>(Cheese <span style=color:#458;font-weight:700>string</span>) Builder
-</span></span><span style=display:flex><span>	<span style=color:#900;font-weight:700>AddLettuce</span>(Lettuce <span style=color:#458;font-weight:700>string</span>) Builder
-</span></span><span style=display:flex><span>	<span style=color:#900;font-weight:700>AddTomato</span>(Tomato <span style=color:#458;font-weight:700>string</span>) Builder
-</span></span><span style=display:flex><span>	<span style=color:#900;font-weight:700>Build</span>() <span style=color:#000;font-weight:700>*</span>Burger
+</span></span><span style=display:flex><span><span style=color:#6272a4>// Builder 构建器接口
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#8be9fd;font-style:italic>type</span> Builder <span style=color:#8be9fd;font-style:italic>interface</span> {
+</span></span><span style=display:flex><span>	<span style=color:#50fa7b>AddPepperoni</span>(Pepperoni <span style=color:#8be9fd>string</span>) Builder
+</span></span><span style=display:flex><span>	<span style=color:#50fa7b>AddCheese</span>(Cheese <span style=color:#8be9fd>string</span>) Builder
+</span></span><span style=display:flex><span>	<span style=color:#50fa7b>AddLettuce</span>(Lettuce <span style=color:#8be9fd>string</span>) Builder
+</span></span><span style=display:flex><span>	<span style=color:#50fa7b>AddTomato</span>(Tomato <span style=color:#8be9fd>string</span>) Builder
+</span></span><span style=display:flex><span>	<span style=color:#50fa7b>Build</span>() <span style=color:#ff79c6>*</span>Burger
 </span></span><span style=display:flex><span>}
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// BurgerBuilder 具体的建造者
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>type</span> BurgerBuilder <span style=color:#000;font-weight:700>struct</span> {
-</span></span><span style=display:flex><span>	burger <span style=color:#000;font-weight:700>*</span>Burger
+</span></span><span style=display:flex><span><span style=color:#6272a4>// BurgerBuilder 具体的建造者
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#8be9fd;font-style:italic>type</span> BurgerBuilder <span style=color:#8be9fd;font-style:italic>struct</span> {
+</span></span><span style=display:flex><span>	burger <span style=color:#ff79c6>*</span>Burger
 </span></span><span style=display:flex><span>}
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// AddPepperoni 添加香肠
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>func</span> (burgerBuilder <span style=color:#000;font-weight:700>*</span>BurgerBuilder) <span style=color:#900;font-weight:700>AddPepperoni</span>(Pepperoni <span style=color:#458;font-weight:700>string</span>) Builder {
+</span></span><span style=display:flex><span><span style=color:#6272a4>// AddPepperoni 添加香肠
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#8be9fd;font-style:italic>func</span> (burgerBuilder <span style=color:#ff79c6>*</span>BurgerBuilder) <span style=color:#50fa7b>AddPepperoni</span>(Pepperoni <span style=color:#8be9fd>string</span>) Builder {
 </span></span><span style=display:flex><span>	burgerBuilder.burger.Pepperoni = Pepperoni
-</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>return</span> burgerBuilder
+</span></span><span style=display:flex><span>	<span style=color:#ff79c6>return</span> burgerBuilder
 </span></span><span style=display:flex><span>}
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// AddCheese 添加 🧀️
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>func</span> (burgerBuilder <span style=color:#000;font-weight:700>*</span>BurgerBuilder) <span style=color:#900;font-weight:700>AddCheese</span>(Cheese <span style=color:#458;font-weight:700>string</span>) Builder {
+</span></span><span style=display:flex><span><span style=color:#6272a4>// AddCheese 添加 🧀️
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#8be9fd;font-style:italic>func</span> (burgerBuilder <span style=color:#ff79c6>*</span>BurgerBuilder) <span style=color:#50fa7b>AddCheese</span>(Cheese <span style=color:#8be9fd>string</span>) Builder {
 </span></span><span style=display:flex><span>	burgerBuilder.burger.Cheese = Cheese
-</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>return</span> burgerBuilder
+</span></span><span style=display:flex><span>	<span style=color:#ff79c6>return</span> burgerBuilder
 </span></span><span style=display:flex><span>}
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// AddLettuce 添加 🥬
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>func</span> (burgerBuilder <span style=color:#000;font-weight:700>*</span>BurgerBuilder) <span style=color:#900;font-weight:700>AddLettuce</span>(Lettuce <span style=color:#458;font-weight:700>string</span>) Builder {
+</span></span><span style=display:flex><span><span style=color:#6272a4>// AddLettuce 添加 🥬
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#8be9fd;font-style:italic>func</span> (burgerBuilder <span style=color:#ff79c6>*</span>BurgerBuilder) <span style=color:#50fa7b>AddLettuce</span>(Lettuce <span style=color:#8be9fd>string</span>) Builder {
 </span></span><span style=display:flex><span>	burgerBuilder.burger.Lettuce = Lettuce
-</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>return</span> burgerBuilder
+</span></span><span style=display:flex><span>	<span style=color:#ff79c6>return</span> burgerBuilder
 </span></span><span style=display:flex><span>}
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// AddTomato 添加 🍅
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>func</span> (burgerBuilder <span style=color:#000;font-weight:700>*</span>BurgerBuilder) <span style=color:#900;font-weight:700>AddTomato</span>(Tomato <span style=color:#458;font-weight:700>string</span>) Builder {
+</span></span><span style=display:flex><span><span style=color:#6272a4>// AddTomato 添加 🍅
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#8be9fd;font-style:italic>func</span> (burgerBuilder <span style=color:#ff79c6>*</span>BurgerBuilder) <span style=color:#50fa7b>AddTomato</span>(Tomato <span style=color:#8be9fd>string</span>) Builder {
 </span></span><span style=display:flex><span>	burgerBuilder.burger.Tomato = Tomato
-</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>return</span> burgerBuilder
+</span></span><span style=display:flex><span>	<span style=color:#ff79c6>return</span> burgerBuilder
 </span></span><span style=display:flex><span>}
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// Build 构建函数
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>func</span> (burgerBuilder <span style=color:#000;font-weight:700>*</span>BurgerBuilder) <span style=color:#900;font-weight:700>Build</span>() <span style=color:#000;font-weight:700>*</span>Burger {
-</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>if</span> burgerBuilder.burger.Pepperoni <span style=color:#000;font-weight:700>==</span> <span style=color:#d14>&#34;&#34;</span> <span style=color:#000;font-weight:700>||</span> burgerBuilder.burger.Cheese <span style=color:#000;font-weight:700>==</span> <span style=color:#d14>&#34;&#34;</span> <span style=color:#000;font-weight:700>||</span>
-</span></span><span style=display:flex><span>		burgerBuilder.burger.Lettuce <span style=color:#000;font-weight:700>==</span> <span style=color:#d14>&#34;&#34;</span> <span style=color:#000;font-weight:700>||</span> burgerBuilder.burger.Tomato <span style=color:#000;font-weight:700>==</span> <span style=color:#d14>&#34;&#34;</span> {
-</span></span><span style=display:flex><span>		fmt.<span style=color:#900;font-weight:700>Println</span>(<span style=color:#d14>&#34;🍔 成分不全,制作失败！&#34;</span>)
-</span></span><span style=display:flex><span>		<span style=color:#000;font-weight:700>return</span> <span style=color:#000;font-weight:700>nil</span>
+</span></span><span style=display:flex><span><span style=color:#6272a4>// Build 构建函数
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#8be9fd;font-style:italic>func</span> (burgerBuilder <span style=color:#ff79c6>*</span>BurgerBuilder) <span style=color:#50fa7b>Build</span>() <span style=color:#ff79c6>*</span>Burger {
+</span></span><span style=display:flex><span>	<span style=color:#ff79c6>if</span> burgerBuilder.burger.Pepperoni <span style=color:#ff79c6>==</span> <span style=color:#f1fa8c>&#34;&#34;</span> <span style=color:#ff79c6>||</span> burgerBuilder.burger.Cheese <span style=color:#ff79c6>==</span> <span style=color:#f1fa8c>&#34;&#34;</span> <span style=color:#ff79c6>||</span>
+</span></span><span style=display:flex><span>		burgerBuilder.burger.Lettuce <span style=color:#ff79c6>==</span> <span style=color:#f1fa8c>&#34;&#34;</span> <span style=color:#ff79c6>||</span> burgerBuilder.burger.Tomato <span style=color:#ff79c6>==</span> <span style=color:#f1fa8c>&#34;&#34;</span> {
+</span></span><span style=display:flex><span>		fmt.<span style=color:#50fa7b>Println</span>(<span style=color:#f1fa8c>&#34;🍔 成分不全,制作失败！&#34;</span>)
+</span></span><span style=display:flex><span>		<span style=color:#ff79c6>return</span> <span style=color:#ff79c6>nil</span>
 </span></span><span style=display:flex><span>	}
-</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>return</span> burgerBuilder.burger
+</span></span><span style=display:flex><span>	<span style=color:#ff79c6>return</span> burgerBuilder.burger
 </span></span><span style=display:flex><span>}
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// NewBurgerBuilder 创建一个面包构建器
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>func</span> <span style=color:#900;font-weight:700>NewBurgerBuilder</span>() <span style=color:#000;font-weight:700>*</span>BurgerBuilder {
-</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>return</span> <span style=color:#000;font-weight:700>&amp;</span>BurgerBuilder{<span style=color:#000;font-weight:700>&amp;</span>Burger{}}
+</span></span><span style=display:flex><span><span style=color:#6272a4>// NewBurgerBuilder 创建一个面包构建器
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#8be9fd;font-style:italic>func</span> <span style=color:#50fa7b>NewBurgerBuilder</span>() <span style=color:#ff79c6>*</span>BurgerBuilder {
+</span></span><span style=display:flex><span>	<span style=color:#ff79c6>return</span> <span style=color:#ff79c6>&amp;</span>BurgerBuilder{<span style=color:#ff79c6>&amp;</span>Burger{}}
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></td></tr></table></div></div><h3 id=测试用例>测试用例</h3><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">26
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">27
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">28
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">29
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">30
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">31
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">32
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">33
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">34
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">35
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#000;font-weight:700>package</span> builder
+</span></span></code></pre></div><h3 id=测试用例>测试用例</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#ff79c6>package</span> builder
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>import</span> (
-</span></span><span style=display:flex><span>	<span style=color:#d14>&#34;testing&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#ff79c6>import</span> (
+</span></span><span style=display:flex><span>	<span style=color:#f1fa8c>&#34;testing&#34;</span>
 </span></span><span style=display:flex><span>)
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// TestBuilder 测试
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// command: go test -v builder_test.go builder.go
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>func</span> <span style=color:#900;font-weight:700>TestBuilder</span>(t <span style=color:#000;font-weight:700>*</span>testing.T) {
+</span></span><span style=display:flex><span><span style=color:#6272a4>// TestBuilder 测试
+</span></span></span><span style=display:flex><span><span style=color:#6272a4>// command: go test -v builder_test.go builder.go
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#8be9fd;font-style:italic>func</span> <span style=color:#50fa7b>TestBuilder</span>(t <span style=color:#ff79c6>*</span>testing.T) {
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>	t.<span style=color:#900;font-weight:700>Log</span>(<span style=color:#d14>&#34;制作第一个 🍔&#34;</span>)
-</span></span><span style=display:flex><span>	burger1 <span style=color:#000;font-weight:700>:=</span> <span style=color:#900;font-weight:700>NewBurgerBuilder</span>().<span style=color:#900;font-weight:700>AddPepperoni</span>(<span style=color:#d14>&#34;火腿1&#34;</span>).<span style=color:#900;font-weight:700>AddCheese</span>(<span style=color:#d14>&#34;奶酪1&#34;</span>)
-</span></span><span style=display:flex><span>  						.<span style=color:#900;font-weight:700>AddLettuce</span>(<span style=color:#d14>&#34;生菜1&#34;</span>).<span style=color:#900;font-weight:700>AddTomato</span>(<span style=color:#d14>&#34;番茄1&#34;</span>).<span style=color:#900;font-weight:700>Build</span>()
+</span></span><span style=display:flex><span>	t.<span style=color:#50fa7b>Log</span>(<span style=color:#f1fa8c>&#34;制作第一个 🍔&#34;</span>)
+</span></span><span style=display:flex><span>	burger1 <span style=color:#ff79c6>:=</span> <span style=color:#50fa7b>NewBurgerBuilder</span>().<span style=color:#50fa7b>AddPepperoni</span>(<span style=color:#f1fa8c>&#34;火腿1&#34;</span>).<span style=color:#50fa7b>AddCheese</span>(<span style=color:#f1fa8c>&#34;奶酪1&#34;</span>)
+</span></span><span style=display:flex><span>  						.<span style=color:#50fa7b>AddLettuce</span>(<span style=color:#f1fa8c>&#34;生菜1&#34;</span>).<span style=color:#50fa7b>AddTomato</span>(<span style=color:#f1fa8c>&#34;番茄1&#34;</span>).<span style=color:#50fa7b>Build</span>()
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>if</span> burger1.Pepperoni <span style=color:#000;font-weight:700>!=</span> <span style=color:#d14>&#34;火腿1&#34;</span> <span style=color:#000;font-weight:700>||</span> burger1.Cheese <span style=color:#000;font-weight:700>!=</span> <span style=color:#d14>&#34;奶酪1&#34;</span> <span style=color:#000;font-weight:700>||</span>
-</span></span><span style=display:flex><span>  			burger1.Lettuce <span style=color:#000;font-weight:700>!=</span> <span style=color:#d14>&#34;生菜1&#34;</span> <span style=color:#000;font-weight:700>||</span> burger1.Tomato <span style=color:#000;font-weight:700>!=</span> <span style=color:#d14>&#34;番茄1&#34;</span> {
-</span></span><span style=display:flex><span>				t.<span style=color:#900;font-weight:700>Fail</span>()
+</span></span><span style=display:flex><span>	<span style=color:#ff79c6>if</span> burger1.Pepperoni <span style=color:#ff79c6>!=</span> <span style=color:#f1fa8c>&#34;火腿1&#34;</span> <span style=color:#ff79c6>||</span> burger1.Cheese <span style=color:#ff79c6>!=</span> <span style=color:#f1fa8c>&#34;奶酪1&#34;</span> <span style=color:#ff79c6>||</span>
+</span></span><span style=display:flex><span>  			burger1.Lettuce <span style=color:#ff79c6>!=</span> <span style=color:#f1fa8c>&#34;生菜1&#34;</span> <span style=color:#ff79c6>||</span> burger1.Tomato <span style=color:#ff79c6>!=</span> <span style=color:#f1fa8c>&#34;番茄1&#34;</span> {
+</span></span><span style=display:flex><span>				t.<span style=color:#50fa7b>Fail</span>()
 </span></span><span style=display:flex><span>	}
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>	t.<span style=color:#900;font-weight:700>Log</span>(<span style=color:#d14>&#34;制作第二个 🍔&#34;</span>)
-</span></span><span style=display:flex><span>	burger2 <span style=color:#000;font-weight:700>:=</span> <span style=color:#900;font-weight:700>NewBurgerBuilder</span>().<span style=color:#900;font-weight:700>AddPepperoni</span>(<span style=color:#d14>&#34;火腿2&#34;</span>).<span style=color:#900;font-weight:700>AddCheese</span>(<span style=color:#d14>&#34;奶酪2&#34;</span>)
-</span></span><span style=display:flex><span>  												.<span style=color:#900;font-weight:700>AddLettuce</span>(<span style=color:#d14>&#34;生菜2&#34;</span>).<span style=color:#900;font-weight:700>AddTomato</span>(<span style=color:#d14>&#34;番茄2&#34;</span>).<span style=color:#900;font-weight:700>Build</span>()
+</span></span><span style=display:flex><span>	t.<span style=color:#50fa7b>Log</span>(<span style=color:#f1fa8c>&#34;制作第二个 🍔&#34;</span>)
+</span></span><span style=display:flex><span>	burger2 <span style=color:#ff79c6>:=</span> <span style=color:#50fa7b>NewBurgerBuilder</span>().<span style=color:#50fa7b>AddPepperoni</span>(<span style=color:#f1fa8c>&#34;火腿2&#34;</span>).<span style=color:#50fa7b>AddCheese</span>(<span style=color:#f1fa8c>&#34;奶酪2&#34;</span>)
+</span></span><span style=display:flex><span>  												.<span style=color:#50fa7b>AddLettuce</span>(<span style=color:#f1fa8c>&#34;生菜2&#34;</span>).<span style=color:#50fa7b>AddTomato</span>(<span style=color:#f1fa8c>&#34;番茄2&#34;</span>).<span style=color:#50fa7b>Build</span>()
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>if</span> burger2.Pepperoni <span style=color:#000;font-weight:700>!=</span> <span style=color:#d14>&#34;火腿2&#34;</span> <span style=color:#000;font-weight:700>||</span> burger2.Cheese <span style=color:#000;font-weight:700>!=</span> <span style=color:#d14>&#34;奶酪2&#34;</span> <span style=color:#000;font-weight:700>||</span>
-</span></span><span style=display:flex><span>  			burger2.Lettuce <span style=color:#000;font-weight:700>!=</span> <span style=color:#d14>&#34;生菜2&#34;</span> <span style=color:#000;font-weight:700>||</span> burger2.Tomato <span style=color:#000;font-weight:700>!=</span> <span style=color:#d14>&#34;番茄2&#34;</span> {
-</span></span><span style=display:flex><span>		t.<span style=color:#900;font-weight:700>Fail</span>()
+</span></span><span style=display:flex><span>	<span style=color:#ff79c6>if</span> burger2.Pepperoni <span style=color:#ff79c6>!=</span> <span style=color:#f1fa8c>&#34;火腿2&#34;</span> <span style=color:#ff79c6>||</span> burger2.Cheese <span style=color:#ff79c6>!=</span> <span style=color:#f1fa8c>&#34;奶酪2&#34;</span> <span style=color:#ff79c6>||</span>
+</span></span><span style=display:flex><span>  			burger2.Lettuce <span style=color:#ff79c6>!=</span> <span style=color:#f1fa8c>&#34;生菜2&#34;</span> <span style=color:#ff79c6>||</span> burger2.Tomato <span style=color:#ff79c6>!=</span> <span style=color:#f1fa8c>&#34;番茄2&#34;</span> {
+</span></span><span style=display:flex><span>		t.<span style=color:#50fa7b>Fail</span>()
 </span></span><span style=display:flex><span>	}
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>	t.<span style=color:#900;font-weight:700>Log</span>(<span style=color:#d14>&#34;制作第三个 🍔&#34;</span>)
-</span></span><span style=display:flex><span>	burger3 <span style=color:#000;font-weight:700>:=</span> <span style=color:#900;font-weight:700>NewBurgerBuilder</span>().<span style=color:#900;font-weight:700>AddPepperoni</span>(<span style=color:#d14>&#34;火腿3&#34;</span>)
-</span></span><span style=display:flex><span>  					.<span style=color:#900;font-weight:700>AddLettuce</span>(<span style=color:#d14>&#34;生菜3&#34;</span>).<span style=color:#900;font-weight:700>AddTomato</span>(<span style=color:#d14>&#34;番茄3&#34;</span>).<span style=color:#900;font-weight:700>Build</span>()
-</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>if</span> burger3 <span style=color:#000;font-weight:700>!=</span> <span style=color:#000;font-weight:700>nil</span> {
-</span></span><span style=display:flex><span>		t.<span style=color:#900;font-weight:700>Fail</span>()
+</span></span><span style=display:flex><span>	t.<span style=color:#50fa7b>Log</span>(<span style=color:#f1fa8c>&#34;制作第三个 🍔&#34;</span>)
+</span></span><span style=display:flex><span>	burger3 <span style=color:#ff79c6>:=</span> <span style=color:#50fa7b>NewBurgerBuilder</span>().<span style=color:#50fa7b>AddPepperoni</span>(<span style=color:#f1fa8c>&#34;火腿3&#34;</span>)
+</span></span><span style=display:flex><span>  					.<span style=color:#50fa7b>AddLettuce</span>(<span style=color:#f1fa8c>&#34;生菜3&#34;</span>).<span style=color:#50fa7b>AddTomato</span>(<span style=color:#f1fa8c>&#34;番茄3&#34;</span>).<span style=color:#50fa7b>Build</span>()
+</span></span><span style=display:flex><span>	<span style=color:#ff79c6>if</span> burger3 <span style=color:#ff79c6>!=</span> <span style=color:#ff79c6>nil</span> {
+</span></span><span style=display:flex><span>		t.<span style=color:#50fa7b>Fail</span>()
 </span></span><span style=display:flex><span>	}
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></td></tr></table></div></div></div><div class="post-meta meta-tags"><ul class=clearfix><li><a href=/tags/%E5%88%9B%E5%BB%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F target=_blank>创建型设计模式</a></li></ul></div></article><div class="post bg-white"><script src=https://utteranc.es/client.js repo=ifenng2020/ifenng2020.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script></div></div><footer id=footer><div>&copy; 2023 <a href=/>平凡之路</a>
+</span></span></code></pre></div></div><div class="post-meta meta-tags"><ul class=clearfix><li><a href=/tags/%E5%88%9B%E5%BB%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F target=_blank>创建型设计模式</a></li></ul></div></article><div class="post bg-white"><script src=https://utteranc.es/client.js repo=ifenng2020/ifenng2020.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script></div></div><footer id=footer><div>&copy; 2023 <a href=/>平凡之路</a>
 | <a rel=nofollow target=_blank href=http://beian.miit.gov.cn/>冀ICP备2023015737号-1</a></div></footer><script type=text/javascript>window.MathJax={tex2jax:{inlineMath:[["$","$"]],processEscapes:!0}}</script><script src='//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
 <a id=rocket href=#top></a>
 <script type=text/javascript src='/js/totop.js?v=0.0.0' async></script><style type=text/css>div.highlight{position:relative;margin:1em 0}.copy-code{display:none;position:absolute;top:4px;right:4px;color:rgba(255,255,255,.8);background:rgba(78,78,78,.8);border-radius:var(--radius);padding:0 5px;font:inherit;user-select:none;cursor:pointer;border:0;--radius:8px}div.highlight:hover .copy-code,pre:hover .copy-code{display:block}</style><script>document.querySelectorAll("pre > code").forEach(e=>{const n=e.parentNode.parentNode,t=document.createElement("button");t.classList.add("copy-code"),t.innerHTML="copy";function s(){t.innerHTML="copied!",setTimeout(()=>{t.innerHTML="copy"},2e3)}t.addEventListener("click",t=>{if("clipboard"in navigator){navigator.clipboard.writeText(e.textContent),s();return}const n=document.createRange();n.selectNodeContents(e);const o=window.getSelection();o.removeAllRanges(),o.addRange(n);try{document.execCommand("copy"),s()}catch{}o.removeRange(n)}),n.classList.contains("highlight")?n.appendChild(t):n.parentNode.firstChild==n||(e.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?e.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(t):e.parentNode.appendChild(t))})</script></div><div id=secondary><section class=widget><form id=search action=/search method=get accept-charset=utf-8 target=_blank _lpchecked=1><input type=text name=q maxlength=20 placeholder=Search>
@@ -260,4 +148,4 @@
 <a href=/tags/work/>work</a>
 <a href=/tags/%E5%88%9B%E5%BB%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>创建型设计模式</a>
 <a href=/tags/%E7%BB%93%E6%9E%84%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>结构型设计模式</a>
-<a href=/tags/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>行为型设计模式</a></div></section><section class=widget><h3 class=widget-title>友情链接</h3><ul class=widget-list><li><a target=_blank href=https://geektutu.com/ title=极客兔兔>极客兔兔的博客</a></li><li><a target=_blank href=https://xiaolincoding.com/ title=小林coding>小林coding</a></li></ul></section></div></div></div></div></body></html>
+<a href=/tags/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>行为型设计模式</a></div></section><section class=widget><h3 class=widget-title>友情链接</h3><ul class=widget-list><li><a target=_blank href=https://xiaolincoding.com/ title=小林coding>小林coding</a></li></ul></section></div></div></div></div></body></html>

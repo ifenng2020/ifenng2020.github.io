@@ -3,181 +3,94 @@
 <a href=/tools/ title=工具箱>工具箱</a>
 <a href=/archives/ title=归档>归档</a>
 <a href=/about/ title=关于>关于</a></nav></div></div></div></header><div id=body><div class=container><div class=col-group><div class=col-8 id=main><div class=res-cons><article class=post><header><h1 class=post-title>原型模式</h1></header><time datetime=2022-11-19T08:17:22Z class="post-meta meta-date dt-published">2022年11月19日</time><div class="post-meta meta-category"><span>&nbsp;|</span>
-<a href=/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F>设计模式</a></div><div class=post-content><p>代码实现</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">26
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">27
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">28
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">29
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">30
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">31
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">32
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">33
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">34
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">35
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">36
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">37
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">38
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">39
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">40
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">41
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">42
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#000;font-weight:700>package</span> prototype
+<a href=/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F>设计模式</a></div><div class=post-content><p>代码实现</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#ff79c6>package</span> prototype
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>import</span> (
-</span></span><span style=display:flex><span>	<span style=color:#d14>&#34;encoding/json&#34;</span>
-</span></span><span style=display:flex><span>	<span style=color:#d14>&#34;time&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#ff79c6>import</span> (
+</span></span><span style=display:flex><span>	<span style=color:#f1fa8c>&#34;encoding/json&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#f1fa8c>&#34;time&#34;</span>
 </span></span><span style=display:flex><span>)
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// Keyword 搜索关键字
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>type</span> Keyword <span style=color:#000;font-weight:700>struct</span> {
-</span></span><span style=display:flex><span>	word      <span style=color:#458;font-weight:700>string</span>
-</span></span><span style=display:flex><span>	visit     <span style=color:#458;font-weight:700>int</span>
-</span></span><span style=display:flex><span>	UpdatedAt <span style=color:#000;font-weight:700>*</span>time.Time
+</span></span><span style=display:flex><span><span style=color:#6272a4>// Keyword 搜索关键字
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#8be9fd;font-style:italic>type</span> Keyword <span style=color:#8be9fd;font-style:italic>struct</span> {
+</span></span><span style=display:flex><span>	word      <span style=color:#8be9fd>string</span>
+</span></span><span style=display:flex><span>	visit     <span style=color:#8be9fd>int</span>
+</span></span><span style=display:flex><span>	UpdatedAt <span style=color:#ff79c6>*</span>time.Time
 </span></span><span style=display:flex><span>}
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// Clone 这里使用序列化与反序列化的方式深拷贝
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>func</span> (k <span style=color:#000;font-weight:700>*</span>Keyword) <span style=color:#900;font-weight:700>Clone</span>() <span style=color:#000;font-weight:700>*</span>Keyword {
-</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>var</span> newKeyword Keyword
-</span></span><span style=display:flex><span>	b, _ <span style=color:#000;font-weight:700>:=</span> json.<span style=color:#900;font-weight:700>Marshal</span>(k)
-</span></span><span style=display:flex><span>	json.<span style=color:#900;font-weight:700>Unmarshal</span>(b, <span style=color:#000;font-weight:700>&amp;</span>newKeyword)
-</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>return</span> <span style=color:#000;font-weight:700>&amp;</span>newKeyword
+</span></span><span style=display:flex><span><span style=color:#6272a4>// Clone 这里使用序列化与反序列化的方式深拷贝
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#8be9fd;font-style:italic>func</span> (k <span style=color:#ff79c6>*</span>Keyword) <span style=color:#50fa7b>Clone</span>() <span style=color:#ff79c6>*</span>Keyword {
+</span></span><span style=display:flex><span>	<span style=color:#8be9fd;font-style:italic>var</span> newKeyword Keyword
+</span></span><span style=display:flex><span>	b, _ <span style=color:#ff79c6>:=</span> json.<span style=color:#50fa7b>Marshal</span>(k)
+</span></span><span style=display:flex><span>	json.<span style=color:#50fa7b>Unmarshal</span>(b, <span style=color:#ff79c6>&amp;</span>newKeyword)
+</span></span><span style=display:flex><span>	<span style=color:#ff79c6>return</span> <span style=color:#ff79c6>&amp;</span>newKeyword
 </span></span><span style=display:flex><span>}
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// Keywords 关键字 map
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>type</span> Keywords <span style=color:#000;font-weight:700>map</span>[<span style=color:#458;font-weight:700>string</span>]<span style=color:#000;font-weight:700>*</span>Keyword
+</span></span><span style=display:flex><span><span style=color:#6272a4>// Keywords 关键字 map
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#8be9fd;font-style:italic>type</span> Keywords <span style=color:#8be9fd;font-style:italic>map</span>[<span style=color:#8be9fd>string</span>]<span style=color:#ff79c6>*</span>Keyword
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// Clone 复制一个新的 keywords
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// updatedWords: 需要更新的关键词列表，由于从数据库中获取数据常常是数组的方式
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>func</span> (words Keywords) <span style=color:#900;font-weight:700>Clone</span>(updatedWords []<span style=color:#000;font-weight:700>*</span>Keyword) Keywords {
-</span></span><span style=display:flex><span>	newKeywords <span style=color:#000;font-weight:700>:=</span> Keywords{}
+</span></span><span style=display:flex><span><span style=color:#6272a4>// Clone 复制一个新的 keywords
+</span></span></span><span style=display:flex><span><span style=color:#6272a4>// updatedWords: 需要更新的关键词列表，由于从数据库中获取数据常常是数组的方式
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#8be9fd;font-style:italic>func</span> (words Keywords) <span style=color:#50fa7b>Clone</span>(updatedWords []<span style=color:#ff79c6>*</span>Keyword) Keywords {
+</span></span><span style=display:flex><span>	newKeywords <span style=color:#ff79c6>:=</span> Keywords{}
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>for</span> k, v <span style=color:#000;font-weight:700>:=</span> <span style=color:#000;font-weight:700>range</span> words {
-</span></span><span style=display:flex><span>		<span style=color:#998;font-style:italic>// 这里是浅拷贝，直接拷贝了地址
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span>		newKeywords[k] = v
+</span></span><span style=display:flex><span>	<span style=color:#ff79c6>for</span> k, v <span style=color:#ff79c6>:=</span> <span style=color:#ff79c6>range</span> words {
+</span></span><span style=display:flex><span>		<span style=color:#6272a4>// 这里是浅拷贝，直接拷贝了地址
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>		newKeywords[k] = v
 </span></span><span style=display:flex><span>	}
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>	<span style=color:#998;font-style:italic>// 替换掉需要更新的字段，这里用的是深拷贝
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span>	<span style=color:#000;font-weight:700>for</span> _, word <span style=color:#000;font-weight:700>:=</span> <span style=color:#000;font-weight:700>range</span> updatedWords {
-</span></span><span style=display:flex><span>		newKeywords[word.word] = word.<span style=color:#900;font-weight:700>Clone</span>()
+</span></span><span style=display:flex><span>	<span style=color:#6272a4>// 替换掉需要更新的字段，这里用的是深拷贝
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>	<span style=color:#ff79c6>for</span> _, word <span style=color:#ff79c6>:=</span> <span style=color:#ff79c6>range</span> updatedWords {
+</span></span><span style=display:flex><span>		newKeywords[word.word] = word.<span style=color:#50fa7b>Clone</span>()
 </span></span><span style=display:flex><span>	}
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>	<span style=color:#000;font-weight:700>return</span> newKeywords
+</span></span><span style=display:flex><span>	<span style=color:#ff79c6>return</span> newKeywords
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></td></tr></table></div></div><p>测试用例</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">26
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">27
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">28
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">29
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">30
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">31
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">32
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">33
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">34
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">35
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">36
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">37
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">38
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">39
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">40
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">41
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">42
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">43
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">44
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">45
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#000;font-weight:700>package</span> prototype
+</span></span></code></pre></div><p>测试用例</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#ff79c6>package</span> prototype
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>import</span> (
-</span></span><span style=display:flex><span>	<span style=color:#d14>&#34;testing&#34;</span>
-</span></span><span style=display:flex><span>	<span style=color:#d14>&#34;time&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#ff79c6>import</span> (
+</span></span><span style=display:flex><span>	<span style=color:#f1fa8c>&#34;testing&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#f1fa8c>&#34;time&#34;</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>	<span style=color:#d14>&#34;github.com/stretchr/testify/assert&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#f1fa8c>&#34;github.com/stretchr/testify/assert&#34;</span>
 </span></span><span style=display:flex><span>)
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>func</span> <span style=color:#900;font-weight:700>TestKeywords_Clone</span>(t <span style=color:#000;font-weight:700>*</span>testing.T) {
-</span></span><span style=display:flex><span>	updateAt, _ <span style=color:#000;font-weight:700>:=</span> time.<span style=color:#900;font-weight:700>Parse</span>(<span style=color:#d14>&#34;2006&#34;</span>, <span style=color:#d14>&#34;2020&#34;</span>)
-</span></span><span style=display:flex><span>	words <span style=color:#000;font-weight:700>:=</span> Keywords{
-</span></span><span style=display:flex><span>		<span style=color:#d14>&#34;testA&#34;</span>: <span style=color:#000;font-weight:700>&amp;</span>Keyword{
-</span></span><span style=display:flex><span>			word:      <span style=color:#d14>&#34;testA&#34;</span>,
-</span></span><span style=display:flex><span>			visit:     <span style=color:#099>1</span>,
-</span></span><span style=display:flex><span>			UpdatedAt: <span style=color:#000;font-weight:700>&amp;</span>updateAt,
+</span></span><span style=display:flex><span><span style=color:#8be9fd;font-style:italic>func</span> <span style=color:#50fa7b>TestKeywords_Clone</span>(t <span style=color:#ff79c6>*</span>testing.T) {
+</span></span><span style=display:flex><span>	updateAt, _ <span style=color:#ff79c6>:=</span> time.<span style=color:#50fa7b>Parse</span>(<span style=color:#f1fa8c>&#34;2006&#34;</span>, <span style=color:#f1fa8c>&#34;2020&#34;</span>)
+</span></span><span style=display:flex><span>	words <span style=color:#ff79c6>:=</span> Keywords{
+</span></span><span style=display:flex><span>		<span style=color:#f1fa8c>&#34;testA&#34;</span>: <span style=color:#ff79c6>&amp;</span>Keyword{
+</span></span><span style=display:flex><span>			word:      <span style=color:#f1fa8c>&#34;testA&#34;</span>,
+</span></span><span style=display:flex><span>			visit:     <span style=color:#bd93f9>1</span>,
+</span></span><span style=display:flex><span>			UpdatedAt: <span style=color:#ff79c6>&amp;</span>updateAt,
 </span></span><span style=display:flex><span>		},
-</span></span><span style=display:flex><span>		<span style=color:#d14>&#34;testB&#34;</span>: <span style=color:#000;font-weight:700>&amp;</span>Keyword{
-</span></span><span style=display:flex><span>			word:      <span style=color:#d14>&#34;testB&#34;</span>,
-</span></span><span style=display:flex><span>			visit:     <span style=color:#099>2</span>,
-</span></span><span style=display:flex><span>			UpdatedAt: <span style=color:#000;font-weight:700>&amp;</span>updateAt,
+</span></span><span style=display:flex><span>		<span style=color:#f1fa8c>&#34;testB&#34;</span>: <span style=color:#ff79c6>&amp;</span>Keyword{
+</span></span><span style=display:flex><span>			word:      <span style=color:#f1fa8c>&#34;testB&#34;</span>,
+</span></span><span style=display:flex><span>			visit:     <span style=color:#bd93f9>2</span>,
+</span></span><span style=display:flex><span>			UpdatedAt: <span style=color:#ff79c6>&amp;</span>updateAt,
 </span></span><span style=display:flex><span>		},
-</span></span><span style=display:flex><span>		<span style=color:#d14>&#34;testC&#34;</span>: <span style=color:#000;font-weight:700>&amp;</span>Keyword{
-</span></span><span style=display:flex><span>			word:      <span style=color:#d14>&#34;testC&#34;</span>,
-</span></span><span style=display:flex><span>			visit:     <span style=color:#099>3</span>,
-</span></span><span style=display:flex><span>			UpdatedAt: <span style=color:#000;font-weight:700>&amp;</span>updateAt,
+</span></span><span style=display:flex><span>		<span style=color:#f1fa8c>&#34;testC&#34;</span>: <span style=color:#ff79c6>&amp;</span>Keyword{
+</span></span><span style=display:flex><span>			word:      <span style=color:#f1fa8c>&#34;testC&#34;</span>,
+</span></span><span style=display:flex><span>			visit:     <span style=color:#bd93f9>3</span>,
+</span></span><span style=display:flex><span>			UpdatedAt: <span style=color:#ff79c6>&amp;</span>updateAt,
 </span></span><span style=display:flex><span>		},
 </span></span><span style=display:flex><span>	}
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>	now <span style=color:#000;font-weight:700>:=</span> time.<span style=color:#900;font-weight:700>Now</span>()
-</span></span><span style=display:flex><span>	updatedWords <span style=color:#000;font-weight:700>:=</span> []<span style=color:#000;font-weight:700>*</span>Keyword{
+</span></span><span style=display:flex><span>	now <span style=color:#ff79c6>:=</span> time.<span style=color:#50fa7b>Now</span>()
+</span></span><span style=display:flex><span>	updatedWords <span style=color:#ff79c6>:=</span> []<span style=color:#ff79c6>*</span>Keyword{
 </span></span><span style=display:flex><span>		{
-</span></span><span style=display:flex><span>			word:      <span style=color:#d14>&#34;testB&#34;</span>,
-</span></span><span style=display:flex><span>			visit:     <span style=color:#099>10</span>,
-</span></span><span style=display:flex><span>			UpdatedAt: <span style=color:#000;font-weight:700>&amp;</span>now,
+</span></span><span style=display:flex><span>			word:      <span style=color:#f1fa8c>&#34;testB&#34;</span>,
+</span></span><span style=display:flex><span>			visit:     <span style=color:#bd93f9>10</span>,
+</span></span><span style=display:flex><span>			UpdatedAt: <span style=color:#ff79c6>&amp;</span>now,
 </span></span><span style=display:flex><span>		},
 </span></span><span style=display:flex><span>	}
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>	got <span style=color:#000;font-weight:700>:=</span> words.<span style=color:#900;font-weight:700>Clone</span>(updatedWords)
+</span></span><span style=display:flex><span>	got <span style=color:#ff79c6>:=</span> words.<span style=color:#50fa7b>Clone</span>(updatedWords)
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>	assert.<span style=color:#900;font-weight:700>Equal</span>(t, words[<span style=color:#d14>&#34;testA&#34;</span>], got[<span style=color:#d14>&#34;testA&#34;</span>])
-</span></span><span style=display:flex><span>	assert.<span style=color:#900;font-weight:700>NotEqual</span>(t, words[<span style=color:#d14>&#34;testB&#34;</span>], got[<span style=color:#d14>&#34;testB&#34;</span>])
-</span></span><span style=display:flex><span>	assert.<span style=color:#900;font-weight:700>NotEqual</span>(t, updatedWords[<span style=color:#099>0</span>], got[<span style=color:#d14>&#34;testB&#34;</span>])
-</span></span><span style=display:flex><span>	assert.<span style=color:#900;font-weight:700>Equal</span>(t, words[<span style=color:#d14>&#34;testC&#34;</span>], got[<span style=color:#d14>&#34;testC&#34;</span>])
+</span></span><span style=display:flex><span>	assert.<span style=color:#50fa7b>Equal</span>(t, words[<span style=color:#f1fa8c>&#34;testA&#34;</span>], got[<span style=color:#f1fa8c>&#34;testA&#34;</span>])
+</span></span><span style=display:flex><span>	assert.<span style=color:#50fa7b>NotEqual</span>(t, words[<span style=color:#f1fa8c>&#34;testB&#34;</span>], got[<span style=color:#f1fa8c>&#34;testB&#34;</span>])
+</span></span><span style=display:flex><span>	assert.<span style=color:#50fa7b>NotEqual</span>(t, updatedWords[<span style=color:#bd93f9>0</span>], got[<span style=color:#f1fa8c>&#34;testB&#34;</span>])
+</span></span><span style=display:flex><span>	assert.<span style=color:#50fa7b>Equal</span>(t, words[<span style=color:#f1fa8c>&#34;testC&#34;</span>], got[<span style=color:#f1fa8c>&#34;testC&#34;</span>])
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></td></tr></table></div></div></div><div class="post-meta meta-tags"><ul class=clearfix><li><a href=/tags/%E5%88%9B%E5%BB%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F target=_blank>创建型设计模式</a></li></ul></div></article><div class="post bg-white"><script src=https://utteranc.es/client.js repo=ifenng2020/ifenng2020.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script></div></div><footer id=footer><div>&copy; 2023 <a href=/>平凡之路</a>
+</span></span></code></pre></div></div><div class="post-meta meta-tags"><ul class=clearfix><li><a href=/tags/%E5%88%9B%E5%BB%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F target=_blank>创建型设计模式</a></li></ul></div></article><div class="post bg-white"><script src=https://utteranc.es/client.js repo=ifenng2020/ifenng2020.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script></div></div><footer id=footer><div>&copy; 2023 <a href=/>平凡之路</a>
 | <a rel=nofollow target=_blank href=http://beian.miit.gov.cn/>冀ICP备2023015737号-1</a></div></footer><script type=text/javascript>window.MathJax={tex2jax:{inlineMath:[["$","$"]],processEscapes:!0}}</script><script src='//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
 <a id=rocket href=#top></a>
 <script type=text/javascript src='/js/totop.js?v=0.0.0' async></script><style type=text/css>div.highlight{position:relative;margin:1em 0}.copy-code{display:none;position:absolute;top:4px;right:4px;color:rgba(255,255,255,.8);background:rgba(78,78,78,.8);border-radius:var(--radius);padding:0 5px;font:inherit;user-select:none;cursor:pointer;border:0;--radius:8px}div.highlight:hover .copy-code,pre:hover .copy-code{display:block}</style><script>document.querySelectorAll("pre > code").forEach(e=>{const n=e.parentNode.parentNode,t=document.createElement("button");t.classList.add("copy-code"),t.innerHTML="copy";function s(){t.innerHTML="copied!",setTimeout(()=>{t.innerHTML="copy"},2e3)}t.addEventListener("click",t=>{if("clipboard"in navigator){navigator.clipboard.writeText(e.textContent),s();return}const n=document.createRange();n.selectNodeContents(e);const o=window.getSelection();o.removeAllRanges(),o.addRange(n);try{document.execCommand("copy"),s()}catch{}o.removeRange(n)}),n.classList.contains("highlight")?n.appendChild(t):n.parentNode.firstChild==n||(e.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?e.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(t):e.parentNode.appendChild(t))})</script></div><div id=secondary><section class=widget><form id=search action=/search method=get accept-charset=utf-8 target=_blank _lpchecked=1><input type=text name=q maxlength=20 placeholder=Search>
@@ -210,4 +123,4 @@
 <a href=/tags/work/>work</a>
 <a href=/tags/%E5%88%9B%E5%BB%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>创建型设计模式</a>
 <a href=/tags/%E7%BB%93%E6%9E%84%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>结构型设计模式</a>
-<a href=/tags/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>行为型设计模式</a></div></section><section class=widget><h3 class=widget-title>友情链接</h3><ul class=widget-list><li><a target=_blank href=https://geektutu.com/ title=极客兔兔>极客兔兔的博客</a></li><li><a target=_blank href=https://xiaolincoding.com/ title=小林coding>小林coding</a></li></ul></section></div></div></div></div></body></html>
+<a href=/tags/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>行为型设计模式</a></div></section><section class=widget><h3 class=widget-title>友情链接</h3><ul class=widget-list><li><a target=_blank href=https://xiaolincoding.com/ title=小林coding>小林coding</a></li></ul></section></div></div></div></div></body></html>

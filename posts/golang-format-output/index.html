@@ -4,61 +4,34 @@
 <a href=/archives/ title=归档>归档</a>
 <a href=/about/ title=关于>关于</a></nav></div></div></div></header><div id=body><div class=container><div class=col-group><div class=col-8 id=main><div class=res-cons><article class=post><header><h1 class=post-title>Golang格式化输出备忘</h1></header><time datetime=2023-02-13T00:34:14Z class="post-meta meta-date dt-published">2023年2月13日</time><div class="post-meta meta-category"><span>&nbsp;|</span>
 <a href=/categories/golang>golang</a></div><div class=post-content><h1 id=go-中格式化输出>Go 中格式化输出</h1><h2 id=general><strong>General</strong></h2><ul><li>%v 以默认的方式打印变量的值</li><li>%T 打印变量的类型</li></ul><h2 id=integer><strong>Integer</strong></h2><ul><li>%+d 带符号的整型，fmt.Printf(“%+d”, 255)输出+255</li><li>%d 不带符号的整形，注意和 %+d 的区别。</li><li>%o 不带零的八进制</li><li>%#o 带零的八进制</li><li>%x 小写的十六进制</li><li>%X 大写的十六进制</li><li>%#x 带 0x 的十六进制</li><li>%U 打印 Unicode 字符</li><li>%#U 打印带字符的 Unicode</li><li>%b 打印整型的二进制</li><li>%q 打印单引号</li></ul><h2 id=integer-width><strong>Integer width</strong></h2><ul><li>%5d 右对齐最少占 5 个位置</li><li>%-5d 左对齐</li><li>%05d 不足长度 5 前面补零。</li></ul><h2 id=float><strong>Float</strong></h2><ul><li>%f (=%.6f) 6 位小数点</li><li>%e (=%.6e) 6 位小数点（科学计数法）</li><li>%g 用最少的数字来表示</li><li>%.3g 最多 3 位数字来表示</li><li>%.3f 最多 3 位小数来表示</li></ul><h2 id=string><strong>String</strong></h2><ul><li>%s 正常输出字符串</li><li>%q 字符串带双引号，字符串中的引号带转义符</li><li>%#q 字符串带反引号，如果字符串内有反引号，就用双引号代替</li><li>%x 将字符串转换为小写的 16 进制格式</li><li>%X 将字符串转换为大写的 16 进制格式</li><li>% x 带空格的 16 进制格式</li></ul><h2 id=string-width-以-5-做例子><strong>String Width (以 5 做例子）</strong></h2><ul><li>%5s 最小宽度为 5</li><li>%-5s 最小宽度为 5（左对齐）</li><li>%.5s 最大宽度为 5</li><li>%5.7s 最小宽度为 5，最大宽度为 7</li><li>%-5.7s 最小宽度为 5，最大宽度为 7（左对齐）</li><li>%5.3s 如果宽度大于 3，则截断</li><li>%05s 如果宽度小于 5，就会在字符串前面补零</li></ul><h2 id=struct><strong>Struct</strong></h2><ul><li>%v 正常打印。比如：{sam {12345 67890}}</li><li>%+v 带字段名称。比如：{name:sam phone:{mobile:12345 office:67890}</li><li>%#v 用 Go 的语法打印。
-比如 main.People{name:”sam”, phone:main.Phone{mobile:”12345”, office:”67890”}}</li></ul><h2 id=boolean>Boolean</h2><ul><li>%t 打印 <code>true</code> 或 <code>false</code></li></ul><h2 id=pointer><strong>Pointer</strong></h2><ul><li>%p 带 0x 的指针</li><li>%#p 不带 0x 的指针</li></ul><h2 id=示例>示例</h2><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">26
-</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">27
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>fmt.<span style=color:#900;font-weight:700>Printf</span>(<span style=color:#d14>&#34;%+d\n&#34;</span>, <span style=color:#099>255</span>)
-</span></span><span style=display:flex><span>fmt.<span style=color:#900;font-weight:700>Printf</span>(<span style=color:#d14>&#34;%d\n&#34;</span>, <span style=color:#099>2345</span>)
-</span></span><span style=display:flex><span>fmt.<span style=color:#900;font-weight:700>Printf</span>(<span style=color:#d14>&#34;%d\n&#34;</span>, <span style=color:#000;font-weight:700>-</span><span style=color:#099>2345</span>)
-</span></span><span style=display:flex><span>fmt.<span style=color:#900;font-weight:700>Printf</span>(<span style=color:#d14>&#34;%q\n&#34;</span>, <span style=color:#d14>&#34;sss&#34;</span>)
-</span></span><span style=display:flex><span>fmt.<span style=color:#900;font-weight:700>Printf</span>(<span style=color:#d14>&#34;%#q\n&#34;</span>, <span style=color:#d14>&#34;sssssss&#34;</span>)
-</span></span><span style=display:flex><span>fmt.<span style=color:#900;font-weight:700>Printf</span>(<span style=color:#d14>&#34;%#q\n&#34;</span>, <span style=color:#d14>&#34;ssss`sss&#34;</span>)
+比如 main.People{name:”sam”, phone:main.Phone{mobile:”12345”, office:”67890”}}</li></ul><h2 id=boolean>Boolean</h2><ul><li>%t 打印 <code>true</code> 或 <code>false</code></li></ul><h2 id=pointer><strong>Pointer</strong></h2><ul><li>%p 带 0x 的指针</li><li>%#p 不带 0x 的指针</li></ul><h2 id=示例>示例</h2><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>fmt.<span style=color:#50fa7b>Printf</span>(<span style=color:#f1fa8c>&#34;%+d\n&#34;</span>, <span style=color:#bd93f9>255</span>)
+</span></span><span style=display:flex><span>fmt.<span style=color:#50fa7b>Printf</span>(<span style=color:#f1fa8c>&#34;%d\n&#34;</span>, <span style=color:#bd93f9>2345</span>)
+</span></span><span style=display:flex><span>fmt.<span style=color:#50fa7b>Printf</span>(<span style=color:#f1fa8c>&#34;%d\n&#34;</span>, <span style=color:#ff79c6>-</span><span style=color:#bd93f9>2345</span>)
+</span></span><span style=display:flex><span>fmt.<span style=color:#50fa7b>Printf</span>(<span style=color:#f1fa8c>&#34;%q\n&#34;</span>, <span style=color:#f1fa8c>&#34;sss&#34;</span>)
+</span></span><span style=display:flex><span>fmt.<span style=color:#50fa7b>Printf</span>(<span style=color:#f1fa8c>&#34;%#q\n&#34;</span>, <span style=color:#f1fa8c>&#34;sssssss&#34;</span>)
+</span></span><span style=display:flex><span>fmt.<span style=color:#50fa7b>Printf</span>(<span style=color:#f1fa8c>&#34;%#q\n&#34;</span>, <span style=color:#f1fa8c>&#34;ssss`sss&#34;</span>)
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>fmt.<span style=color:#900;font-weight:700>Printf</span>(<span style=color:#d14>&#34;%#x\n&#34;</span>, <span style=color:#099>255</span>)
-</span></span><span style=display:flex><span>fmt.<span style=color:#900;font-weight:700>Printf</span>(<span style=color:#d14>&#34;%#X\n&#34;</span>, <span style=color:#099>255</span>)
-</span></span><span style=display:flex><span>fmt.<span style=color:#900;font-weight:700>Printf</span>(<span style=color:#d14>&#34;%#o\n&#34;</span>, <span style=color:#099>255</span>)
-</span></span><span style=display:flex><span>fmt.<span style=color:#900;font-weight:700>Printf</span>(<span style=color:#d14>&#34;%e\n&#34;</span>, <span style=color:#099>1000024.123456</span>)
-</span></span><span style=display:flex><span>fmt.<span style=color:#900;font-weight:700>Printf</span>(<span style=color:#d14>&#34;%f\n&#34;</span>, <span style=color:#099>1000024.123456</span>)
-</span></span><span style=display:flex><span>fmt.<span style=color:#900;font-weight:700>Printf</span>(<span style=color:#d14>&#34;%g\n&#34;</span>, <span style=color:#099>1000024.123456</span>)
+</span></span><span style=display:flex><span>fmt.<span style=color:#50fa7b>Printf</span>(<span style=color:#f1fa8c>&#34;%#x\n&#34;</span>, <span style=color:#bd93f9>255</span>)
+</span></span><span style=display:flex><span>fmt.<span style=color:#50fa7b>Printf</span>(<span style=color:#f1fa8c>&#34;%#X\n&#34;</span>, <span style=color:#bd93f9>255</span>)
+</span></span><span style=display:flex><span>fmt.<span style=color:#50fa7b>Printf</span>(<span style=color:#f1fa8c>&#34;%#o\n&#34;</span>, <span style=color:#bd93f9>255</span>)
+</span></span><span style=display:flex><span>fmt.<span style=color:#50fa7b>Printf</span>(<span style=color:#f1fa8c>&#34;%e\n&#34;</span>, <span style=color:#bd93f9>1000024.123456</span>)
+</span></span><span style=display:flex><span>fmt.<span style=color:#50fa7b>Printf</span>(<span style=color:#f1fa8c>&#34;%f\n&#34;</span>, <span style=color:#bd93f9>1000024.123456</span>)
+</span></span><span style=display:flex><span>fmt.<span style=color:#50fa7b>Printf</span>(<span style=color:#f1fa8c>&#34;%g\n&#34;</span>, <span style=color:#bd93f9>1000024.123456</span>)
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>// output
-</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span><span style=color:#000;font-weight:700>+</span><span style=color:#099>255</span>
-</span></span><span style=display:flex><span><span style=color:#099>2345</span>
-</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>-</span><span style=color:#099>2345</span>
-</span></span><span style=display:flex><span><span style=color:#d14>&#34;sss&#34;</span>
-</span></span><span style=display:flex><span><span style=color:#d14>`sssssss`</span>
-</span></span><span style=display:flex><span><span style=color:#d14>&#34;ssss`sss&#34;</span>
-</span></span><span style=display:flex><span><span style=color:#099>0xff</span>
-</span></span><span style=display:flex><span><span style=color:#099>0XFF</span>
-</span></span><span style=display:flex><span><span style=color:#099>0377</span>
-</span></span><span style=display:flex><span><span style=color:#099>1.000024e+06</span>
-</span></span><span style=display:flex><span><span style=color:#099>1000024.123456</span>
-</span></span><span style=display:flex><span><span style=color:#099>1.000024123456e+06</span>
-</span></span></code></pre></td></tr></table></div></div></div><div class="post-meta meta-tags"><ul class=clearfix><li><a href=/tags/golang target=_blank>golang</a></li></ul></div></article><div class="post bg-white"><script src=https://utteranc.es/client.js repo=ifenng2020/ifenng2020.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script></div></div><footer id=footer><div>&copy; 2023 <a href=/>平凡之路</a>
+</span></span><span style=display:flex><span><span style=color:#6272a4>// output
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#ff79c6>+</span><span style=color:#bd93f9>255</span>
+</span></span><span style=display:flex><span><span style=color:#bd93f9>2345</span>
+</span></span><span style=display:flex><span><span style=color:#ff79c6>-</span><span style=color:#bd93f9>2345</span>
+</span></span><span style=display:flex><span><span style=color:#f1fa8c>&#34;sss&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#f1fa8c>`sssssss`</span>
+</span></span><span style=display:flex><span><span style=color:#f1fa8c>&#34;ssss`sss&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#bd93f9>0xff</span>
+</span></span><span style=display:flex><span><span style=color:#bd93f9>0XFF</span>
+</span></span><span style=display:flex><span><span style=color:#bd93f9>0377</span>
+</span></span><span style=display:flex><span><span style=color:#bd93f9>1.000024e+06</span>
+</span></span><span style=display:flex><span><span style=color:#bd93f9>1000024.123456</span>
+</span></span><span style=display:flex><span><span style=color:#bd93f9>1.000024123456e+06</span>
+</span></span></code></pre></div></div><div class="post-meta meta-tags"><ul class=clearfix><li><a href=/tags/golang target=_blank>golang</a></li></ul></div></article><div class="post bg-white"><script src=https://utteranc.es/client.js repo=ifenng2020/ifenng2020.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script></div></div><footer id=footer><div>&copy; 2023 <a href=/>平凡之路</a>
 | <a rel=nofollow target=_blank href=http://beian.miit.gov.cn/>冀ICP备2023015737号-1</a></div></footer><script type=text/javascript>window.MathJax={tex2jax:{inlineMath:[["$","$"]],processEscapes:!0}}</script><script src='//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
 <a id=rocket href=#top></a>
 <script type=text/javascript src='/js/totop.js?v=0.0.0' async></script><style type=text/css>div.highlight{position:relative;margin:1em 0}.copy-code{display:none;position:absolute;top:4px;right:4px;color:rgba(255,255,255,.8);background:rgba(78,78,78,.8);border-radius:var(--radius);padding:0 5px;font:inherit;user-select:none;cursor:pointer;border:0;--radius:8px}div.highlight:hover .copy-code,pre:hover .copy-code{display:block}</style><script>document.querySelectorAll("pre > code").forEach(e=>{const n=e.parentNode.parentNode,t=document.createElement("button");t.classList.add("copy-code"),t.innerHTML="copy";function s(){t.innerHTML="copied!",setTimeout(()=>{t.innerHTML="copy"},2e3)}t.addEventListener("click",t=>{if("clipboard"in navigator){navigator.clipboard.writeText(e.textContent),s();return}const n=document.createRange();n.selectNodeContents(e);const o=window.getSelection();o.removeAllRanges(),o.addRange(n);try{document.execCommand("copy"),s()}catch{}o.removeRange(n)}),n.classList.contains("highlight")?n.appendChild(t):n.parentNode.firstChild==n||(e.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?e.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(t):e.parentNode.appendChild(t))})</script></div><div id=secondary><section class=widget><form id=search action=/search method=get accept-charset=utf-8 target=_blank _lpchecked=1><input type=text name=q maxlength=20 placeholder=Search>
@@ -91,4 +64,4 @@
 <a href=/tags/work/>work</a>
 <a href=/tags/%E5%88%9B%E5%BB%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>创建型设计模式</a>
 <a href=/tags/%E7%BB%93%E6%9E%84%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>结构型设计模式</a>
-<a href=/tags/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>行为型设计模式</a></div></section><section class=widget><h3 class=widget-title>友情链接</h3><ul class=widget-list><li><a target=_blank href=https://geektutu.com/ title=极客兔兔>极客兔兔的博客</a></li><li><a target=_blank href=https://xiaolincoding.com/ title=小林coding>小林coding</a></li></ul></section></div></div></div></div></body></html>
+<a href=/tags/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>行为型设计模式</a></div></section><section class=widget><h3 class=widget-title>友情链接</h3><ul class=widget-list><li><a target=_blank href=https://xiaolincoding.com/ title=小林coding>小林coding</a></li></ul></section></div></div></div></div></body></html>
