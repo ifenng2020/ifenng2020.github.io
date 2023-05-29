@@ -1,0 +1,139 @@
+<!doctype html><html lang=zh-hans><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1"><title>Golang一致性哈希实现 | 平凡之路</title><meta property="og:title" content="Golang一致性哈希实现 - 平凡之路"><meta property="og:type" content="article"><meta property="article:published_time" content="2023-05-29T15:01:12+08:00"><meta property="article:modified_time" content="2023-05-29T15:01:12+08:00"><meta name=Keywords content="golang,php"><meta name=description content="Golang一致性哈希实现"><meta name=author content="ifenng"><meta property="og:url" content="/posts/golang-consistent-hash/"><link rel="shortcut icon" href=/favicon.ico type=image/x-icon><link rel=stylesheet href=/css/normalize.css><link rel=stylesheet href=/css/style.css><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js></script></head><body><header id=header class=clearfix><div class=container><div class=col-group><div class=site-name><a id=logo href=/>平凡之路</a><p class=description>不忘初心 方得始终</p></div><div><nav id=nav-menu class=clearfix><a class=current href=/>首页</a>
+<a href=/reading/ title=读书笔记>读书笔记</a>
+<a href=/tools/ title=工具箱>工具箱</a>
+<a href=/archives/ title=归档>归档</a>
+<a href=/about/ title=关于>关于</a></nav></div></div></div></header><div id=body><div class=container><div class=col-group><div class=col-8 id=main><div class=res-cons><article class=post><header><h1 class=post-title>Golang一致性哈希实现</h1></header><time datetime=2023-05-29T07:01:12Z class="post-meta meta-date dt-published">2023年5月29日</time><div class="post-meta meta-category"><span>&nbsp;|</span>
+<a href=/categories/golang>golang</a></div><div class=post-content><h3 id=概念>概念</h3><p>一致性哈希是指将数据分散到多个节点上进行存储的方法。在一致性哈希中，数据通常用数字编码，并使用哈希函数将它们映射到一个固定的哈希环上。在这种情况下，哈希环的大小通常是 2 的某个次方。选择 2 的 32 次方作为哈希环的大小是因为这是一个较大的数字，能够在哈希环上映射到许多不同的点，从而提高数据的分散性。此外，使用 32 位整数作为哈希值可以有效地使用现有的计算机硬件，并且它们通常在存储和传输方面是非常有效的。</p><p>不过，哈希环的大小不是固定的，也不一定必须为 2 的 32 次方。它可以是任何大小，只要满足某些特定的要求，例如能够平均分布数据，或者有足够的空间来存储数据等。</p><h3 id=解决什么问题>解决什么问题</h3><p>分布式系统中扩容/缩容问题，减少数据迁移，或减少扩/缩容后对各节点的压力</p><h3 id=已有车轮>已有车轮</h3><p>Go 语言提供了一些库和工具，其中最受欢迎的是 hashring 和 consistent</p><h3 id=重复造车轮>重复造车轮</h3><p>为加深对 <code>一致性哈希</code> 的理解，我们亲自实现个简单的</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#ff79c6>package</span> main
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#ff79c6>import</span> (
+</span></span><span style=display:flex><span>	<span style=color:#f1fa8c>&#34;fmt&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#f1fa8c>&#34;hash/crc32&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#f1fa8c>&#34;sort&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#f1fa8c>&#34;strconv&#34;</span>
+</span></span><span style=display:flex><span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#6272a4>// HashRing 结构表示一致性哈希环
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#8be9fd;font-style:italic>type</span> HashRing <span style=color:#8be9fd;font-style:italic>struct</span> {
+</span></span><span style=display:flex><span>	virtualNodes <span style=color:#8be9fd>int</span>              <span style=color:#6272a4>// 虚拟节点数
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>	nodes        []<span style=color:#8be9fd>string</span>         <span style=color:#6272a4>// 实际节点列表
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>	hashMap      <span style=color:#8be9fd;font-style:italic>map</span>[<span style=color:#8be9fd>uint32</span>]<span style=color:#8be9fd>string</span> <span style=color:#6272a4>// 节点哈希映射
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#6272a4>// NewHashRing 创建一个新的一致性哈希环
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#8be9fd;font-style:italic>func</span> <span style=color:#50fa7b>NewHashRing</span>(virtualNodes <span style=color:#8be9fd>int</span>, nodes []<span style=color:#8be9fd>string</span>) <span style=color:#ff79c6>*</span>HashRing {
+</span></span><span style=display:flex><span>	hashRing <span style=color:#ff79c6>:=</span> <span style=color:#ff79c6>&amp;</span>HashRing{
+</span></span><span style=display:flex><span>		virtualNodes: virtualNodes,
+</span></span><span style=display:flex><span>		nodes:        nodes,
+</span></span><span style=display:flex><span>		hashMap:      <span style=color:#8be9fd;font-style:italic>make</span>(<span style=color:#8be9fd;font-style:italic>map</span>[<span style=color:#8be9fd>uint32</span>]<span style=color:#8be9fd>string</span>),
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	hashRing.<span style=color:#50fa7b>generateHashRing</span>()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#ff79c6>return</span> hashRing
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#6272a4>// 生成哈希环
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#8be9fd;font-style:italic>func</span> (hr <span style=color:#ff79c6>*</span>HashRing) <span style=color:#50fa7b>generateHashRing</span>() {
+</span></span><span style=display:flex><span>	<span style=color:#ff79c6>for</span> _, node <span style=color:#ff79c6>:=</span> <span style=color:#ff79c6>range</span> hr.nodes {
+</span></span><span style=display:flex><span>		<span style=color:#ff79c6>for</span> i <span style=color:#ff79c6>:=</span> <span style=color:#bd93f9>0</span>; i &lt; hr.virtualNodes; i<span style=color:#ff79c6>++</span> {
+</span></span><span style=display:flex><span>			virtualKey <span style=color:#ff79c6>:=</span> hr.<span style=color:#50fa7b>getVirtualKey</span>(node, i)
+</span></span><span style=display:flex><span>			hash <span style=color:#ff79c6>:=</span> crc32.<span style=color:#50fa7b>ChecksumIEEE</span>([]<span style=color:#8be9fd;font-style:italic>byte</span>(virtualKey))
+</span></span><span style=display:flex><span>			hr.hashMap[hash] = node
+</span></span><span style=display:flex><span>		}
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#6272a4>// 获取虚拟节点键
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#8be9fd;font-style:italic>func</span> (hr <span style=color:#ff79c6>*</span>HashRing) <span style=color:#50fa7b>getVirtualKey</span>(node <span style=color:#8be9fd>string</span>, index <span style=color:#8be9fd>int</span>) <span style=color:#8be9fd>string</span> {
+</span></span><span style=display:flex><span>	<span style=color:#ff79c6>return</span> node <span style=color:#ff79c6>+</span> strconv.<span style=color:#50fa7b>Itoa</span>(index)
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#6272a4>// 添加节点
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#8be9fd;font-style:italic>func</span> (hr <span style=color:#ff79c6>*</span>HashRing) <span style=color:#50fa7b>AddNode</span>(node <span style=color:#8be9fd>string</span>) {
+</span></span><span style=display:flex><span>	hr.nodes = <span style=color:#8be9fd;font-style:italic>append</span>(hr.nodes, node)
+</span></span><span style=display:flex><span>	hr.<span style=color:#50fa7b>generateHashRing</span>()
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#6272a4>// 删除节点
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#8be9fd;font-style:italic>func</span> (hr <span style=color:#ff79c6>*</span>HashRing) <span style=color:#50fa7b>RemoveNode</span>(node <span style=color:#8be9fd>string</span>) {
+</span></span><span style=display:flex><span>	<span style=color:#ff79c6>for</span> i <span style=color:#ff79c6>:=</span> <span style=color:#8be9fd;font-style:italic>len</span>(hr.nodes) <span style=color:#ff79c6>-</span> <span style=color:#bd93f9>1</span>; i <span style=color:#ff79c6>&gt;=</span> <span style=color:#bd93f9>0</span>; i<span style=color:#ff79c6>--</span> {
+</span></span><span style=display:flex><span>		<span style=color:#ff79c6>if</span> hr.nodes[i] <span style=color:#ff79c6>==</span> node {
+</span></span><span style=display:flex><span>			hr.nodes = <span style=color:#8be9fd;font-style:italic>append</span>(hr.nodes[:i], hr.nodes[i<span style=color:#ff79c6>+</span><span style=color:#bd93f9>1</span>:]<span style=color:#ff79c6>...</span>)
+</span></span><span style=display:flex><span>		}
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	hr.<span style=color:#50fa7b>generateHashRing</span>()
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#6272a4>// 根据键获取节点
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#8be9fd;font-style:italic>func</span> (hr <span style=color:#ff79c6>*</span>HashRing) <span style=color:#50fa7b>GetNode</span>(key <span style=color:#8be9fd>string</span>) (<span style=color:#8be9fd>string</span>, <span style=color:#8be9fd>error</span>) {
+</span></span><span style=display:flex><span>	<span style=color:#ff79c6>if</span> <span style=color:#8be9fd;font-style:italic>len</span>(hr.nodes) <span style=color:#ff79c6>==</span> <span style=color:#bd93f9>0</span> {
+</span></span><span style=display:flex><span>		<span style=color:#ff79c6>return</span> <span style=color:#f1fa8c>&#34;&#34;</span>, fmt.<span style=color:#50fa7b>Errorf</span>(<span style=color:#f1fa8c>&#34;no nodes available in the hash ring&#34;</span>)
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	hash <span style=color:#ff79c6>:=</span> crc32.<span style=color:#50fa7b>ChecksumIEEE</span>([]<span style=color:#8be9fd;font-style:italic>byte</span>(key))
+</span></span><span style=display:flex><span>	<span style=color:#6272a4>// 查找大于等于哈希值的最小哈希
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>	<span style=color:#ff79c6>for</span> k <span style=color:#ff79c6>:=</span> <span style=color:#ff79c6>range</span> hr.hashMap {
+</span></span><span style=display:flex><span>		<span style=color:#ff79c6>if</span> k <span style=color:#ff79c6>&gt;=</span> hash {
+</span></span><span style=display:flex><span>			<span style=color:#ff79c6>return</span> hr.hashMap[k], <span style=color:#ff79c6>nil</span>
+</span></span><span style=display:flex><span>		}
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#6272a4>// 如果没有找到大于等于哈希值的最小哈希，则返回环的第一个节点
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>	<span style=color:#ff79c6>return</span> hr.nodes[<span style=color:#bd93f9>0</span>], <span style=color:#ff79c6>nil</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#8be9fd;font-style:italic>func</span> <span style=color:#50fa7b>main</span>() {
+</span></span><span style=display:flex><span>	<span style=color:#6272a4>// 创建一致性哈希环并添加节点
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>	hashRing <span style=color:#ff79c6>:=</span> <span style=color:#50fa7b>NewHashRing</span>(<span style=color:#bd93f9>3</span>, []<span style=color:#8be9fd>string</span>{<span style=color:#f1fa8c>&#34;node1&#34;</span>, <span style=color:#f1fa8c>&#34;node2&#34;</span>, <span style=color:#f1fa8c>&#34;node3&#34;</span>})
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#6272a4>// 添加更多节点
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>	hashRing.<span style=color:#50fa7b>AddNode</span>(<span style=color:#f1fa8c>&#34;node4&#34;</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#6272a4>// 删除节点
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>	hashRing.<span style=color:#50fa7b>RemoveNode</span>(<span style=color:#f1fa8c>&#34;node3&#34;</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#6272a4>// 获取指定键的节点
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>	key <span style=color:#ff79c6>:=</span> <span style=color:#f1fa8c>&#34;mykey&#34;</span>
+</span></span><span style=display:flex><span>	node, err <span style=color:#ff79c6>:=</span> hashRing.<span style=color:#50fa7b>GetNode</span>(key)
+</span></span><span style=display:flex><span>	<span style=color:#ff79c6>if</span> err <span style=color:#ff79c6>!=</span> <span style=color:#ff79c6>nil</span> {
+</span></span><span style=display:flex><span>		fmt.<span style=color:#50fa7b>Println</span>(<span style=color:#f1fa8c>&#34;Error:&#34;</span>, err)
+</span></span><span style=display:flex><span>		<span style=color:#ff79c6>return</span>
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	fmt.<span style=color:#50fa7b>Printf</span>(<span style=color:#f1fa8c>&#34;Key %s maps to node %s\n&#34;</span>, key, node)
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><blockquote><p>注意，此示例代码只是一个基本的实现，可能不具备完整的容错和平衡性。</p></blockquote><h3 id=总结>总结</h3><p>在这个实现中，我们创建了一个<code>HashRing</code>结构来表示一致性哈希环。我们使用 CRC32 哈希算法计算节点的哈希值，并使用虚拟节点在哈希环上进行分布。<code>generateHashRing</code>函数用于生成哈希环，<code>AddNode</code>和<code>RemoveNode</code>函数用于动态添加和删除节点，<code>GetNode</code>函数用于根据键获取相应的节点。</p><p>在<code>main</code>函数中，我们使用示例数据创建了一个一致性哈希环，并演示了添加、删除和获取节点的操作。</p></div><div class="post-meta meta-tags"><ul class=clearfix><li><a href=/tags/hash target=_blank>hash</a></li></ul></div></article><div class="post bg-white"><script src=https://utteranc.es/client.js repo=ifenng2020/ifenng2020.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script></div></div><footer id=footer><div>&copy; 2023 <a href=/>平凡之路</a> All rights reserved</div><div><a target=_blank href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=13102402000400" class=beian-link><img src=/ba.png style=float:left><p class=beian-text-p>冀公网安备 13102402000400号</p></a><a rel=nofollow target=_blank href=http://beian.miit.gov.cn/ class=beian-link><p class=beian-text-p>| 冀ICP备2023015737号-1</p></a></div></footer><script type=text/javascript>window.MathJax={tex2jax:{inlineMath:[["$","$"]],processEscapes:!0}}</script><script src='//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+<a id=rocket href=#top></a>
+<script type=text/javascript src='/js/totop.js?v=0.0.0' async></script><style type=text/css>div.highlight{position:relative;margin:1em 0}.copy-code{display:none;position:absolute;top:4px;right:4px;color:rgba(255,255,255,.8);background:rgba(78,78,78,.8);border-radius:var(--radius);padding:0 5px;font:inherit;user-select:none;cursor:pointer;border:0;--radius:8px}div.highlight:hover .copy-code,pre:hover .copy-code{display:block}</style><script>document.querySelectorAll("pre > code").forEach(e=>{const n=e.parentNode.parentNode,t=document.createElement("button");t.classList.add("copy-code"),t.innerHTML="copy";function s(){t.innerHTML="copied!",setTimeout(()=>{t.innerHTML="copy"},2e3)}t.addEventListener("click",t=>{if("clipboard"in navigator){navigator.clipboard.writeText(e.textContent),s();return}const n=document.createRange();n.selectNodeContents(e);const o=window.getSelection();o.removeAllRanges(),o.addRange(n);try{document.execCommand("copy"),s()}catch{}o.removeRange(n)}),n.classList.contains("highlight")?n.appendChild(t):n.parentNode.firstChild==n||(e.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?e.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(t):e.parentNode.appendChild(t))})</script></div><div id=secondary><section class=widget><form id=search action=/search method=get accept-charset=utf-8 _lpchecked=1><input type=text name=q maxlength=20 placeholder=Search>
+<input type=hidden name=sitesearch value=/>
+<button type=submit class="submit icon-search"></button></form></section><section class=widget><h3 class=widget-title>最近文章</h3><ul class=widget-list><li><a href=/posts/golang-consistent-hash/ title=Golang一致性哈希实现 target=_blank>Golang一致性哈希实现</a></li><li><a href=/posts/linux-systemctl/ title="创建Linux Systemctl自定义服务" target=_blank>创建Linux Systemctl自定义服务</a></li><li><a href=/posts/golang-testify/ title="Golang testify学习" target=_blank>Golang testify学习</a></li><li><a href=/posts/hugo-favicon/ title="Hugo Maupassant添加favicon.ico" target=_blank>Hugo Maupassant添加favicon.ico</a></li><li><a href=/posts/php-fastroute/ title=php使用fastroute路由 target=_blank>php使用fastroute路由</a></li><li><a href=/posts/composer-php-framework/ title=使用composer创建PHP框架 target=_blank>使用composer创建PHP框架</a></li><li><a href=/posts/go-test-cover/ title="Go Test代码覆盖率" target=_blank>Go Test代码覆盖率</a></li><li><a href=/posts/algorithms-binary-search/ title=二分查找 target=_blank>二分查找</a></li><li><a href=/posts/vim-makefile/ title="Vim Makefile无法输入tab问题" target=_blank>Vim Makefile无法输入tab问题</a></li><li><a href=/posts/docker-file/ title=深入理解DockerFile target=_blank>深入理解DockerFile</a></li></ul></section><section class=widget><h3 class=widget-title><a href=/categories/>分类</a></h3><ul class=widget-list><li><a href=/categories/algorithms/>algorithms (2)</a></li><li><a href=/categories/golang/>golang (6)</a></li><li><a href=/categories/linux/>linux (2)</a></li><li><a href=/categories/mac/>mac (1)</a></li><li><a href=/categories/php/>php (3)</a></li><li><a href=/categories/programming/>programming (1)</a></li><li><a href=/categories/reading/>reading (3)</a></li><li><a href=/categories/tools/>tools (7)</a></li><li><a href=/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/>中间件 (6)</a></li><li><a href=/categories/%E4%BA%91%E5%8E%9F%E7%94%9F/>云原生 (2)</a></li><li><a href=/categories/%E5%B0%8F%E5%AD%A6%E6%95%B0%E5%AD%A6/>小学数学 (1)</a></li><li><a href=/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/>计算机网络 (1)</a></li><li><a href=/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>设计模式 (8)</a></li><li><a href=/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/>软件开发 (1)</a></li></ul></section><section class=widget><h3 class=widget-title><a href=/tags/>标签</a></h3><div class=tagcloud><a href=/tags/TCP/>TCP</a>
+<a href=/tags/algorithm/>algorithm</a>
+<a href=/tags/basic/>basic</a>
+<a href=/tags/context/>context</a>
+<a href=/tags/dockerfile/>dockerfile</a>
+<a href=/tags/fastroute/>fastroute</a>
+<a href=/tags/gitlab/>gitlab</a>
+<a href=/tags/git%E5%91%BD%E4%BB%A4%E5%A4%87%E5%BF%98/>git命令备忘</a>
+<a href=/tags/golang/>golang</a>
+<a href=/tags/goroutine/>goroutine</a>
+<a href=/tags/hash/>hash</a>
+<a href=/tags/hugo/>hugo</a>
+<a href=/tags/k8s/>k8s</a>
+<a href=/tags/larval/>larval</a>
+<a href=/tags/leetcode/>leetcode</a>
+<a href=/tags/life/>life</a>
+<a href=/tags/lua/>lua</a>
+<a href=/tags/mathematics/>mathematics</a>
+<a href=/tags/node/>node</a>
+<a href=/tags/npm/>npm</a>
+<a href=/tags/redis/>redis</a>
+<a href=/tags/release/>release</a>
+<a href=/tags/rsync/>rsync</a>
+<a href=/tags/systemctl/>systemctl</a>
+<a href=/tags/testing/>testing</a>
+<a href=/tags/tools/>tools</a>
+<a href=/tags/vim/>vim</a>
+<a href=/tags/work/>work</a>
+<a href=/tags/%E5%88%9B%E5%BB%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>创建型设计模式</a>
+<a href=/tags/%E7%BB%93%E6%9E%84%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>结构型设计模式</a>
+<a href=/tags/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>行为型设计模式</a></div></section><section class=widget><h3 class=widget-title>友情链接</h3><ul class=widget-list><li><a target=_blank href=https://xiaolincoding.com/ title=小林coding>小林coding</a></li></ul></section></div></div></div></div></body></html>
