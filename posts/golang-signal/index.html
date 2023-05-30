@@ -1,0 +1,228 @@
+<!doctype html><html lang=zh-hans><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1"><title>Golang中的信号处理 | 平凡之路</title><meta property="og:title" content="Golang中的信号处理 - 平凡之路"><meta property="og:type" content="article"><meta property="article:published_time" content="2023-05-30T20:15:37+08:00"><meta property="article:modified_time" content="2023-05-30T20:15:37+08:00"><meta name=Keywords content="golang,php"><meta name=description content="Golang中的信号处理"><meta name=author content="ifenng"><meta property="og:url" content="/posts/golang-signal/"><link rel="shortcut icon" href=/favicon.ico type=image/x-icon><link rel=stylesheet href=/css/normalize.css><link rel=stylesheet href=/css/style.css><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js></script></head><body><header id=header class=clearfix><div class=container><div class=col-group><div class=site-name><a id=logo href=/>平凡之路</a><p class=description>不忘初心 方得始终</p></div><div><nav id=nav-menu class=clearfix><a class=current href=/>首页</a>
+<a href=/reading/ title=读书笔记>读书笔记</a>
+<a href=/tools/ title=工具箱>工具箱</a>
+<a href=/archives/ title=归档>归档</a>
+<a href=/about/ title=关于>关于</a></nav></div></div></div></header><div id=body><div class=container><div class=col-group><div class=col-8 id=main><div class=res-cons><article class=post><header><h1 class=post-title>Golang中的信号处理</h1></header><time datetime=2023-05-30T12:15:37Z class="post-meta meta-date dt-published">2023年5月30日</time><div class=post-content><h2 id=信号类型>信号类型</h2><p>个平台的信号定义或许有些不同。下面列出了 POSIX 中定义的信号。
+Linux 使用 34-64 信号用作实时系统中。
+命令 man signal 提供了官方的信号介绍。</p><ul><li><p>在 POSIX.1-1990 标准中定义的信号列表
+信号 值 动作 说明
+SIGHUP 1 Term 终端控制进程结束(终端连接断开)
+SIGINT 2 Term 用户发送 INTR 字符(Ctrl+C)触发
+SIGQUIT 3 Core 用户发送 QUIT 字符(Ctrl+/)触发
+SIGILL 4 Core 非法指令(程序错误、试图执行数据段、栈溢出等)
+SIGABRT 6 Core 调用 abort 函数触发
+SIGFPE 8 Core 算术运行错误(浮点运算错误、除数为零等)
+SIGKILL 9 Term 无条件结束程序(不能被捕获、阻塞或忽略)
+SIGSEGV 11 Core 无效内存引用(试图访问不属于自己的内存空间、对只读内存空间进行写操作)
+SIGPIPE 13 Term 消息管道损坏(FIFO/Socket 通信时，管道未打开而进行写操作)
+SIGALRM 14 Term 时钟定时信号
+SIGTERM 15 Term 结束程序(可以被捕获、阻塞或忽略)
+SIGUSR1 30,10,16 Term 用户保留
+SIGUSR2 31,12,17 Term 用户保留
+SIGCHLD 20,17,18 Ign 子进程结束(由父进程接收)
+SIGCONT 19,18,25 Cont 继续执行已经停止的进程(不能被阻塞)
+SIGSTOP 17,19,23 Stop 停止进程(不能被捕获、阻塞或忽略)
+SIGTSTP 18,20,24 Stop 停止进程(可以被捕获、阻塞或忽略)
+SIGTTIN 21,21,26 Stop 后台程序从终端中读取数据时触发
+SIGTTOU 22,22,27 Stop 后台程序向终端中写数据时触发</p></li><li><p>在 SUSv2 和 POSIX.1-2001 标准中的信号列表:
+信号 值 动作 说明
+SIGTRAP 5 Core Trap 指令触发(如断点，在调试器中使用)
+SIGBUS 0,7,10 Core 非法地址(内存地址对齐错误)
+SIGPOLL Term Pollable event (Sys V). Synonym for SIGIO
+SIGPROF 27,27,29 Term 性能时钟信号(包含系统调用时间和进程占用 CPU 的时间)
+SIGSYS 12,31,12 Core 无效的系统调用(SVr4)
+SIGURG 16,23,21 Ign 有紧急数据到达 Socket(4.2BSD)
+SIGVTALRM 26,26,28 Term 虚拟时钟信号(进程占用 CPU 的时间)(4.2BSD)
+SIGXCPU 24,24,30 Core 超过 CPU 时间资源限制(4.2BSD)
+SIGXFSZ 25,25,31 Core 超过文件大小资源限制(4.2BSD)</p><p>第 1 列为信号名；</p><p>第 2 列为对应的信号值，需要注意的是，有些信号名对应着 3 个信号值，这是因为这些信号值与平台相关，将 man 手册中对 3 个信号值的说明摘出如下，the first one is usually valid for alpha and sparc, the middle one for i386, ppc and sh, and the last one for mips.</p><p>第 3 列为操作系统收到信号后的动作，Term 表明默认动作为终止进程，Ign 表明默认动作为忽略该信号，Core 表明默认动作为终止进程同时输出 core dump，Stop 表明默认动作为停止进程。</p><p>第 4 列为对信号作用的注释性说明，浅显易懂，这里不再赘述。
+需要特别说明的是，SIGKILL 和 SIGSTOP 这两个信号既不能被应用程序捕获，也不能被操作系统阻塞或忽略。</p></li></ul><h2 id=kill-pid-与-kill--9-pid-的区别>kill pid 与 kill -9 pid 的区别</h2><p>kill pid 的作用是向进程号为 pid 的进程发送 SIGTERM（这是 kill 默认发送的信号），该信号是一个结束进程的信号且可以被应用程序捕获。若应用程序没有捕获并响应该信号的逻辑代码，则该信号的默认动作是 kill 掉进程。这是终止指定进程的推荐做法。</p><p>kill -9 pid 则是向进程号为 pid 的进程发送 SIGKILL（该信号的编号为 9），从本文上面的说明可知，SIGKILL 既不能被应用程序捕获，也不能被阻塞或忽略，其动作是立即结束指定进程。通俗地说，应用程序根本无法“感知”SIGKILL 信号，它在完全无准备的情况下，就被收到 SIGKILL 信号的操作系统给干掉了，显然，在这种“暴力”情况下，应用程序完全没有释放当前占用资源的机会。事实上，SIGKILL 信号是直接发给 init 进程的，它收到该信号后，负责终止 pid 指定的进程。在某些情况下（如进程已经 hang 死，无法响应正常信号），就可以使用 kill -9 来结束进程。</p><p>若通过 kill 结束的进程是一个创建过子进程的父进程，则其子进程就会成为孤儿进程（Orphan Process），这种情况下，子进程的退出状态就不能再被应用进程捕获（因为作为父进程的应用程序已经不存在了），不过应该不会对整个 linux 系统产生什么不利影响。</p><h2 id=应用程序如何优雅退出>应用程序如何优雅退出</h2><p>Linux Server 端的应用程序经常会长时间运行，在运行过程中，可能申请了很多系统资源，也可能保存了很多状态，在这些场景下，我们希望进程在退出前，可以释放资源或将当前状态 dump 到磁盘上或打印一些重要的日志，也就是希望进程优雅退出（exit gracefully）。</p><p>从上面的介绍不难看出，优雅退出可以通过捕获 SIGTERM 来实现。具体来讲，通常只需要两步动作：</p><p>1）注册 SIGTERM 信号的处理函数并在处理函数中做一些进程退出的准备。信号处理函数的注册可以通过 signal()或 sigaction()来实现，其中，推荐使用后者来实现信号响应函数的设置。信号处理函数的逻辑越简单越好，通常的做法是在该函数中设置一个 bool 型的 flag 变量以表明进程收到了 SIGTERM 信号，准备退出。</p><p>2）在主进程的 main()中，通过类似于 while(!bQuit)的逻辑来检测那个 flag 变量，一旦 bQuit 在 signal handler function 中被置为 true，则主进程退出 while()循环，接下来就是一些释放资源或 dump 进程当前状态或记录日志的动作，完成这些后，主进程退出。</p><h2 id=go-中的-signal-发送和处理>Go 中的 Signal 发送和处理</h2><p>golang 中对信号的处理主要使用 os/signal 包中的两个方法：
+notify 方法用来监听收到的信号
+stop 方法用来取消监听</p><h3 id=1监听全部信号>1.监听全部信号</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#ff79c6>package</span> main
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#ff79c6>import</span> (
+</span></span><span style=display:flex><span><span style=color:#f1fa8c>&#34;fmt&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#f1fa8c>&#34;os&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#f1fa8c>&#34;os/signal&#34;</span>
+</span></span><span style=display:flex><span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#6272a4>// 监听全部信号
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#8be9fd;font-style:italic>func</span> <span style=color:#50fa7b>main</span>() {
+</span></span><span style=display:flex><span><span style=color:#6272a4>//合建 chan
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>c <span style=color:#ff79c6>:=</span> <span style=color:#8be9fd;font-style:italic>make</span>(<span style=color:#8be9fd;font-style:italic>chan</span> os.Signal)
+</span></span><span style=display:flex><span><span style=color:#6272a4>//监听所有信号
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>signal.<span style=color:#50fa7b>Notify</span>(c)
+</span></span><span style=display:flex><span><span style=color:#6272a4>//阻塞直到有信号传入
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>fmt.<span style=color:#50fa7b>Println</span>(<span style=color:#f1fa8c>&#34;启动&#34;</span>)
+</span></span><span style=display:flex><span>s <span style=color:#ff79c6>:=</span> <span style=color:#ff79c6>&lt;-</span>c
+</span></span><span style=display:flex><span>fmt.<span style=color:#50fa7b>Println</span>(<span style=color:#f1fa8c>&#34;退出信号&#34;</span>, s)
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>启动
+</span></span><span style=display:flex><span><span style=color:#ff79c6>go</span> run example<span style=color:#ff79c6>-</span><span style=color:#bd93f9>1.</span><span style=color:#ff79c6>go</span>
+</span></span><span style=display:flex><span>启动
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>ctrl<span style=color:#ff79c6>+</span>c 退出,输出
+</span></span><span style=display:flex><span>退出信号 interrupt
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>kill pid 输出
+</span></span><span style=display:flex><span>退出信号 terminated
+</span></span></code></pre></div><h3 id=2监听指定信号>2.监听指定信号</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#ff79c6>package</span> main
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#ff79c6>import</span> (
+</span></span><span style=display:flex><span><span style=color:#f1fa8c>&#34;fmt&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#f1fa8c>&#34;os&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#f1fa8c>&#34;os/signal&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#f1fa8c>&#34;syscall&#34;</span>
+</span></span><span style=display:flex><span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#6272a4>// 监听指定信号
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#8be9fd;font-style:italic>func</span> <span style=color:#50fa7b>main</span>() {
+</span></span><span style=display:flex><span><span style=color:#6272a4>//合建 chan
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>c <span style=color:#ff79c6>:=</span> <span style=color:#8be9fd;font-style:italic>make</span>(<span style=color:#8be9fd;font-style:italic>chan</span> os.Signal)
+</span></span><span style=display:flex><span><span style=color:#6272a4>//监听指定信号 ctrl+c kill
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>signal.<span style=color:#50fa7b>Notify</span>(c, os.Interrupt, os.Kill, syscall.SIGUSR1, syscall.SIGUSR2)
+</span></span><span style=display:flex><span><span style=color:#6272a4>//阻塞直到有信号传入
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>fmt.<span style=color:#50fa7b>Println</span>(<span style=color:#f1fa8c>&#34;启动&#34;</span>)
+</span></span><span style=display:flex><span><span style=color:#6272a4>//阻塞直至有信号传入
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>s <span style=color:#ff79c6>:=</span> <span style=color:#ff79c6>&lt;-</span>c
+</span></span><span style=display:flex><span>fmt.<span style=color:#50fa7b>Println</span>(<span style=color:#f1fa8c>&#34;退出信号&#34;</span>, s)
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>运行</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>go run example-2.go
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>ctrl+c 退出,输出
+</span></span><span style=display:flex><span>退出信号 interrupt
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#8be9fd;font-style:italic>kill</span> pid 输出
+</span></span><span style=display:flex><span>退出信号 terminated
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#8be9fd;font-style:italic>kill</span> -USR1 pid 输出
+</span></span><span style=display:flex><span>退出信号 user defined signal <span style=color:#bd93f9>1</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#8be9fd;font-style:italic>kill</span> -USR2 pid 输出
+</span></span><span style=display:flex><span>退出信号 user defined signal <span style=color:#bd93f9>2</span>
+</span></span></code></pre></div><h3 id=3优雅退出-go-守护进程>3.优雅退出 go 守护进程</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#ff79c6>package</span> main
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#ff79c6>import</span> (
+</span></span><span style=display:flex><span>	<span style=color:#f1fa8c>&#34;fmt&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#f1fa8c>&#34;os&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#f1fa8c>&#34;os/signal&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#f1fa8c>&#34;syscall&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#f1fa8c>&#34;time&#34;</span>
+</span></span><span style=display:flex><span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#6272a4>// 优雅退出 go 守护进程
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#8be9fd;font-style:italic>func</span> <span style=color:#50fa7b>main</span>() {
+</span></span><span style=display:flex><span>	<span style=color:#6272a4>// 创建监听退出 chan
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>	c <span style=color:#ff79c6>:=</span> <span style=color:#8be9fd;font-style:italic>make</span>(<span style=color:#8be9fd;font-style:italic>chan</span> os.Signal)
+</span></span><span style=display:flex><span>	<span style=color:#6272a4>// 监听指定信号 ctrl+c kill
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>	signal.<span style=color:#50fa7b>Notify</span>(c, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGUSR1, syscall.SIGUSR2)
+</span></span><span style=display:flex><span>	<span style=color:#ff79c6>go</span> <span style=color:#8be9fd;font-style:italic>func</span>() {
+</span></span><span style=display:flex><span>		<span style=color:#ff79c6>for</span> s <span style=color:#ff79c6>:=</span> <span style=color:#ff79c6>range</span> c {
+</span></span><span style=display:flex><span>			<span style=color:#ff79c6>switch</span> s {
+</span></span><span style=display:flex><span>			<span style=color:#ff79c6>case</span> syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT:
+</span></span><span style=display:flex><span>				fmt.<span style=color:#50fa7b>Println</span>(<span style=color:#f1fa8c>&#34;退出&#34;</span>, s)
+</span></span><span style=display:flex><span>				<span style=color:#50fa7b>ExitFunc</span>()
+</span></span><span style=display:flex><span>			<span style=color:#ff79c6>case</span> syscall.SIGUSR1:
+</span></span><span style=display:flex><span>				fmt.<span style=color:#50fa7b>Println</span>(<span style=color:#f1fa8c>&#34;usr1&#34;</span>, s)
+</span></span><span style=display:flex><span>			<span style=color:#ff79c6>case</span> syscall.SIGUSR2:
+</span></span><span style=display:flex><span>				fmt.<span style=color:#50fa7b>Println</span>(<span style=color:#f1fa8c>&#34;usr2&#34;</span>, s)
+</span></span><span style=display:flex><span>			<span style=color:#ff79c6>default</span>:
+</span></span><span style=display:flex><span>				fmt.<span style=color:#50fa7b>Println</span>(<span style=color:#f1fa8c>&#34;other&#34;</span>, s)
+</span></span><span style=display:flex><span>			}
+</span></span><span style=display:flex><span>		}
+</span></span><span style=display:flex><span>	}()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	fmt.<span style=color:#50fa7b>Println</span>(<span style=color:#f1fa8c>&#34;进程启动...&#34;</span>)
+</span></span><span style=display:flex><span>	sum <span style=color:#ff79c6>:=</span> <span style=color:#bd93f9>0</span>
+</span></span><span style=display:flex><span>	<span style=color:#ff79c6>for</span> {
+</span></span><span style=display:flex><span>		sum<span style=color:#ff79c6>++</span>
+</span></span><span style=display:flex><span>		fmt.<span style=color:#50fa7b>Println</span>(<span style=color:#f1fa8c>&#34;sum:&#34;</span>, sum)
+</span></span><span style=display:flex><span>		time.<span style=color:#50fa7b>Sleep</span>(time.Second)
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#8be9fd;font-style:italic>func</span> <span style=color:#50fa7b>ExitFunc</span>() {
+</span></span><span style=display:flex><span>	fmt.<span style=color:#50fa7b>Println</span>(<span style=color:#f1fa8c>&#34;开始退出...&#34;</span>)
+</span></span><span style=display:flex><span>	fmt.<span style=color:#50fa7b>Println</span>(<span style=color:#f1fa8c>&#34;执行清理...&#34;</span>)
+</span></span><span style=display:flex><span>	fmt.<span style=color:#50fa7b>Println</span>(<span style=color:#f1fa8c>&#34;结束退出...&#34;</span>)
+</span></span><span style=display:flex><span>	os.<span style=color:#50fa7b>Exit</span>(<span style=color:#bd93f9>0</span>)
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#8be9fd;font-style:italic>kill</span> -USR1 pid 输出
+</span></span><span style=display:flex><span>usr1 user defined signal <span style=color:#bd93f9>1</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#8be9fd;font-style:italic>kill</span> -USR2 pid
+</span></span><span style=display:flex><span>usr2 user defined signal <span style=color:#bd93f9>2</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#8be9fd;font-style:italic>kill</span> pid
+</span></span><span style=display:flex><span>退出 terminated
+</span></span><span style=display:flex><span>开始退出...
+</span></span><span style=display:flex><span>执行清理...
+</span></span><span style=display:flex><span>结束退出...
+</span></span><span style=display:flex><span>执行输出
+</span></span><span style=display:flex><span>go run example-3.go
+</span></span><span style=display:flex><span>进程启动...
+</span></span><span style=display:flex><span>sum: <span style=color:#bd93f9>1</span>
+</span></span><span style=display:flex><span>sum: <span style=color:#bd93f9>2</span>
+</span></span><span style=display:flex><span>sum: <span style=color:#bd93f9>3</span>
+</span></span><span style=display:flex><span>sum: <span style=color:#bd93f9>4</span>
+</span></span><span style=display:flex><span>sum: <span style=color:#bd93f9>5</span>
+</span></span><span style=display:flex><span>sum: <span style=color:#bd93f9>6</span>
+</span></span><span style=display:flex><span>sum: <span style=color:#bd93f9>7</span>
+</span></span><span style=display:flex><span>sum: <span style=color:#bd93f9>8</span>
+</span></span><span style=display:flex><span>sum: <span style=color:#bd93f9>9</span>
+</span></span><span style=display:flex><span>usr1 user defined signal <span style=color:#bd93f9>1</span>
+</span></span><span style=display:flex><span>sum: <span style=color:#bd93f9>10</span>
+</span></span><span style=display:flex><span>sum: <span style=color:#bd93f9>11</span>
+</span></span><span style=display:flex><span>sum: <span style=color:#bd93f9>12</span>
+</span></span><span style=display:flex><span>sum: <span style=color:#bd93f9>13</span>
+</span></span><span style=display:flex><span>sum: <span style=color:#bd93f9>14</span>
+</span></span><span style=display:flex><span>usr2 user defined signal <span style=color:#bd93f9>2</span>
+</span></span><span style=display:flex><span>sum: <span style=color:#bd93f9>15</span>
+</span></span><span style=display:flex><span>sum: <span style=color:#bd93f9>16</span>
+</span></span><span style=display:flex><span>sum: <span style=color:#bd93f9>17</span>
+</span></span><span style=display:flex><span>退出 terminated
+</span></span><span style=display:flex><span>开始退出...
+</span></span><span style=display:flex><span>执行清理...
+</span></span><span style=display:flex><span>结束退出...
+</span></span></code></pre></div><p>参考</p><pre tabindex=0><code>http://www.cnblogs.com/jkkkk/p/6180016.html
+http://blog.csdn.net/zzhongcy/article/details/50601079
+https://www.douban.com/note/484935836/
+https://gist.github.com/reiki4040/be3705f307d3cd136e85#file-signal-go-L1
+</code></pre><p>作者：水滴穿石
+链接：https://www.jianshu.com/p/ae72ad58ecb6
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p></div><div class="post-meta meta-tags">没有标签</div></article><div class="post bg-white"><script src=https://utteranc.es/client.js repo=ifenng2020/ifenng2020.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script></div></div><footer id=footer><div>&copy; 2023 <a href=/>平凡之路</a> All rights reserved</div><div><a target=_blank href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=13102402000400" class=beian-link><img src=/ba.png style=float:left><p class=beian-text-p>冀公网安备 13102402000400号</p></a><a rel=nofollow target=_blank href=http://beian.miit.gov.cn/ class=beian-link><p class=beian-text-p>| 冀ICP备2023015737号-1</p></a></div></footer><script type=text/javascript>window.MathJax={tex2jax:{inlineMath:[["$","$"]],processEscapes:!0}}</script><script src='//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+<a id=rocket href=#top></a>
+<script type=text/javascript src='/js/totop.js?v=0.0.0' async></script><style type=text/css>div.highlight{position:relative;margin:1em 0}.copy-code{display:none;position:absolute;top:4px;right:4px;color:rgba(255,255,255,.8);background:rgba(78,78,78,.8);border-radius:var(--radius);padding:0 5px;font:inherit;user-select:none;cursor:pointer;border:0;--radius:8px}div.highlight:hover .copy-code,pre:hover .copy-code{display:block}</style><script>document.querySelectorAll("pre > code").forEach(e=>{const n=e.parentNode.parentNode,t=document.createElement("button");t.classList.add("copy-code"),t.innerHTML="copy";function s(){t.innerHTML="copied!",setTimeout(()=>{t.innerHTML="copy"},2e3)}t.addEventListener("click",t=>{if("clipboard"in navigator){navigator.clipboard.writeText(e.textContent),s();return}const n=document.createRange();n.selectNodeContents(e);const o=window.getSelection();o.removeAllRanges(),o.addRange(n);try{document.execCommand("copy"),s()}catch{}o.removeRange(n)}),n.classList.contains("highlight")?n.appendChild(t):n.parentNode.firstChild==n||(e.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?e.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(t):e.parentNode.appendChild(t))})</script></div><div id=secondary><section class=widget><form id=search action=/search method=get accept-charset=utf-8 _lpchecked=1><input type=text name=q maxlength=20 placeholder=Search>
+<input type=hidden name=sitesearch value=/>
+<button type=submit class="submit icon-search"></button></form></section><section class=widget><h3 class=widget-title>最近文章</h3><ul class=widget-list><li><a href=/posts/golang-signal/ title=Golang中的信号处理 target=_blank>Golang中的信号处理</a></li><li><a href=/posts/golang-consistent-hash/ title=Golang一致性哈希实现 target=_blank>Golang一致性哈希实现</a></li><li><a href=/posts/linux-systemctl/ title="创建Linux Systemctl自定义服务" target=_blank>创建Linux Systemctl自定义服务</a></li><li><a href=/posts/golang-testify/ title="Golang testify学习" target=_blank>Golang testify学习</a></li><li><a href=/posts/hugo-favicon/ title="Hugo Maupassant添加favicon.ico" target=_blank>Hugo Maupassant添加favicon.ico</a></li><li><a href=/posts/php-fastroute/ title=php使用fastroute路由 target=_blank>php使用fastroute路由</a></li><li><a href=/posts/composer-php-framework/ title=使用composer创建PHP框架 target=_blank>使用composer创建PHP框架</a></li><li><a href=/posts/go-test-cover/ title="Go Test代码覆盖率" target=_blank>Go Test代码覆盖率</a></li><li><a href=/posts/algorithms-binary-search/ title=二分查找 target=_blank>二分查找</a></li><li><a href=/posts/vim-makefile/ title="Vim Makefile无法输入tab问题" target=_blank>Vim Makefile无法输入tab问题</a></li></ul></section><section class=widget><h3 class=widget-title><a href=/categories/>分类</a></h3><ul class=widget-list><li><a href=/categories/algorithms/>algorithms (2)</a></li><li><a href=/categories/golang/>golang (6)</a></li><li><a href=/categories/linux/>linux (2)</a></li><li><a href=/categories/mac/>mac (1)</a></li><li><a href=/categories/php/>php (3)</a></li><li><a href=/categories/programming/>programming (1)</a></li><li><a href=/categories/reading/>reading (3)</a></li><li><a href=/categories/tools/>tools (7)</a></li><li><a href=/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/>中间件 (6)</a></li><li><a href=/categories/%E4%BA%91%E5%8E%9F%E7%94%9F/>云原生 (2)</a></li><li><a href=/categories/%E5%B0%8F%E5%AD%A6%E6%95%B0%E5%AD%A6/>小学数学 (1)</a></li><li><a href=/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/>计算机网络 (1)</a></li><li><a href=/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>设计模式 (8)</a></li><li><a href=/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/>软件开发 (1)</a></li></ul></section><section class=widget><h3 class=widget-title><a href=/tags/>标签</a></h3><div class=tagcloud><a href=/tags/TCP/>TCP</a>
+<a href=/tags/algorithm/>algorithm</a>
+<a href=/tags/basic/>basic</a>
+<a href=/tags/context/>context</a>
+<a href=/tags/dockerfile/>dockerfile</a>
+<a href=/tags/fastroute/>fastroute</a>
+<a href=/tags/gitlab/>gitlab</a>
+<a href=/tags/git%E5%91%BD%E4%BB%A4%E5%A4%87%E5%BF%98/>git命令备忘</a>
+<a href=/tags/golang/>golang</a>
+<a href=/tags/goroutine/>goroutine</a>
+<a href=/tags/hash/>hash</a>
+<a href=/tags/hugo/>hugo</a>
+<a href=/tags/k8s/>k8s</a>
+<a href=/tags/larval/>larval</a>
+<a href=/tags/leetcode/>leetcode</a>
+<a href=/tags/life/>life</a>
+<a href=/tags/lua/>lua</a>
+<a href=/tags/mathematics/>mathematics</a>
+<a href=/tags/node/>node</a>
+<a href=/tags/npm/>npm</a>
+<a href=/tags/redis/>redis</a>
+<a href=/tags/release/>release</a>
+<a href=/tags/rsync/>rsync</a>
+<a href=/tags/systemctl/>systemctl</a>
+<a href=/tags/testing/>testing</a>
+<a href=/tags/tools/>tools</a>
+<a href=/tags/vim/>vim</a>
+<a href=/tags/work/>work</a>
+<a href=/tags/%E5%88%9B%E5%BB%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>创建型设计模式</a>
+<a href=/tags/%E7%BB%93%E6%9E%84%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>结构型设计模式</a>
+<a href=/tags/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>行为型设计模式</a></div></section><section class=widget><h3 class=widget-title>友情链接</h3><ul class=widget-list><li><a target=_blank href=https://xiaolincoding.com/ title=小林coding>小林coding</a></li></ul></section></div></div></div></div></body></html>
