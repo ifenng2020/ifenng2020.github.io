@@ -1,0 +1,92 @@
+<!doctype html><html lang=zh-hans><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1"><title>Leetcode234解答 | 平凡之路</title><meta property="og:title" content="Leetcode234解答 - 平凡之路"><meta property="og:type" content="article"><meta property="article:published_time" content="2023-06-07T18:09:10+08:00"><meta property="article:modified_time" content="2023-06-07T18:09:10+08:00"><meta name=Keywords content="golang,php"><meta name=description content="Leetcode234解答"><meta name=author content="ifenng"><meta property="og:url" content="/posts/leetcode234/"><link rel="shortcut icon" href=/favicon.ico type=image/x-icon><link rel=stylesheet href=/css/normalize.css><link rel=stylesheet href=/css/style.css><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js></script></head><body><header id=header class=clearfix><div class=container><div class=col-group><div class=site-name><a id=logo href=/>平凡之路</a><p class=description>不忘初心 方得始终</p></div><div><nav id=nav-menu class=clearfix><a class=current href=/>首页</a>
+<a href=/reading/ title=读书笔记>读书笔记</a>
+<a href=/tools/ title=工具箱>工具箱</a>
+<a href=/archives/ title=归档>归档</a>
+<a href=/about/ title=关于>关于</a></nav></div></div></div></header><div id=body><div class=container><div class=col-group><div class=col-8 id=main><div class=res-cons><article class=post><header><h1 class=post-title>Leetcode234解答</h1></header><time datetime=2023-06-07T10:09:10Z class="post-meta meta-date dt-published">2023年6月7日</time><div class="post-meta meta-category"><span>&nbsp;|</span>
+<a href=/categories/algorithms>algorithms</a></div><div class=post-content><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#6272a4>/**
+</span></span></span><span style=display:flex><span><span style=color:#6272a4> * Definition for singly-linked list.
+</span></span></span><span style=display:flex><span><span style=color:#6272a4> * type ListNode struct {
+</span></span></span><span style=display:flex><span><span style=color:#6272a4> *     Val int
+</span></span></span><span style=display:flex><span><span style=color:#6272a4> *     Next *ListNode
+</span></span></span><span style=display:flex><span><span style=color:#6272a4> * }
+</span></span></span><span style=display:flex><span><span style=color:#6272a4> */</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#8be9fd;font-style:italic>func</span> <span style=color:#50fa7b>isPalindrome</span>(head <span style=color:#ff79c6>*</span>ListNode) <span style=color:#8be9fd>bool</span> {
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>if</span> head <span style=color:#ff79c6>==</span> <span style=color:#ff79c6>nil</span> <span style=color:#ff79c6>||</span> head.Next <span style=color:#ff79c6>==</span> <span style=color:#ff79c6>nil</span> {
+</span></span><span style=display:flex><span>        <span style=color:#ff79c6>return</span> <span style=color:#ff79c6>true</span>
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#6272a4>// 找到链表的中点
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>    slow, fast <span style=color:#ff79c6>:=</span> head, head
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>for</span> fast.Next <span style=color:#ff79c6>!=</span> <span style=color:#ff79c6>nil</span> <span style=color:#ff79c6>&amp;&amp;</span> fast.Next.Next <span style=color:#ff79c6>!=</span> <span style=color:#ff79c6>nil</span> {
+</span></span><span style=display:flex><span>        slow = slow.Next
+</span></span><span style=display:flex><span>        fast = fast.Next.Next
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#6272a4>// 反转后半部分链表
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>    secondHalf <span style=color:#ff79c6>:=</span> <span style=color:#50fa7b>reverseList</span>(slow.Next)
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#6272a4>// 比较前半部分和反转后的后半部分链表
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>    p1, p2 <span style=color:#ff79c6>:=</span> head, secondHalf
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>for</span> p2 <span style=color:#ff79c6>!=</span> <span style=color:#ff79c6>nil</span> {
+</span></span><span style=display:flex><span>        <span style=color:#ff79c6>if</span> p1.Val <span style=color:#ff79c6>!=</span> p2.Val {
+</span></span><span style=display:flex><span>            <span style=color:#ff79c6>return</span> <span style=color:#ff79c6>false</span>
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        p1 = p1.Next
+</span></span><span style=display:flex><span>        p2 = p2.Next
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#6272a4>// 恢复链表
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>    slow.Next = <span style=color:#50fa7b>reverseList</span>(secondHalf)
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>return</span> <span style=color:#ff79c6>true</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#6272a4>// 反转链表
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#8be9fd;font-style:italic>func</span> <span style=color:#50fa7b>reverseList</span>(head <span style=color:#ff79c6>*</span>ListNode) <span style=color:#ff79c6>*</span>ListNode {
+</span></span><span style=display:flex><span>    <span style=color:#8be9fd;font-style:italic>var</span> prev <span style=color:#ff79c6>*</span>ListNode
+</span></span><span style=display:flex><span>    curr <span style=color:#ff79c6>:=</span> head
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>for</span> curr <span style=color:#ff79c6>!=</span> <span style=color:#ff79c6>nil</span> {
+</span></span><span style=display:flex><span>        next <span style=color:#ff79c6>:=</span> curr.Next
+</span></span><span style=display:flex><span>        curr.Next = prev
+</span></span><span style=display:flex><span>        prev = curr
+</span></span><span style=display:flex><span>        curr = next
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>return</span> prev
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>时间复杂度：<strong>O(n)</strong></p><ul><li>遍历链表以找到中点：O(n/2) = O(n)</li><li>反转链表的后半部分：O(n/2) = O(n)</li><li>比较两部分链表的节点值：O(n/2) = O(n)</li><li>恢复链表的后半部分：O(n/2) = O(n)</li></ul><p>总体时间复杂度为 O(n)。</p><p>空间复杂度：<strong>O(1)</strong></p><ul><li>使用常量级别的额外空间，没有随链表长度变化的空间消耗。</li></ul></div><div class="post-meta meta-tags"><ul class=clearfix><li><a href=/tags/leetcode target=_blank>leetcode</a></li></ul></div></article><div class="post bg-white"><script src=https://utteranc.es/client.js repo=ifenng2020/ifenng2020.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script></div></div><footer id=footer><div>&copy; 2023 <a href=/>平凡之路</a> All rights reserved</div><div><a target=_blank href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=13102402000400" class=beian-link><img src=/ba.png style=float:left><p class=beian-text-p>冀公网安备 13102402000400号</p></a><a rel=nofollow target=_blank href=http://beian.miit.gov.cn/ class=beian-link><p class=beian-text-p>| 冀ICP备2023015737号-1</p></a></div></footer><script type=text/javascript>window.MathJax={tex2jax:{inlineMath:[["$","$"]],processEscapes:!0}}</script><script src='//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+<a id=rocket href=#top></a>
+<script type=text/javascript src='/js/totop.js?v=0.0.0' async></script><style type=text/css>div.highlight{position:relative;margin:1em 0}.copy-code{display:none;position:absolute;top:4px;right:4px;color:rgba(255,255,255,.8);background:rgba(78,78,78,.8);border-radius:var(--radius);padding:0 5px;font:inherit;user-select:none;cursor:pointer;border:0;--radius:8px}div.highlight:hover .copy-code,pre:hover .copy-code{display:block}</style><script>document.querySelectorAll("pre > code").forEach(e=>{const n=e.parentNode.parentNode,t=document.createElement("button");t.classList.add("copy-code"),t.innerHTML="copy";function s(){t.innerHTML="copied!",setTimeout(()=>{t.innerHTML="copy"},2e3)}t.addEventListener("click",t=>{if("clipboard"in navigator){navigator.clipboard.writeText(e.textContent),s();return}const n=document.createRange();n.selectNodeContents(e);const o=window.getSelection();o.removeAllRanges(),o.addRange(n);try{document.execCommand("copy"),s()}catch{}o.removeRange(n)}),n.classList.contains("highlight")?n.appendChild(t):n.parentNode.firstChild==n||(e.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?e.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(t):e.parentNode.appendChild(t))})</script></div><div id=secondary><section class=widget><form id=search action=/search method=get accept-charset=utf-8 _lpchecked=1><input type=text name=q maxlength=20 placeholder=Search>
+<input type=hidden name=sitesearch value=/>
+<button type=submit class="submit icon-search"></button></form></section><section class=widget><h3 class=widget-title>最近文章</h3><ul class=widget-list><li><a href=/posts/leetcode234/ title=Leetcode234解答 target=_blank>Leetcode234解答</a></li><li><a href=/posts/webstorage/ title=Webstorage target=_blank>Webstorage</a></li><li><a href=/posts/linux-vmstat/ title="Linux vmstat使用" target=_blank>Linux vmstat使用</a></li><li><a href=/posts/distribute-transaction/ title=分布式事务失败解决方案 target=_blank>分布式事务失败解决方案</a></li><li><a href=/posts/design-pattern-singleton/ title="Design Pattern Singleton" target=_blank>Design Pattern Singleton</a></li><li><a href=/posts/linux-makefile/ title="Linux Makefile" target=_blank>Linux Makefile</a></li><li><a href=/posts/php-multi-process/ title="Pphp Multi Process" target=_blank>Pphp Multi Process</a></li><li><a href=/posts/gin-validator/ title=Gin参数校验 target=_blank>Gin参数校验</a></li><li><a href=/posts/git-tag/ title="Git Tag备忘" target=_blank>Git Tag备忘</a></li><li><a href=/posts/vscode-shortcut/ title=Vscode几个快捷键 target=_blank>Vscode几个快捷键</a></li></ul></section><section class=widget><h3 class=widget-title><a href=/categories/>分类</a></h3><ul class=widget-list><li><a href=/categories/algorithms/>algorithms (3)</a></li><li><a href=/categories/golang/>golang (8)</a></li><li><a href=/categories/linux/>linux (4)</a></li><li><a href=/categories/mac/>mac (1)</a></li><li><a href=/categories/php/>php (4)</a></li><li><a href=/categories/programming/>programming (1)</a></li><li><a href=/categories/reading/>reading (3)</a></li><li><a href=/categories/tools/>tools (9)</a></li><li><a href=/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/>中间件 (6)</a></li><li><a href=/categories/%E4%BA%91%E5%8E%9F%E7%94%9F/>云原生 (2)</a></li><li><a href=/categories/%E5%B0%8F%E5%AD%A6%E6%95%B0%E5%AD%A6/>小学数学 (1)</a></li><li><a href=/categories/%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/>解决方案 (2)</a></li><li><a href=/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/>计算机网络 (1)</a></li><li><a href=/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>设计模式 (9)</a></li><li><a href=/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/>软件开发 (1)</a></li></ul></section><section class=widget><h3 class=widget-title><a href=/tags/>标签</a></h3><div class=tagcloud><a href=/tags/TCP/>TCP</a>
+<a href=/tags/algorithm/>algorithm</a>
+<a href=/tags/basic/>basic</a>
+<a href=/tags/context/>context</a>
+<a href=/tags/docker/>docker</a>
+<a href=/tags/fastroute/>fastroute</a>
+<a href=/tags/gin/>gin</a>
+<a href=/tags/git/>git</a>
+<a href=/tags/git%E5%91%BD%E4%BB%A4%E5%A4%87%E5%BF%98/>git命令备忘</a>
+<a href=/tags/hash/>hash</a>
+<a href=/tags/hugo/>hugo</a>
+<a href=/tags/k8s/>k8s</a>
+<a href=/tags/larval/>larval</a>
+<a href=/tags/leetcode/>leetcode</a>
+<a href=/tags/life/>life</a>
+<a href=/tags/lua/>lua</a>
+<a href=/tags/makefile/>makefile</a>
+<a href=/tags/mathematics/>mathematics</a>
+<a href=/tags/node/>node</a>
+<a href=/tags/npm/>npm</a>
+<a href=/tags/php/>php</a>
+<a href=/tags/redis/>redis</a>
+<a href=/tags/release/>release</a>
+<a href=/tags/rsync/>rsync</a>
+<a href=/tags/systemctl/>systemctl</a>
+<a href=/tags/testing/>testing</a>
+<a href=/tags/tools/>tools</a>
+<a href=/tags/vim/>vim</a>
+<a href=/tags/vscode/>vscode</a>
+<a href=/tags/work/>work</a></div></section><section class=widget><h3 class=widget-title>友情链接</h3><ul class=widget-list><li><a target=_blank href=https://xiaolincoding.com/ title=小林coding>小林coding</a></li></ul></section></div></div></div></div></body></html>
