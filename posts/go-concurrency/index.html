@@ -3,7 +3,20 @@
 <a href=/tools/ title=工具箱>工具箱</a>
 <a href=/archives/ title=归档>归档</a>
 <a href=/about/ title=关于>关于</a></nav></div></div></div></header><div id=body><div class=container><div class=col-group><div class=col-8 id=main><div class=res-cons><article class=post><header><h1 class=post-title>Go如何控制并发请求数</h1></header><time datetime=2023-06-16T14:44:28Z class="post-meta meta-date dt-published">2023年6月16日</time><div class="post-meta meta-category"><span>&nbsp;|</span>
-<a href=/categories/golang>golang</a></div><div class=post-content><p>在 Golang 中，可以使用 time.Tick 和 sync.WaitGroup 来控制每秒请求并发数。</p><p>具体实现方法如下：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#8be9fd;font-style:italic>const</span> maxQPS = <span style=color:#bd93f9>100</span> <span style=color:#6272a4>// 每秒最大请求数
+<a href=/categories/golang>golang</a></div><div class=post-content><h3 id=仅仅限制并发数>仅仅限制并发数</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#8be9fd;font-style:italic>var</span> limit = <span style=color:#8be9fd;font-style:italic>make</span>(<span style=color:#8be9fd;font-style:italic>chan</span> <span style=color:#8be9fd>int</span>, <span style=color:#bd93f9>300</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#8be9fd;font-style:italic>func</span> <span style=color:#50fa7b>main</span>() {
+</span></span><span style=display:flex><span>    <span style=color:#6272a4>// …………
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>    <span style=color:#ff79c6>for</span> _, w <span style=color:#ff79c6>:=</span> <span style=color:#ff79c6>range</span> work {
+</span></span><span style=display:flex><span>        <span style=color:#ff79c6>go</span> <span style=color:#8be9fd;font-style:italic>func</span>() {
+</span></span><span style=display:flex><span>            limit <span style=color:#ff79c6>&lt;-</span> <span style=color:#bd93f9>1</span>
+</span></span><span style=display:flex><span>            <span style=color:#50fa7b>w</span>()
+</span></span><span style=display:flex><span>            <span style=color:#ff79c6>&lt;-</span>limit
+</span></span><span style=display:flex><span>        }()
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#6272a4>// …………
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>}
+</span></span></code></pre></div><h3 id=控制单位时间内并发数>控制单位时间内并发数</h3><p>可以通过使用 time.Tick 和 sync.WaitGroup 来控制每秒请求并发数。</p><p>具体实现方法如下：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#8be9fd;font-style:italic>const</span> maxQPS = <span style=color:#bd93f9>100</span> <span style=color:#6272a4>// 每秒最大请求数
 </span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#8be9fd;font-style:italic>func</span> <span style=color:#50fa7b>main</span>() {
 </span></span><span style=display:flex><span>    qpsInterval <span style=color:#ff79c6>:=</span> time.Second <span style=color:#ff79c6>/</span> time.<span style=color:#50fa7b>Duration</span>(maxQPS) <span style=color:#6272a4>// 每个请求的时间间隔
 </span></span></span><span style=display:flex><span><span style=color:#6272a4></span>    <span style=color:#8be9fd;font-style:italic>var</span> wg sync.WaitGroup
