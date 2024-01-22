@@ -1,0 +1,54 @@
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=google-adsense-account content="ca-pub-4240300554559785"><title>初识Redis Streams | 平凡之路</title><meta property="og:title" content="初识Redis Streams - 平凡之路"><meta property="og:type" content="article"><meta property="article:published_time" content="2024-01-22T21:21:12+08:00"><meta property="article:modified_time" content="2024-01-22T21:21:12+08:00"><meta name=Keywords content="golang,php"><meta name=description content="初识Redis Streams"><meta name=author content="ifenng"><meta property="og:url" content="/posts/redis-stream/"><link rel="shortcut icon" href=/favicon.ico type=image/x-icon><link rel=stylesheet href=/css/normalize.css><link rel=stylesheet href=/css/style.css><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js></script></head><body><header id=header class=clearfix><div class=container><div class=col-group><div class=site-name><a id=logo href=/>平凡之路</a><p class=description>不忘初心 方得始终</p></div><div><nav id=nav-menu class=clearfix><a class=current href=/>首页</a>
+<a href=/reading/ title=读书笔记>读书笔记</a>
+<a href=/tools/ title=工具箱>工具箱</a>
+<a href=/archives/ title=归档>归档</a>
+<a href=/about/ title=关于>关于</a></nav></div></div></div></header><div id=body><div class=container><div class=col-group><div class=col-8 id=main><div class=res-cons><article class=post><header><h1 class=post-title>初识Redis Streams</h1></header><time datetime=2024-01-22T13:21:12Z class="post-meta meta-date dt-published">2024年1月22日</time><div class="post-meta meta-category"><span>&nbsp;|</span>
+<a href=/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6>中间件</a></div><div class=post-content><p>Redis Streams 是 Redis 5.0 引入的一种新型数据结构，用于处理<code>消息</code>和<code>事件流</code>。它提供了一个有序、持久化、可扩展的日志结构，可以按照时间戳的顺序存储和检索消息。以下是 Redis Streams 的一些基本用法：</p><h3 id=1-创建-stream>1. 创建 Stream：</h3><pre tabindex=0><code class=language-redis data-lang=redis>XADD mystream * field1 value1 field2 value2
+</code></pre><p>通过 <code>XADD</code> 命令创建一个新的 Stream，并向其中添加消息。<code>mystream</code> 是 Stream 的名称，<code>*</code> 表示使用自动生成的消息 ID，<code>field1 value1 field2 value2</code> 是消息的键值对。</p><h3 id=2-读取-stream-中的消息>2. 读取 Stream 中的消息：</h3><pre tabindex=0><code class=language-redis data-lang=redis>XREAD COUNT 5 STREAMS mystream 0
+</code></pre><p>使用 <code>XREAD</code> 命令读取 Stream 中的消息。上述命令表示从 <code>mystream</code> 中读取不超过 5 条消息，从最早的消息（0）开始读取。<code>COUNT</code> 参数是可选的，用于指定要读取的消息数量。</p><h3 id=3-消息消费者consumer>3. 消息消费者（Consumer）：</h3><pre tabindex=0><code class=language-redis data-lang=redis>XREADGROUP GROUP mygroup myconsumer COUNT 1 STREAMS mystream 0
+</code></pre><p>使用 <code>XREADGROUP</code> 命令可以创建一个消费者组，以协调多个消费者并确保每个消息只被处理一次。上述命令表示在 <code>mystream</code> 中以组名 <code>mygroup</code> 创建一个名为 <code>myconsumer</code> 的消费者，每次处理一个消息。</p><h3 id=4-消息确认>4. 消息确认：</h3><pre tabindex=0><code class=language-redis data-lang=redis>XACK mystream mygroup message-id
+</code></pre><p>使用 <code>XACK</code> 命令确认已经处理的消息，防止它被其他消费者再次处理。<code>message-id</code> 是消息的唯一标识符。</p><h3 id=5-消费者状态>5. 消费者状态：</h3><pre tabindex=0><code class=language-redis data-lang=redis>XINFO CONSUMERS mystream mygroup
+</code></pre><p>使用 <code>XINFO</code> 命令查看消费者组的状态，包括消费者和它们的偏移量（offset）。</p><h3 id=6-删除消息>6. 删除消息：</h3><pre tabindex=0><code class=language-redis data-lang=redis>XTRIM mystream MINIDLE &lt;milliseconds&gt;
+</code></pre><p>使用 <code>XTRIM</code> 命令删除 Stream 中的消息，保留最新的消息。<code>MINIDLE</code> 参数指定消息在被删除前需要保留的最小时间。</p><h3 id=7-消息阻塞读取>7. 消息阻塞读取：</h3><pre tabindex=0><code class=language-redis data-lang=redis>XREAD BLOCK &lt;milliseconds&gt; STREAMS mystream $
+</code></pre><p>使用 <code>XREAD</code> 命令的 <code>BLOCK</code> 参数可以让消费者在没有消息的情况下阻塞一段时间，以便在消息到达时立即处理。</p><p>这只是 Redis Streams 的一些基本用法，它提供了更多的功能和选项，如支持多个 Stream、消息的生存时间、消费者的等待时间等。Streams 是一个强大的工具，适用于处理实时事件流、日志、消息队列等应用场景。</p></div><div class="post-meta meta-tags"><ul class=clearfix><li><a href=/tags/redis target=_blank>redis</a></li></ul></div></article><div class="post bg-white"><script src=https://utteranc.es/client.js repo=ifenng2020/ifenng2020.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script></div></div><footer id=footer><div>&copy; 2024 <a href=/>平凡之路</a> All rights reserved</div><div><a target=_blank href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=13102402000400" class=beian-link><img src=/ba.png style=float:left><p class=beian-text-p>冀公网安备 13102402000400号</p></a><a rel=nofollow target=_blank href=http://beian.miit.gov.cn/ class=beian-link><p class=beian-text-p>| 冀ICP备2023015737号-1</p></a></div></footer><script type=text/javascript>window.MathJax={tex2jax:{inlineMath:[["$","$"]],processEscapes:!0}}</script><script src='//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+<a id=rocket href=#top></a>
+<script type=text/javascript src='/js/totop.js?v=0.0.0' async></script><style type=text/css>div.highlight{position:relative;margin:1em 0}.copy-code{display:none;position:absolute;top:4px;right:4px;color:rgba(255,255,255,.8);background:rgba(78,78,78,.8);border-radius:var(--radius);padding:0 5px;font:inherit;user-select:none;cursor:pointer;border:0;--radius:8px}div.highlight:hover .copy-code,pre:hover .copy-code{display:block}</style><script>document.querySelectorAll("pre > code").forEach(e=>{const n=e.parentNode.parentNode,t=document.createElement("button");t.classList.add("copy-code"),t.innerHTML="copy";function s(){t.innerHTML="copied!",setTimeout(()=>{t.innerHTML="copy"},2e3)}t.addEventListener("click",t=>{if("clipboard"in navigator){navigator.clipboard.writeText(e.textContent),s();return}const n=document.createRange();n.selectNodeContents(e);const o=window.getSelection();o.removeAllRanges(),o.addRange(n);try{document.execCommand("copy"),s()}catch{}o.removeRange(n)}),n.classList.contains("highlight")?n.appendChild(t):n.parentNode.firstChild==n||(e.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?e.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(t):e.parentNode.appendChild(t))})</script></div><div id=secondary><section class=widget><form id=search action=/search method=get accept-charset=utf-8 _lpchecked=1><input type=text name=q maxlength=20 placeholder=Search>
+<input type=hidden name=sitesearch value=/>
+<button type=submit class="submit icon-search"></button></form></section><section class=widget><h3 class=widget-title>最近文章</h3><ul class=widget-list><li><a href=/posts/redis-stream/ title="初识Redis Streams" target=_blank>初识Redis Streams</a></li><li><a href=/posts/rust-string-indexing/ title="Rust 中的 String 为什么不能通过下标去访问" target=_blank>Rust 中的 String 为什么不能通过下标去访问</a></li><li><a href=/posts/rust-benchmark/ title="Rust Benchmark初探" target=_blank>Rust Benchmark初探</a></li><li><a href=/posts/qrcode-login/ title=二维码登录实现方案 target=_blank>二维码登录实现方案</a></li><li><a href=/posts/booleanstorage/ title=为什么布尔占用一个字节(byte)，而不是一位(bit) target=_blank>为什么布尔占用一个字节(byte)，而不是一位(bit)</a></li><li><a href=/posts/theonlytimezone/ title=中国为什么只占一个时区 target=_blank>中国为什么只占一个时区</a></li><li><a href=/posts/history_of_pi/ title=π的由来 target=_blank>π的由来</a></li><li><a href=/posts/diff-pattern-algorithm/ title=设计模式与算法的区别 target=_blank>设计模式与算法的区别</a></li><li><a href=/posts/mysql-stage-commit/ title=谈谈数据库分解决提交 target=_blank>谈谈数据库分解决提交</a></li><li><a href=/posts/go-concurrency/ title=Go如何控制并发请求数 target=_blank>Go如何控制并发请求数</a></li></ul></section><section class=widget><h3 class=widget-title><a href=/categories/>分类</a></h3><ul class=widget-list><li><a href=/categories/algorithms/>algorithms (3)</a></li><li><a href=/categories/golang/>golang (10)</a></li><li><a href=/categories/linux/>linux (5)</a></li><li><a href=/categories/mac/>mac (1)</a></li><li><a href=/categories/math/>math (2)</a></li><li><a href=/categories/mysql/>mysql (1)</a></li><li><a href=/categories/php/>php (4)</a></li><li><a href=/categories/programing/>programing (3)</a></li><li><a href=/categories/reading/>reading (3)</a></li><li><a href=/categories/rust/>rust (2)</a></li><li><a href=/categories/solution/>solution (2)</a></li><li><a href=/categories/timezone/>timezone (1)</a></li><li><a href=/categories/tools/>tools (9)</a></li><li><a href=/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/>中间件 (7)</a></li><li><a href=/categories/%E4%BA%91%E5%8E%9F%E7%94%9F/>云原生 (2)</a></li><li><a href=/categories/%E6%9E%B6%E6%9E%84/>架构 (1)</a></li><li><a href=/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/>计算机网络 (1)</a></li><li><a href=/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>设计模式 (9)</a></li><li><a href=/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/>软件开发 (1)</a></li></ul></section><section class=widget><h3 class=widget-title><a href=/tags/>标签</a></h3><div class=tagcloud><a href=/tags/TCP/>TCP</a>
+<a href=/tags/algorithm/>algorithm</a>
+<a href=/tags/basic/>basic</a>
+<a href=/tags/channel/>channel</a>
+<a href=/tags/context/>context</a>
+<a href=/tags/docker/>docker</a>
+<a href=/tags/fastroute/>fastroute</a>
+<a href=/tags/gin/>gin</a>
+<a href=/tags/git/>git</a>
+<a href=/tags/git%E5%91%BD%E4%BB%A4%E5%A4%87%E5%BF%98/>git命令备忘</a>
+<a href=/tags/go/>go</a>
+<a href=/tags/hash/>hash</a>
+<a href=/tags/hugo/>hugo</a>
+<a href=/tags/k8s/>k8s</a>
+<a href=/tags/larval/>larval</a>
+<a href=/tags/leetcode/>leetcode</a>
+<a href=/tags/life/>life</a>
+<a href=/tags/lua/>lua</a>
+<a href=/tags/makefile/>makefile</a>
+<a href=/tags/math/>math</a>
+<a href=/tags/mathematics/>mathematics</a>
+<a href=/tags/mysql/>mysql</a>
+<a href=/tags/node/>node</a>
+<a href=/tags/npm/>npm</a>
+<a href=/tags/php/>php</a>
+<a href=/tags/redis/>redis</a>
+<a href=/tags/release/>release</a>
+<a href=/tags/rsync/>rsync</a>
+<a href=/tags/rust/>rust</a>
+<a href=/tags/shell/>shell</a>
+<a href=/tags/systemctl/>systemctl</a>
+<a href=/tags/testing/>testing</a>
+<a href=/tags/tools/>tools</a>
+<a href=/tags/vim/>vim</a>
+<a href=/tags/vscode/>vscode</a>
+<a href=/tags/work/>work</a>
+<a href=/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/>数据结构</a>
+<a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>设计模式</a></div></section><section class=widget><h3 class=widget-title>友情链接</h3><ul class=widget-list><li><a target=_blank href=https://xiaolincoding.com/ title=小林coding>小林coding</a></li></ul></section></div></div></div></div></body></html>
