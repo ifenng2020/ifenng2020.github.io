@@ -1,0 +1,49 @@
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=google-adsense-account content="ca-pub-4240300554559785"><title>恶性循环 | 平凡之路</title><meta property="og:title" content="恶性循环 - 平凡之路"><meta property="og:type" content="article"><meta property="article:published_time" content="2024-04-23T10:23:40+08:00"><meta property="article:modified_time" content="2024-04-23T10:23:40+08:00"><meta name=Keywords content="golang,php"><meta name=description content="恶性循环"><meta name=author content="ifenng"><meta property="og:url" content="/posts/worst-cycle/"><link rel="shortcut icon" href=/favicon.ico type=image/x-icon><link rel=stylesheet href=/css/normalize.css><link rel=stylesheet href=/css/style.css><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js></script></head><body><header id=header class=clearfix><div class=container><div class=col-group><div class=site-name><a id=logo href=/>平凡之路</a><p class=description>不忘初心 方得始终</p></div><div><nav id=nav-menu class=clearfix><a class=current href=/>首页</a>
+<a href=/reading/ title=读书笔记>读书笔记</a>
+<a href=/tools/ title=工具箱>工具箱</a>
+<a href=/archives/ title=归档>归档</a>
+<a href=/about/ title=关于>关于</a></nav></div></div></div></header><div id=body><div class=container><div class=col-group><div class=col-8 id=main><div class=res-cons><article class=post><header><h1 class=post-title>恶性循环</h1></header><time datetime=2024-04-23T02:23:40Z class="post-meta meta-date dt-published">2024年4月23日</time><div class="post-meta meta-category"><span>&nbsp;|</span>
+<a href=/categories/%E7%89%A2%E9%AA%9A>牢骚</a></div><div class=post-content><p>网上有很多埋怨：</p><p>​ 『现在大学讲授知识与社会脱节』</p><p>​ 『大学生出来都找不到工作』</p><p>​ 『动不动就要工作经验，刚毕业哪里来的经验』</p><p>偶有感悟，今天来聊聊大学讲授知识与社会需求脱节的问题。</p><p>我毕业于一个双非的二流大学，毕业后什么都不会，找工作四处碰壁。。。</p><p>当然这里自己也有很大一部分原因。</p><p>运气：没有遇见好老师</p><p>有些人可能会这么说：我们学的时候老师就是这么讲的。。。</p><blockquote><p>不少这样的人流入了教培体系</p></blockquote><p>也有人少数贯通的人，可是他们早早的进入管理序列，彻底与无关</p><p>如果你融会贯通的所学的知识，你会将所有知识连贯起来将给你的学生或听众么？</p></div><div class="post-meta meta-tags">没有标签</div></article><div class="post bg-white"><script src=https://utteranc.es/client.js repo=ifenng2020/ifenng2020.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script></div></div><footer id=footer><div>&copy; 2024 <a href=/>平凡之路</a> All rights reserved</div><div><a target=_blank href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=13102402000400" class=beian-link><img src=/ba.png style=float:left><p class=beian-text-p>冀公网安备 13102402000400号</p></a><a rel=nofollow target=_blank href=http://beian.miit.gov.cn/ class=beian-link><p class=beian-text-p>| 冀ICP备2023015737号-1</p></a></div></footer><script type=text/javascript>window.MathJax={tex2jax:{inlineMath:[["$","$"]],processEscapes:!0}}</script><script src='//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+<a id=rocket href=#top></a>
+<script type=text/javascript src='/js/totop.js?v=0.0.0' async></script><style type=text/css>div.highlight{position:relative;margin:1em 0}.copy-code{display:none;position:absolute;top:4px;right:4px;color:rgba(255,255,255,.8);background:rgba(78,78,78,.8);border-radius:var(--radius);padding:0 5px;font:inherit;user-select:none;cursor:pointer;border:0;--radius:8px}div.highlight:hover .copy-code,pre:hover .copy-code{display:block}</style><script>document.querySelectorAll("pre > code").forEach(e=>{const n=e.parentNode.parentNode,t=document.createElement("button");t.classList.add("copy-code"),t.innerHTML="copy";function s(){t.innerHTML="copied!",setTimeout(()=>{t.innerHTML="copy"},2e3)}t.addEventListener("click",t=>{if("clipboard"in navigator){navigator.clipboard.writeText(e.textContent),s();return}const n=document.createRange();n.selectNodeContents(e);const o=window.getSelection();o.removeAllRanges(),o.addRange(n);try{document.execCommand("copy"),s()}catch{}o.removeRange(n)}),n.classList.contains("highlight")?n.appendChild(t):n.parentNode.firstChild==n||(e.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?e.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(t):e.parentNode.appendChild(t))})</script></div><div id=secondary><section class=widget><form id=search action=/search method=get accept-charset=utf-8 _lpchecked=1><input type=text name=q maxlength=20 placeholder=Search>
+<input type=hidden name=sitesearch value=/>
+<button type=submit class="submit icon-search"></button></form></section><section class=widget><h3 class=widget-title>最近文章</h3><ul class=widget-list><li><a href=/posts/rust-attribute/ title=Rust属性unused和dead_code的区别 target=_blank>Rust属性unused和dead_code的区别</a></li><li><a href=/posts/virtual-memory/ title="Virtual Memory" target=_blank>Virtual Memory</a></li><li><a href=/posts/worst-cycle/ title=恶性循环 target=_blank>恶性循环</a></li><li><a href=/posts/rust-trait/ title="Rust Trait Study" target=_blank>Rust Trait Study</a></li><li><a href=/posts/rust-cfg-usage/ title="Rust --cfg 用法" target=_blank>Rust --cfg 用法</a></li><li><a href=/posts/redis-stream/ title="初识Redis Streams" target=_blank>初识Redis Streams</a></li><li><a href=/posts/rust-string-indexing/ title="Rust 中的 String 为什么不能通过下标去访问" target=_blank>Rust 中的 String 为什么不能通过下标去访问</a></li><li><a href=/posts/rust-benchmark/ title="Rust Benchmark初探" target=_blank>Rust Benchmark初探</a></li><li><a href=/posts/qrcode-login/ title=二维码登录实现方案 target=_blank>二维码登录实现方案</a></li><li><a href=/posts/booleanstorage/ title=为什么布尔占用一个字节(byte)，而不是一位(bit) target=_blank>为什么布尔占用一个字节(byte)，而不是一位(bit)</a></li></ul></section><section class=widget><h3 class=widget-title><a href=/categories/>分类</a></h3><ul class=widget-list><li><a href=/categories/algorithms/>algorithms (3)</a></li><li><a href=/categories/golang/>golang (10)</a></li><li><a href=/categories/linux/>linux (5)</a></li><li><a href=/categories/mac/>mac (1)</a></li><li><a href=/categories/math/>math (2)</a></li><li><a href=/categories/mysql/>mysql (1)</a></li><li><a href=/categories/php/>php (4)</a></li><li><a href=/categories/programing/>programing (3)</a></li><li><a href=/categories/reading/>reading (3)</a></li><li><a href=/categories/rust/>rust (5)</a></li><li><a href=/categories/solution/>solution (2)</a></li><li><a href=/categories/timezone/>timezone (1)</a></li><li><a href=/categories/tools/>tools (9)</a></li><li><a href=/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/>中间件 (7)</a></li><li><a href=/categories/%E4%BA%91%E5%8E%9F%E7%94%9F/>云原生 (2)</a></li><li><a href=/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/>操作系统 (1)</a></li><li><a href=/categories/%E6%9E%B6%E6%9E%84/>架构 (1)</a></li><li><a href=/categories/%E7%89%A2%E9%AA%9A/>牢骚 (1)</a></li><li><a href=/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/>计算机网络 (1)</a></li><li><a href=/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>设计模式 (9)</a></li><li><a href=/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/>软件开发 (1)</a></li></ul></section><section class=widget><h3 class=widget-title><a href=/tags/>标签</a></h3><div class=tagcloud><a href=/tags/TCP/>TCP</a>
+<a href=/tags/algorithm/>algorithm</a>
+<a href=/tags/basic/>basic</a>
+<a href=/tags/channel/>channel</a>
+<a href=/tags/context/>context</a>
+<a href=/tags/docker/>docker</a>
+<a href=/tags/fastroute/>fastroute</a>
+<a href=/tags/gin/>gin</a>
+<a href=/tags/git/>git</a>
+<a href=/tags/git%E5%91%BD%E4%BB%A4%E5%A4%87%E5%BF%98/>git命令备忘</a>
+<a href=/tags/go/>go</a>
+<a href=/tags/hash/>hash</a>
+<a href=/tags/hugo/>hugo</a>
+<a href=/tags/k8s/>k8s</a>
+<a href=/tags/larval/>larval</a>
+<a href=/tags/leetcode/>leetcode</a>
+<a href=/tags/life/>life</a>
+<a href=/tags/lua/>lua</a>
+<a href=/tags/makefile/>makefile</a>
+<a href=/tags/math/>math</a>
+<a href=/tags/mathematics/>mathematics</a>
+<a href=/tags/mysql/>mysql</a>
+<a href=/tags/node/>node</a>
+<a href=/tags/npm/>npm</a>
+<a href=/tags/php/>php</a>
+<a href=/tags/redis/>redis</a>
+<a href=/tags/release/>release</a>
+<a href=/tags/rsync/>rsync</a>
+<a href=/tags/rust/>rust</a>
+<a href=/tags/shell/>shell</a>
+<a href=/tags/systemctl/>systemctl</a>
+<a href=/tags/testing/>testing</a>
+<a href=/tags/tools/>tools</a>
+<a href=/tags/vim/>vim</a>
+<a href=/tags/vscode/>vscode</a>
+<a href=/tags/work/>work</a>
+<a href=/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/>操作系统</a>
+<a href=/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/>数据结构</a>
+<a href=/tags/%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3/>编程思想</a>
+<a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>设计模式</a></div></section><section class=widget><h3 class=widget-title>友情链接</h3><ul class=widget-list><li><a target=_blank href=https://xiaolincoding.com/ title=小林coding>小林coding</a></li></ul></section></div></div></div></div></body></html>
