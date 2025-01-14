@@ -1,0 +1,234 @@
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=google-adsense-account content="ca-pub-4240300554559785"><title>敏感词过滤服务 | 平凡之路</title><meta property="og:title" content="敏感词过滤服务 - 平凡之路"><meta property="og:type" content="article"><meta property="article:published_time" content="2025-01-14T12:15:35+08:00"><meta property="article:modified_time" content="2025-01-14T12:15:35+08:00"><meta name=Keywords content="golang,php"><meta name=description content="敏感词过滤服务"><meta name=author content="ifenng"><meta property="og:url" content="/posts/sensitive_filter/"><link rel="shortcut icon" href=/favicon.ico type=image/x-icon><link rel=stylesheet href=/css/normalize.css><link rel=stylesheet href=/css/style.css><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js></script></head><body><header id=header class=clearfix><div class=container><div class=col-group><div class=site-name><a id=logo href=/>平凡之路</a><p class=description>不忘初心 方得始终</p></div><div><nav id=nav-menu class=clearfix><a class=current href=/>首页</a>
+<a href=/reading/ title=读书笔记>读书笔记</a>
+<a href=/tools/ title=工具箱>工具箱</a>
+<a href=/archives/ title=归档>归档</a>
+<a href=/about/ title=关于>关于</a></nav></div></div></div></header><div id=body><div class=container><div class=col-group><div class=col-8 id=main><div class=res-cons><article class=post><header><h1 class=post-title>敏感词过滤服务</h1></header><time datetime=2025-01-14T04:15:35Z class="post-meta meta-date dt-published">2025年1月14日</time><div class="post-meta meta-category"><span>&nbsp;|</span>
+<a href=/categories/go>go</a></div><div class=post-content><p>在内容管理项目中，我们经常会用到敏感词检查/过滤服务，这里我们使用 Go 编写一个简单的敏感词过滤服务。</p><p>主要功能如下：</p><ol><li><strong>加载敏感词列表:</strong> 从文件或直接在代码中定义。</li><li><strong>添加/删除敏感词:</strong> 允许动态修改敏感词列表。</li><li><strong>文本过滤:</strong> 检测文本中是否包含敏感词，并进行替换或直接返回结果。</li></ol><p>我们将使用 <strong>Trie (前缀树)</strong> 数据结构来提高查找效率。</p><p>以下是代码实现：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#ff79c6>package</span> main
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#ff79c6>import</span> (
+</span></span><span style=display:flex><span>	<span style=color:#f1fa8c>&#34;bufio&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#f1fa8c>&#34;fmt&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#f1fa8c>&#34;io&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#f1fa8c>&#34;log&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#f1fa8c>&#34;os&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#f1fa8c>&#34;strings&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#f1fa8c>&#34;sync&#34;</span>
+</span></span><span style=display:flex><span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#6272a4>// TrieNode  Trie树节点
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#8be9fd;font-style:italic>type</span> TrieNode <span style=color:#8be9fd;font-style:italic>struct</span> {
+</span></span><span style=display:flex><span>	children <span style=color:#8be9fd;font-style:italic>map</span>[<span style=color:#8be9fd>rune</span>]<span style=color:#ff79c6>*</span>TrieNode
+</span></span><span style=display:flex><span>	isEnd    <span style=color:#8be9fd>bool</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#6272a4>// Trie  Trie树
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#8be9fd;font-style:italic>type</span> Trie <span style=color:#8be9fd;font-style:italic>struct</span> {
+</span></span><span style=display:flex><span>	root <span style=color:#ff79c6>*</span>TrieNode
+</span></span><span style=display:flex><span>	lock sync.RWMutex
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#6272a4>// NewTrie  创建新的Trie树
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#8be9fd;font-style:italic>func</span> <span style=color:#50fa7b>NewTrie</span>() <span style=color:#ff79c6>*</span>Trie {
+</span></span><span style=display:flex><span>	<span style=color:#ff79c6>return</span> <span style=color:#ff79c6>&amp;</span>Trie{
+</span></span><span style=display:flex><span>		root: <span style=color:#ff79c6>&amp;</span>TrieNode{children: <span style=color:#8be9fd;font-style:italic>make</span>(<span style=color:#8be9fd;font-style:italic>map</span>[<span style=color:#8be9fd>rune</span>]<span style=color:#ff79c6>*</span>TrieNode)},
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#6272a4>// Insert  向Trie树中插入敏感词
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#8be9fd;font-style:italic>func</span> (t <span style=color:#ff79c6>*</span>Trie) <span style=color:#50fa7b>Insert</span>(word <span style=color:#8be9fd>string</span>) {
+</span></span><span style=display:flex><span>	t.lock.<span style=color:#50fa7b>Lock</span>()
+</span></span><span style=display:flex><span>	<span style=color:#ff79c6>defer</span> t.lock.<span style=color:#50fa7b>Unlock</span>()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	node <span style=color:#ff79c6>:=</span> t.root
+</span></span><span style=display:flex><span>	<span style=color:#ff79c6>for</span> _, char <span style=color:#ff79c6>:=</span> <span style=color:#ff79c6>range</span> word {
+</span></span><span style=display:flex><span>		<span style=color:#ff79c6>if</span> _, ok <span style=color:#ff79c6>:=</span> node.children[char]; !ok {
+</span></span><span style=display:flex><span>			node.children[char] = <span style=color:#ff79c6>&amp;</span>TrieNode{children: <span style=color:#8be9fd;font-style:italic>make</span>(<span style=color:#8be9fd;font-style:italic>map</span>[<span style=color:#8be9fd>rune</span>]<span style=color:#ff79c6>*</span>TrieNode)}
+</span></span><span style=display:flex><span>		}
+</span></span><span style=display:flex><span>		node = node.children[char]
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	node.isEnd = <span style=color:#ff79c6>true</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#6272a4>// Delete  从Trie树中删除敏感词
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#8be9fd;font-style:italic>func</span> (t <span style=color:#ff79c6>*</span>Trie) <span style=color:#50fa7b>Delete</span>(word <span style=color:#8be9fd>string</span>) {
+</span></span><span style=display:flex><span>	t.lock.<span style=color:#50fa7b>Lock</span>()
+</span></span><span style=display:flex><span>	<span style=color:#ff79c6>defer</span> t.lock.<span style=color:#50fa7b>Unlock</span>()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	node <span style=color:#ff79c6>:=</span> t.root
+</span></span><span style=display:flex><span>	nodes <span style=color:#ff79c6>:=</span> <span style=color:#8be9fd;font-style:italic>make</span>([]<span style=color:#ff79c6>*</span>TrieNode, <span style=color:#bd93f9>0</span>)
+</span></span><span style=display:flex><span>	chars <span style=color:#ff79c6>:=</span> <span style=color:#8be9fd;font-style:italic>make</span>([]<span style=color:#8be9fd>rune</span>, <span style=color:#bd93f9>0</span>)
+</span></span><span style=display:flex><span>	<span style=color:#ff79c6>for</span> _, char <span style=color:#ff79c6>:=</span> <span style=color:#ff79c6>range</span> word {
+</span></span><span style=display:flex><span>		<span style=color:#ff79c6>if</span> _, ok <span style=color:#ff79c6>:=</span> node.children[char]; !ok {
+</span></span><span style=display:flex><span>			<span style=color:#ff79c6>return</span> <span style=color:#6272a4>// 如果没有找到，直接返回
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>		}
+</span></span><span style=display:flex><span>		nodes = <span style=color:#8be9fd;font-style:italic>append</span>(nodes, node)
+</span></span><span style=display:flex><span>		chars = <span style=color:#8be9fd;font-style:italic>append</span>(chars, char)
+</span></span><span style=display:flex><span>		node = node.children[char]
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	<span style=color:#ff79c6>if</span> !node.isEnd {
+</span></span><span style=display:flex><span>		<span style=color:#ff79c6>return</span> <span style=color:#6272a4>// 查找的不是一个词的结尾，不需要删除
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>	}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#ff79c6>if</span> <span style=color:#8be9fd;font-style:italic>len</span>(node.children) <span style=color:#ff79c6>==</span> <span style=color:#bd93f9>0</span> {
+</span></span><span style=display:flex><span>		<span style=color:#ff79c6>for</span> i <span style=color:#ff79c6>:=</span> <span style=color:#8be9fd;font-style:italic>len</span>(nodes) <span style=color:#ff79c6>-</span> <span style=color:#bd93f9>1</span>; i <span style=color:#ff79c6>&gt;=</span> <span style=color:#bd93f9>0</span>; i<span style=color:#ff79c6>--</span> {
+</span></span><span style=display:flex><span>			parentNode <span style=color:#ff79c6>:=</span> nodes[i]
+</span></span><span style=display:flex><span>			<span style=color:#8be9fd;font-style:italic>delete</span>(parentNode.children, chars[i])
+</span></span><span style=display:flex><span>			<span style=color:#ff79c6>if</span> <span style=color:#8be9fd;font-style:italic>len</span>(parentNode.children) &gt; <span style=color:#bd93f9>0</span> <span style=color:#ff79c6>||</span> parentNode <span style=color:#ff79c6>==</span> t.root {
+</span></span><span style=display:flex><span>				<span style=color:#ff79c6>break</span>
+</span></span><span style=display:flex><span>			}
+</span></span><span style=display:flex><span>		}
+</span></span><span style=display:flex><span>	} <span style=color:#ff79c6>else</span> {
+</span></span><span style=display:flex><span>		node.isEnd = <span style=color:#ff79c6>false</span> <span style=color:#6272a4>// 如果该节点还有子节点，仅取消isEnd
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>	}
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#6272a4>// Contains  检查Trie树中是否存在敏感词
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#8be9fd;font-style:italic>func</span> (t <span style=color:#ff79c6>*</span>Trie) <span style=color:#50fa7b>Contains</span>(word <span style=color:#8be9fd>string</span>) <span style=color:#8be9fd>bool</span> {
+</span></span><span style=display:flex><span>    t.lock.<span style=color:#50fa7b>RLock</span>()
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>defer</span> t.lock.<span style=color:#50fa7b>RUnlock</span>()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    node <span style=color:#ff79c6>:=</span> t.root
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>for</span> _, char <span style=color:#ff79c6>:=</span> <span style=color:#ff79c6>range</span> word {
+</span></span><span style=display:flex><span>        <span style=color:#ff79c6>if</span> _, ok <span style=color:#ff79c6>:=</span> node.children[char]; !ok {
+</span></span><span style=display:flex><span>            <span style=color:#ff79c6>return</span> <span style=color:#ff79c6>false</span>
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        node = node.children[char]
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>return</span> node.isEnd
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#6272a4>// Filter  过滤文本中的敏感词，并用替换符替换
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#8be9fd;font-style:italic>func</span> (t <span style=color:#ff79c6>*</span>Trie) <span style=color:#50fa7b>Filter</span>(text <span style=color:#8be9fd>string</span>, replaceRune <span style=color:#8be9fd>rune</span>) <span style=color:#8be9fd>string</span> {
+</span></span><span style=display:flex><span>	t.lock.<span style=color:#50fa7b>RLock</span>()
+</span></span><span style=display:flex><span>	<span style=color:#ff79c6>defer</span> t.lock.<span style=color:#50fa7b>RUnlock</span>()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    result <span style=color:#ff79c6>:=</span> []<span style=color:#8be9fd;font-style:italic>rune</span>(text)
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>for</span> i <span style=color:#ff79c6>:=</span> <span style=color:#bd93f9>0</span>; i &lt; <span style=color:#8be9fd;font-style:italic>len</span>(result); i<span style=color:#ff79c6>++</span> {
+</span></span><span style=display:flex><span>        node <span style=color:#ff79c6>:=</span> t.root
+</span></span><span style=display:flex><span>        start <span style=color:#ff79c6>:=</span> i
+</span></span><span style=display:flex><span>        <span style=color:#ff79c6>for</span> j <span style=color:#ff79c6>:=</span> i; j &lt; <span style=color:#8be9fd;font-style:italic>len</span>(result); j<span style=color:#ff79c6>++</span> {
+</span></span><span style=display:flex><span>            char <span style=color:#ff79c6>:=</span> result[j]
+</span></span><span style=display:flex><span>            <span style=color:#ff79c6>if</span> _, ok <span style=color:#ff79c6>:=</span> node.children[char]; !ok {
+</span></span><span style=display:flex><span>                <span style=color:#ff79c6>break</span>
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>            node = node.children[char]
+</span></span><span style=display:flex><span>            <span style=color:#ff79c6>if</span> node.isEnd {
+</span></span><span style=display:flex><span>                <span style=color:#6272a4>// 发现敏感词，替换
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>                <span style=color:#ff79c6>for</span> k <span style=color:#ff79c6>:=</span> start; k <span style=color:#ff79c6>&lt;=</span> j; k<span style=color:#ff79c6>++</span> {
+</span></span><span style=display:flex><span>                    result[k] = replaceRune
+</span></span><span style=display:flex><span>                }
+</span></span><span style=display:flex><span>                i = j
+</span></span><span style=display:flex><span>                <span style=color:#ff79c6>break</span>
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>return</span> <span style=color:#8be9fd;font-style:italic>string</span>(result)
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#6272a4>// LoadFromFile  从文件中加载敏感词
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span><span style=color:#8be9fd;font-style:italic>func</span> (t <span style=color:#ff79c6>*</span>Trie) <span style=color:#50fa7b>LoadFromFile</span>(filePath <span style=color:#8be9fd>string</span>) <span style=color:#8be9fd>error</span> {
+</span></span><span style=display:flex><span>    file, err <span style=color:#ff79c6>:=</span> os.<span style=color:#50fa7b>Open</span>(filePath)
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>if</span> err <span style=color:#ff79c6>!=</span> <span style=color:#ff79c6>nil</span> {
+</span></span><span style=display:flex><span>        <span style=color:#ff79c6>return</span> err
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>defer</span> file.<span style=color:#50fa7b>Close</span>()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    reader <span style=color:#ff79c6>:=</span> bufio.<span style=color:#50fa7b>NewReader</span>(file)
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>for</span> {
+</span></span><span style=display:flex><span>        line, err <span style=color:#ff79c6>:=</span> reader.<span style=color:#50fa7b>ReadString</span>(<span style=color:#f1fa8c>&#39;\n&#39;</span>)
+</span></span><span style=display:flex><span>        <span style=color:#ff79c6>if</span> err <span style=color:#ff79c6>!=</span> <span style=color:#ff79c6>nil</span> {
+</span></span><span style=display:flex><span>            <span style=color:#ff79c6>if</span> err <span style=color:#ff79c6>==</span> io.EOF {
+</span></span><span style=display:flex><span>                <span style=color:#ff79c6>break</span>
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>            <span style=color:#ff79c6>return</span> err
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>		line = strings.<span style=color:#50fa7b>TrimSpace</span>(line)
+</span></span><span style=display:flex><span>		<span style=color:#ff79c6>if</span> line <span style=color:#ff79c6>==</span> <span style=color:#f1fa8c>&#34;&#34;</span> {
+</span></span><span style=display:flex><span>			<span style=color:#ff79c6>continue</span>
+</span></span><span style=display:flex><span>		}
+</span></span><span style=display:flex><span>        t.<span style=color:#50fa7b>Insert</span>(line)
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>return</span> <span style=color:#ff79c6>nil</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#8be9fd;font-style:italic>func</span> <span style=color:#50fa7b>main</span>() {
+</span></span><span style=display:flex><span>    trie <span style=color:#ff79c6>:=</span> <span style=color:#50fa7b>NewTrie</span>()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#6272a4>// 1. 从文件加载敏感词
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>    err <span style=color:#ff79c6>:=</span> trie.<span style=color:#50fa7b>LoadFromFile</span>(<span style=color:#f1fa8c>&#34;sensitive_words.txt&#34;</span>) 
+</span></span><span style=display:flex><span>    <span style=color:#ff79c6>if</span> err <span style=color:#ff79c6>!=</span> <span style=color:#ff79c6>nil</span> {
+</span></span><span style=display:flex><span>        log.<span style=color:#50fa7b>Println</span>(<span style=color:#f1fa8c>&#34;加载敏感词文件失败:&#34;</span>, err)
+</span></span><span style=display:flex><span>        <span style=color:#6272a4>// 如果加载失败，使用默认敏感词
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>		trie.<span style=color:#50fa7b>Insert</span>(<span style=color:#f1fa8c>&#34;fuck&#34;</span>)
+</span></span><span style=display:flex><span>		trie.<span style=color:#50fa7b>Insert</span>(<span style=color:#f1fa8c>&#34;shit&#34;</span>)
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#6272a4>// 2. 添加/删除敏感词
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>    trie.<span style=color:#50fa7b>Insert</span>(<span style=color:#f1fa8c>&#34;尼玛&#34;</span>)
+</span></span><span style=display:flex><span>    trie.<span style=color:#50fa7b>Delete</span>(<span style=color:#f1fa8c>&#34;shit&#34;</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#6272a4>// 3. 文本过滤
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>    text1 <span style=color:#ff79c6>:=</span> <span style=color:#f1fa8c>&#34;这是一段测试文本，包含fuck和尼玛，还有一些正常内容。&#34;</span>
+</span></span><span style=display:flex><span>    filteredText1 <span style=color:#ff79c6>:=</span> trie.<span style=color:#50fa7b>Filter</span>(text1, <span style=color:#f1fa8c>&#39;*&#39;</span>)
+</span></span><span style=display:flex><span>    fmt.<span style=color:#50fa7b>Println</span>(<span style=color:#f1fa8c>&#34;过滤前:&#34;</span>, text1)
+</span></span><span style=display:flex><span>    fmt.<span style=color:#50fa7b>Println</span>(<span style=color:#f1fa8c>&#34;过滤后:&#34;</span>, filteredText1)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	text2 <span style=color:#ff79c6>:=</span> <span style=color:#f1fa8c>&#34;你好，世界，没有敏感词！&#34;</span>
+</span></span><span style=display:flex><span>    filteredText2 <span style=color:#ff79c6>:=</span> trie.<span style=color:#50fa7b>Filter</span>(text2, <span style=color:#f1fa8c>&#39;*&#39;</span>)
+</span></span><span style=display:flex><span>    fmt.<span style=color:#50fa7b>Println</span>(<span style=color:#f1fa8c>&#34;过滤前:&#34;</span>, text2)
+</span></span><span style=display:flex><span>    fmt.<span style=color:#50fa7b>Println</span>(<span style=color:#f1fa8c>&#34;过滤后:&#34;</span>, filteredText2)
+</span></span><span style=display:flex><span>	
+</span></span><span style=display:flex><span>	<span style=color:#6272a4>// 4. 测试 Contains
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>	fmt.<span style=color:#50fa7b>Println</span>(<span style=color:#f1fa8c>&#34;Contains &#39;fuck&#39;:&#34;</span>, trie.<span style=color:#50fa7b>Contains</span>(<span style=color:#f1fa8c>&#34;fuck&#34;</span>)) <span style=color:#6272a4>// true
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>	fmt.<span style=color:#50fa7b>Println</span>(<span style=color:#f1fa8c>&#34;Contains &#39;shit&#39;:&#34;</span>, trie.<span style=color:#50fa7b>Contains</span>(<span style=color:#f1fa8c>&#34;shit&#34;</span>)) <span style=color:#6272a4>// false
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>	fmt.<span style=color:#50fa7b>Println</span>(<span style=color:#f1fa8c>&#34;Contains &#39;尼玛&#39;:&#34;</span>, trie.<span style=color:#50fa7b>Contains</span>(<span style=color:#f1fa8c>&#34;尼玛&#34;</span>)) <span style=color:#6272a4>// true
+</span></span></span><span style=display:flex><span><span style=color:#6272a4></span>}
+</span></span></code></pre></div><p><strong>说明:</strong></p><ol><li><strong>创建 <code>sensitive_words.txt</code> 文件:</strong> 将敏感词一行一个放入此文件中。</li><li><strong>编译并运行代码:</strong> <code>go run main.go</code></li><li><strong>测试结果:</strong> 查看控制台输出，可以看到敏感词被替换为了 <code>*</code> 。</li></ol><p><strong>代码解析:</strong></p><ul><li><strong><code>TrieNode</code> 和 <code>Trie</code>:</strong> 定义了 Trie 树的数据结构。</li><li><strong><code>Insert(word string)</code>:</strong> 向 Trie 树插入一个敏感词。</li><li><strong><code>Delete(word string)</code>:</strong> 从Trie树中删除敏感词。</li><li><strong><code>Contains(word string)</code>:</strong> 检查 Trie 树是否包含指定敏感词。</li><li><strong><code>Filter(text string, replaceRune rune)</code>:</strong> 过滤文本中的敏感词，并用 <code>replaceRune</code> 替换。</li><li><strong><code>LoadFromFile(filePath string)</code>:</strong> 从指定文件路径加载敏感词，一行一个。</li><li><strong><code>main()</code> 函数:</strong> 演示了如何使用这个敏感词过滤服务。</li></ul><p><strong>优点:</strong></p><ul><li><strong>高效:</strong> 使用 Trie 树进行查找，时间复杂度接近 O(n)，n为敏感词长度，相比于直接匹配，效率更高。</li><li><strong>可扩展:</strong> 可以很容易地添加新的敏感词。</li><li><strong>线程安全:</strong> 使用 <code>sync.RWMutex</code> 实现了并发安全的读写操作。</li></ul><p><strong>进一步优化:</strong></p><ul><li><strong>忽略大小写和空格:</strong> 可以对输入的文本和敏感词进行预处理，转换为小写并去除空格。</li><li><strong>支持多种替换方式:</strong> 可以根据需求选择不同的替换符或替换规则。</li><li><strong>使用高性能的第三方库:</strong> 可以使用高性能的 Trie 树库，例如 <code>github.com/emirpasic/gods</code>。</li><li><strong>配置化:</strong> 将配置（如文件路径，替换符）放入配置文件中。</li><li><strong>API 服务:</strong> 将此服务封装成 API 供其他应用调用。</li></ul><p><strong>注意:</strong></p><ul><li>这个示例是一个简单的敏感词过滤实现，在实际应用中可能需要考虑更多的复杂场景，如：<ul><li><strong>同音字、形近字:</strong> 可以考虑使用模糊匹配或更复杂的 NLP 技术来处理。</li><li><strong>组合敏感词:</strong> 需要考虑不同组合方式的敏感词。</li><li><strong>上下文:</strong> 有些词在特定上下文中才是敏感的。</li></ul></li><li>为了安全和完整性，敏感词列表需要定期更新和维护。</li></ul><p>你可以根据自己的需求进行修改和扩展，希望这个例子能够帮助你更好的理解和完善 敏感词过滤服务！</p></div><div class="post-meta meta-tags"><ul class=clearfix><li><a href=/tags/go target=_blank>go</a></li></ul></div></article><div class="post bg-white"><script src=https://utteranc.es/client.js repo=ifenng2020/ifenng2020.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script></div></div><footer id=footer><div>&copy; 2025 <a href=/>平凡之路</a> All rights reserved</div><div><a target=_blank href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=13102402000400" class=beian-link><img src=/ba.png style=float:left><p class=beian-text-p>冀公网安备 13102402000400号</p></a><a rel=nofollow target=_blank href=http://beian.miit.gov.cn/ class=beian-link><p class=beian-text-p>| 冀ICP备2023015737号-1</p></a></div></footer><script type=text/javascript>window.MathJax={tex2jax:{inlineMath:[["$","$"]],processEscapes:!0}}</script><script src='//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+<a id=rocket href=#top></a>
+<script type=text/javascript src='/js/totop.js?v=0.0.0' async></script><style type=text/css>div.highlight{position:relative;margin:1em 0}.copy-code{display:none;position:absolute;top:4px;right:4px;color:rgba(255,255,255,.8);background:rgba(78,78,78,.8);border-radius:var(--radius);padding:0 5px;font:inherit;user-select:none;cursor:pointer;border:0;--radius:8px}div.highlight:hover .copy-code,pre:hover .copy-code{display:block}</style><script>document.querySelectorAll("pre > code").forEach(e=>{const n=e.parentNode.parentNode,t=document.createElement("button");t.classList.add("copy-code"),t.innerHTML="copy";function s(){t.innerHTML="copied!",setTimeout(()=>{t.innerHTML="copy"},2e3)}t.addEventListener("click",t=>{if("clipboard"in navigator){navigator.clipboard.writeText(e.textContent),s();return}const n=document.createRange();n.selectNodeContents(e);const o=window.getSelection();o.removeAllRanges(),o.addRange(n);try{document.execCommand("copy"),s()}catch{}o.removeRange(n)}),n.classList.contains("highlight")?n.appendChild(t):n.parentNode.firstChild==n||(e.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?e.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(t):e.parentNode.appendChild(t))})</script></div><div id=secondary><section class=widget><form id=search action=/search method=get accept-charset=utf-8 _lpchecked=1><input type=text name=q maxlength=20 placeholder=Search>
+<input type=hidden name=sitesearch value=/>
+<button type=submit class="submit icon-search"></button></form></section><section class=widget><h3 class=widget-title>最近文章</h3><ul class=widget-list><li><a href=/posts/sensitive_filter/ title=敏感词过滤服务 target=_blank>敏感词过滤服务</a></li><li><a href=/posts/rust-micro/ title=Rust宏浅尝 target=_blank>Rust宏浅尝</a></li><li><a href=/posts/rust-async/ title=Rust异步编程初尝 target=_blank>Rust异步编程初尝</a></li><li><a href=/posts/rust-cow/ title="Rust 牛？" target=_blank>Rust 牛？</a></li><li><a href=/posts/rust-attribute/ title=Rust属性unused和dead_code的区别 target=_blank>Rust属性unused和dead_code的区别</a></li><li><a href=/posts/virtual-memory/ title="Virtual Memory" target=_blank>Virtual Memory</a></li><li><a href=/posts/worst-cycle/ title=恶性循环 target=_blank>恶性循环</a></li><li><a href=/posts/rust-trait/ title="Rust Trait Study" target=_blank>Rust Trait Study</a></li><li><a href=/posts/rust-cfg-usage/ title="Rust --cfg 用法" target=_blank>Rust --cfg 用法</a></li><li><a href=/posts/redis-stream/ title="初识Redis Streams" target=_blank>初识Redis Streams</a></li></ul></section><section class=widget><h3 class=widget-title><a href=/categories/>分类</a></h3><ul class=widget-list><li><a href=/categories/algorithms/>algorithms (3)</a></li><li><a href=/categories/go/>go (1)</a></li><li><a href=/categories/golang/>golang (10)</a></li><li><a href=/categories/linux/>linux (5)</a></li><li><a href=/categories/mac/>mac (1)</a></li><li><a href=/categories/math/>math (2)</a></li><li><a href=/categories/mysql/>mysql (1)</a></li><li><a href=/categories/php/>php (4)</a></li><li><a href=/categories/programing/>programing (3)</a></li><li><a href=/categories/reading/>reading (3)</a></li><li><a href=/categories/rust/>rust (8)</a></li><li><a href=/categories/solution/>solution (2)</a></li><li><a href=/categories/timezone/>timezone (1)</a></li><li><a href=/categories/tools/>tools (9)</a></li><li><a href=/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/>中间件 (7)</a></li><li><a href=/categories/%E4%BA%91%E5%8E%9F%E7%94%9F/>云原生 (2)</a></li><li><a href=/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/>操作系统 (1)</a></li><li><a href=/categories/%E6%9E%B6%E6%9E%84/>架构 (1)</a></li><li><a href=/categories/%E7%89%A2%E9%AA%9A/>牢骚 (1)</a></li><li><a href=/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/>计算机网络 (1)</a></li><li><a href=/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>设计模式 (9)</a></li><li><a href=/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/>软件开发 (1)</a></li></ul></section><section class=widget><h3 class=widget-title><a href=/tags/>标签</a></h3><div class=tagcloud><a href=/tags/TCP/>TCP</a>
+<a href=/tags/algorithm/>algorithm</a>
+<a href=/tags/basic/>basic</a>
+<a href=/tags/channel/>channel</a>
+<a href=/tags/context/>context</a>
+<a href=/tags/docker/>docker</a>
+<a href=/tags/fastroute/>fastroute</a>
+<a href=/tags/gin/>gin</a>
+<a href=/tags/git/>git</a>
+<a href=/tags/git%E5%91%BD%E4%BB%A4%E5%A4%87%E5%BF%98/>git命令备忘</a>
+<a href=/tags/go/>go</a>
+<a href=/tags/hash/>hash</a>
+<a href=/tags/hugo/>hugo</a>
+<a href=/tags/k8s/>k8s</a>
+<a href=/tags/larval/>larval</a>
+<a href=/tags/leetcode/>leetcode</a>
+<a href=/tags/life/>life</a>
+<a href=/tags/lua/>lua</a>
+<a href=/tags/makefile/>makefile</a>
+<a href=/tags/math/>math</a>
+<a href=/tags/mathematics/>mathematics</a>
+<a href=/tags/mysql/>mysql</a>
+<a href=/tags/node/>node</a>
+<a href=/tags/npm/>npm</a>
+<a href=/tags/php/>php</a>
+<a href=/tags/redis/>redis</a>
+<a href=/tags/release/>release</a>
+<a href=/tags/rsync/>rsync</a>
+<a href=/tags/rust/>rust</a>
+<a href=/tags/shell/>shell</a>
+<a href=/tags/systemctl/>systemctl</a>
+<a href=/tags/testing/>testing</a>
+<a href=/tags/tools/>tools</a>
+<a href=/tags/vim/>vim</a>
+<a href=/tags/vscode/>vscode</a>
+<a href=/tags/work/>work</a>
+<a href=/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/>操作系统</a>
+<a href=/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/>数据结构</a>
+<a href=/tags/%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3/>编程思想</a>
+<a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>设计模式</a></div></section><section class=widget><h3 class=widget-title>友情链接</h3><ul class=widget-list><li><a target=_blank href=https://xiaolincoding.com/ title=小林coding>小林coding</a></li></ul></section></div></div></div></div></body></html>
