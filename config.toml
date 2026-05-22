@@ -1,0 +1,77 @@
+baseURL = "/"
+
+defaultContentLanguage = "zh-hans"
+title = "平凡之路"
+theme = "maupassant"
+
+## 保持分类的原始名字（false会做转小写处理）
+preserveTaxonomyNames = true
+## 是否禁止URL Path转小写
+disablePathToLower = true
+
+hasCJKLanguage = true
+summaryLength = 140
+
+[author]
+  name = "zf"
+
+[params]
+  author = "zzf"
+  subtitle = "不忘初心 方得始终"
+  keywords = "golang, php"
+  description = ""
+  busuanzi = false #启用不算子网页统计
+  localSearch = true # 启用本地搜索
+
+  # 全局开关，你也可以在每一篇内容的 front matter 中针对单篇内容关闭或开启某些功能
+  toc = false  # 是否开启目录
+  aiRobot = false
+  beian = ""
+  policeBeiAn = ""
+  adsense = true # 是否打开谷歌adsense
+  adsenseAccount = "ca-pub-4240300554559785"
+[params.utteranc]
+  enable = true
+  repo = "ifenng2020/ifenng2020.github.io" 
+  issueTerm = "pathname"
+  theme = "github-light"
+
+## 友情链接
+[[params.links]]
+  title = "小林coding"
+  name = "小林coding"
+  url = "https://xiaolincoding.com/"
+
+
+## 配置代码高亮
+[markup]
+  [markup.highlight]
+    lineNos = false
+    style = "dracula"
+
+## 网站菜单
+[menu]
+
+  [[menu.main]]
+    identifier = "reading"
+    name = "读书笔记"
+    url = "/reading/"
+    weight = 3
+
+  [[menu.main]]
+    identifier = "tools"
+    name = "工具箱"
+    url = "/tools/"
+    weight = 4
+
+  [[menu.main]]
+    identifier = "archives"
+    name = "归档"
+    url = "/archives/"
+    weight = 5
+
+  [[menu.main]]
+    identifier = "about"
+    name = "关于"
+    url = "/about/"
+    weight = 6
